@@ -87,7 +87,7 @@ Usage: tps [options]
 
 ## Output
 
-TPS outputs a [sif] (Simple Interaction Format) file that summarizes the valid
+TPS outputs a Simple Interaction Format ([sif]) file that summarizes the valid
 pathway models.  The sif file can be imported into [Cytoscape] to visualize
 the network.  Each line has the form:
 ```
