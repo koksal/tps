@@ -7,4 +7,4 @@ if [ ! -f $sbtscript ]; then
   ./scripts/get-sbt
 fi
 
-$sbtscript --warn "project tps-core" "run-main tps.Main $*"
+$sbtscript "project tps-core" "run-main tps.Main $*"
