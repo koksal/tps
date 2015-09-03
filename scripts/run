@@ -1,0 +1,10 @@
+#!/bin/bash
+
+sbtscript=./scripts/sbt
+
+if [ ! -f $sbtscript ]; then
+  echo "downloading sbt" 1>&2
+  ./scripts/get-sbt
+fi
+
+$sbtscript --warn "project tps-core" "run-main tps.Main $*"
