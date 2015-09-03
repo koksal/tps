@@ -28,19 +28,19 @@ object ArgHandling {
 
       opt[String]("firstscores") required() action { (v, o) =>
         o.copy(firstScoresPath = new java.io.File(v))
-      } text("significance scores for time series points w.r.t. first time point")
+      } text("significance scores file for time series points w.r.t. first time point")
 
       opt[String]("prevscores") required() action { (v, o) =>
         o.copy(prevScoresPath = new java.io.File(v))
-      } text("significance scores for time series points w.r.t. previous time point")
+      } text("significance scores file for time series points w.r.t. previous time point")
 
       opt[String]("partialmodel") unbounded() action { (v, o) =>
         o.copy(partialModelPaths = o.partialModelPaths + new java.io.File(v))
-      } text("input partial model given as a network")
+      } text("input partial model network file")
 
       opt[String]("peptidemap") action { (v, o) =>
         o.copy(peptideProteinMapPath = Some(new java.io.File(v))) 
-      } text("peptide protein mapping")
+      } text("peptide protein mapping file")
 
       opt[String]("outlabel") action { (v, o) =>
         o.copy(outLabel = Some(v)) 
@@ -63,17 +63,17 @@ object ArgHandling {
       opt[String]("solver") action { (v, o) =>
         o.copy(synthesisOptions = 
           o.synthesisOptions.copy(solver = v)) } text(
-          "solver (naive, bilateral or dataflow)")
+          "solver type (naive, bilateral or dataflow)")
 
       opt[Int]("slack") action { (i, o) =>
         o.copy(synthesisOptions = 
           o.synthesisOptions.copy(pathLengthSlack = Some(i))) } text(
-          "limit path lengths from source to each node (only for symbolic solvers)")
+          "integer limit for maximum path lengths from sources (only for symbolic solvers)")
 
       opt[Int]("bitvect") action { (i, o) => 
         o.copy(synthesisOptions = 
           o.synthesisOptions.copy(bitvectorWidth = Some(i))) } text(
-          "use bitvectors for integer encoding")
+          "use bitvectors of the given size for integer encoding")
 
       opt[Unit]("no-connectivity") action { (_, o) => 
         o.copy(synthesisOptions = 
