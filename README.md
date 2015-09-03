@@ -17,29 +17,32 @@ TPS is built and run using the command-line interface. To use TPS, follow these
 steps:
 
 1. Download the code:
-```
-git clone https://github.com/koksal/tps.git
-```
+
+        ```
+        git clone https://github.com/koksal/tps.git
+        ```
 2. Browse to the root project folder:
-```
-cd tps
-```
+
+        ```
+        cd tps
+        ```
 3. Invoke `scripts/run`. The first time this script is run, it will download
    [sbt-extras], which is a script for running the build tool [sbt]. After sbt
    is downloaded, the script will build the code and run TPS with the given
    command-line arguments. To run TPS using the provided data, use the
    following command:
-```
-./scripts/run \
-  --network data/networks/input-network.tsv \
-  --timeseries data/timeseries/median-time-series.tsv \
-  --firstscores data/timeseries/p-values-first.tsv \
-  --prevscores data/timeseries/p-values-prev.tsv \
-  --partialmodel data/resources/kinase-substrate-interactions.sif \
-  --peptidemap data/timeseries/peptide-mapping.tsv \
-  --source EGF_HUMAN \
-  --threshold 0.01
-```
+
+        ```
+        ./scripts/run \
+          --network data/networks/input-network.tsv \
+          --timeseries data/timeseries/median-time-series.tsv \
+          --firstscores data/timeseries/p-values-first.tsv \
+          --prevscores data/timeseries/p-values-prev.tsv \
+          --partialmodel data/resources/kinase-substrate-interactions.sif \
+          --peptidemap data/timeseries/peptide-mapping.tsv \
+          --source EGF_HUMAN \
+          --threshold 0.01
+        ```
 This command will generate a network file called `output.sif` in the current folder.
 
 ## Command-line arguments
