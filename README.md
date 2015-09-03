@@ -12,6 +12,7 @@ that control post-translational modifications.
 
 ## Requirements
 
+TPS runs on both Linux and OS X. The only requirement is:
 * Java Development Kit 8.
 
 ## Installation and sample usage
