@@ -70,7 +70,7 @@ Usage: tps [options]
   --solver <value>
         solver (naive, bilateral or dataflow)
   --slack <value>
-        when using a symbolic solver, limit path lengths from source to each nodes to k + shortest path
+        limit path lengths from source to each node (only for symbolic solvers)
   --bitvect <value>
         use bitvectors for integer encoding
   --no-connectivity

@@ -68,7 +68,7 @@ object ArgHandling {
       opt[Int]("slack") action { (i, o) =>
         o.copy(synthesisOptions = 
           o.synthesisOptions.copy(pathLengthSlack = Some(i))) } text(
-          "when using a symbolic solver, limit path lengths from source to each nodes to k + shortest path")
+          "limit path lengths from source to each node (only for symbolic solvers)")
 
       opt[Int]("bitvect") action { (i, o) => 
         o.copy(synthesisOptions = 
