@@ -2,6 +2,7 @@ package tps.synthesis
 
 import tps.Graphs._
 import tps.GraphSolutions._
+import tps.ResultReporter
 
 import tps.util.FileUtils
 
@@ -24,7 +25,8 @@ class DataflowSolver(
   graph: UndirectedGraph,
   partialModel: AmbiguousGraphSolution,
   opts: SynthesisOptions,
-  interp: TriggerInterpretation
+  interp: TriggerInterpretation,
+  resultReporter: ResultReporter
 ) extends Solver {
 
   import Dominators._
@@ -109,7 +111,7 @@ class DataflowSolver(
     val lines = graph.V map (activationRow)
     val content = lines.mkString("\n")
 
-    FileUtils.writeToFile(new java.io.File("dataflow.log"), content)
+    resultReporter.writeOutput("activity-windows.tsv", content)
   }
 
   def updateEdge(e: Edge) = {

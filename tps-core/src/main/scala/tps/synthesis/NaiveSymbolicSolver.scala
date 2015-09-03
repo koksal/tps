@@ -3,6 +3,8 @@ package tps.synthesis
 import tps.Graphs._
 import tps.GraphSolutions._
 
+import tps.util.LogUtils
+
 class NaiveSymbolicSolver(
   graph: UndirectedGraph,
   opts: SynthesisOptions,
@@ -40,7 +42,7 @@ class NaiveSymbolicSolver(
     var solution: AmbiguousGraphSolution = Map.empty
 
     val total = graph.E.size
-    println(s"$total edges to test")
+    LogUtils.log(s"$total edges to test")
     var ctr = 0
 
     for (e <- graph.bfsEdgeOrder) {
@@ -55,7 +57,7 @@ class NaiveSymbolicSolver(
       // assert what's already known
       assertExpr(sg.graphSolutionFormula(newPartialModel))
     }
-    println("# queries: " + ctr)
+    LogUtils.log("# queries: " + ctr)
 
     solution
   }

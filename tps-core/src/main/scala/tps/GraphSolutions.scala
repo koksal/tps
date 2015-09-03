@@ -74,18 +74,18 @@ object GraphSolutions {
     val aes = ambigEdges(sol)
     val naes = nonAmbigEdges(sol)
 
-    println("Summary:")
-    println("--------")
-    println(s"Non-ambiguous predictions (${naes.size}):")
+    LogUtils.log("Summary:")
+    LogUtils.log("--------")
+    LogUtils.log(s"Non-ambiguous predictions (${naes.size}):")
     for (e <- naes.toList.sortBy(_.v1.id)) {
-      println(printPrediction(e, sol))
+      LogUtils.log(printPrediction(e, sol))
     }
-    println("--------")
-    println(s"Ambiguous predictions (${aes.size}):")
+    LogUtils.log("--------")
+    LogUtils.log(s"Ambiguous predictions (${aes.size}):")
     for (e <- aes.toList.sortBy(_.v1.id)) {
-      println(printPrediction(e, sol))
+      LogUtils.log(printPrediction(e, sol))
     }
-    println("--------")
+    LogUtils.log("--------")
   }
 
   def parsableGraphSolutionString(sol: AmbiguousGraphSolution): String = {

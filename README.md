@@ -30,8 +30,8 @@ steps:
 3. Invoke `./scripts/run`. The first time this script is run, it will download
    [sbt-extras], which is a script for running the build tool [sbt]. After sbt
    is downloaded, the script will build the code and run TPS with the given
-   command-line arguments. To run TPS using the provided data, use the
-   following command:
+   command-line arguments. To run TPS using the provided data, copy and paste
+   the following command into the terminal:
 
         ./scripts/run \
           --network data/networks/input-network.tsv \
@@ -42,7 +42,10 @@ steps:
           --peptidemap data/timeseries/peptide-mapping.tsv \
           --source EGF_HUMAN \
           --threshold 0.01
-   This command will generate a network file called `output.sif` in the current folder.
+   This command will generate in the current folder:
+   - a network file named `output.sif`
+   - a tab-separated file named `activity-windows.tsv` 
+   The output files are described in the **Output** section.
 
 ## Command-line arguments
 

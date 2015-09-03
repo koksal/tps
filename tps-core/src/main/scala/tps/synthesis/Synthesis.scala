@@ -14,7 +14,8 @@ object Synthesis {
     peptideProteinMap: Map[String, Set[String]],
     sources: Set[String],
     significanceThreshold: Double,
-    opts: SynthesisOptions
+    opts: SynthesisOptions,
+    resultReporter: ResultReporter
   ): AmbiguousGraphSolution = {
     def networkWithSources = network.copy(sources = sources map (Vertex(_)))
 
@@ -56,7 +57,8 @@ object Synthesis {
           expandedNetwork, 
           expandedPartialModel, 
           opts, 
-          interpretation
+          interpretation,
+          resultReporter
         )
       case "naive" => 
         new NaiveSymbolicSolver(

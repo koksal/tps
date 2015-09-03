@@ -3,6 +3,8 @@ package tps.synthesis
 import tps.Graphs._
 import tps.GraphSolutions._
 
+import tps.util.LogUtils
+
 import Trees._
 
 class BilateralSolver(
@@ -105,8 +107,8 @@ class BilateralSolver(
     var lower = emptySol(undirGraph)
     var upper = fullSol(undirGraph)
 
-    println("|V| = " + undirGraph.V.size)
-    println("|E| = " + undirGraph.E.size)
+    LogUtils.log("|V| = " + undirGraph.V.size)
+    LogUtils.log("|E| = " + undirGraph.E.size)
 
     var ctr = 0
     var nbSwitches = 0
@@ -142,8 +144,8 @@ class BilateralSolver(
           lastUpdatedAbs = Lower
       }
     }
-    println("# queries: " + ctr)
-    println("# switches: " + nbSwitches)
+    LogUtils.log("# queries: " + ctr)
+    LogUtils.log("# switches: " + nbSwitches)
     rsrcSW.stop
 
     upper map { case (e, ess) =>
