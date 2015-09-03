@@ -1,6 +1,8 @@
+  [Cytoscape]: http://www.cytoscape.org/
   [sbt]: https://github.com/sbt/sbt
   [sbt-extras]: https://github.com/paulp/sbt-extras
   [ScalaZ3]: https://github.com/epfl-lara/ScalaZ3
+  [sif]: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats
 
 # TPS: Temporal Pathway Synthesizer
 
@@ -82,6 +84,20 @@ Usage: tps [options]
   --help
         print this help message
 ```
+
+## Output
+
+TPS outputs a [sif] (Simple Interaction Format) file that summarizes the valid
+pathway models.  The sif file can be imported into [Cytoscape] to visualize
+the network.  Each line has the form:
+```
+ProteinA <relationship type> ProteinB
+```
+The TPS relationship types are:
+* **A**: ProteinA activates ProteinB
+* **I**: ProteinA inhibits ProteinB
+* **N**: ProteinA regulates ProteinB but the edge sign is unknown
+* **U**: an undirected edge between ProteinA and ProteinB
 
 ## Solvers
 
