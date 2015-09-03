@@ -22,7 +22,7 @@ steps:
 2. Browse to the root project folder:
 
         cd tps
-3. Invoke `scripts/run`. The first time this script is run, it will download
+3. Invoke `./scripts/run`. The first time this script is run, it will download
    [sbt-extras], which is a script for running the build tool [sbt]. After sbt
    is downloaded, the script will build the code and run TPS with the given
    command-line arguments. To run TPS using the provided data, use the
