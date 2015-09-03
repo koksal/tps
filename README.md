@@ -1,5 +1,6 @@
   [sbt]: https://github.com/sbt/sbt
   [sbt-extras]: https://github.com/paulp/sbt-extras
+  [ScalaZ3]: https://github.com/epfl-lara/ScalaZ3
 
 # TPS: Temporal Pathway Synthesizer
 
@@ -43,7 +44,7 @@ steps:
 
 ```
 $ ./scripts/run --help
-tps 1.0
+tps 2.0
 Usage: tps [options]
 
   --network <value>
@@ -69,7 +70,7 @@ Usage: tps [options]
   --solver <value>
         solver (naive, bilateral or dataflow)
   --slack <value>
-        path from source to node n is no longer than k + shortest path
+        when using a symbolic solver, limit path lengths from source to each nodes to k + shortest path
   --bitvect <value>
         use bitvectors for integer encoding
   --no-connectivity
@@ -81,6 +82,18 @@ Usage: tps [options]
   --help
         print this help message
 ```
+
+## Solvers
+
+TPS uses by default a custom solver (`DataflowSolver`), but it also includes
+two symbolic solvers (`NaiveSymbolicSolver` and `BilateralSolver`) that
+implement the same functionality as the custom solver. 
+
+We recommend using the default solver, which is the most recent and fastest of
+all three. Meanwhile, if you would like to use either of the two symbolic
+solvers on OS X, you will need to replace the `scalaz3.jar` with a packaged
+version of [ScalaZ3] built on the computer you will run TPS on. Instructions
+for building ScalaZ3 can be found on its project page.
 
 ## Authors
 

@@ -14,7 +14,7 @@ object ArgHandling {
 
   private def parser = {
     new scopt.OptionParser[Options]("tps") {
-      head("tps", "1.0")
+      head("tps", "2.0")
 
       // Options:
 
@@ -68,7 +68,7 @@ object ArgHandling {
       opt[Int]("slack") action { (i, o) =>
         o.copy(synthesisOptions = 
           o.synthesisOptions.copy(pathLengthSlack = Some(i))) } text(
-          "path from source to node n is no longer than k + shortest path")
+          "when using a symbolic solver, limit path lengths from source to each nodes to k + shortest path")
 
       opt[Int]("bitvect") action { (i, o) => 
         o.copy(synthesisOptions = 

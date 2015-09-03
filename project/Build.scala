@@ -3,13 +3,6 @@ import Keys._
 
 object ApplicationBuild extends Build {
 
-  val osName: String = System.getProperty("os.name")
-
-  val isLinux = osName.indexOf("nux") >= 0
-  val isMac   = osName.indexOf("Mac") >= 0
-
-  val osPath = if (isLinux) "linux" else if (isMac) "osx" else "NA"
-
   val commonSettings = Seq(
     Keys.fork in (Compile, run) := true,
     Keys.fork in Test := true,
@@ -28,7 +21,7 @@ object ApplicationBuild extends Build {
   val coreSettings = commonSettings ++ Seq(
     outputStrategy := Some(StdoutOutput),
 
-    unmanagedBase <<= baseDirectory { base => base / "lib" / osPath },
+    unmanagedBase <<= baseDirectory { base => base / "lib" },
 
     libraryDependencies ++= Seq(
       "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",

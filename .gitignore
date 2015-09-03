@@ -4,4 +4,3 @@ sbt
 project/project
 project/target
 target
-scalaz3*.jar
