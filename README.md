@@ -1,4 +1,5 @@
   [Cytoscape]: http://www.cytoscape.org/
+  [Java Development Kit 8]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
   [sbt]: https://github.com/sbt/sbt
   [sbt-extras]: https://github.com/paulp/sbt-extras
   [ScalaZ3]: https://github.com/epfl-lara/ScalaZ3
@@ -13,7 +14,7 @@ that control post-translational modifications.
 ## Requirements
 
 TPS runs on both Linux and OS X. The only requirement is:
-* Java Development Kit 8.
+* [Java Development Kit 8].
 
 ## Installation and sample usage
 
