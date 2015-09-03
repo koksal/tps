@@ -42,9 +42,10 @@ steps:
           --peptidemap data/timeseries/peptide-mapping.tsv \
           --source EGF_HUMAN \
           --threshold 0.01
-   This command will generate in the current folder:
+   This command will generate, in the current folder:
    - a network file named `output.sif`
    - a tab-separated file named `activity-windows.tsv` 
+
    The output files are described in the **Output** section.
 
 ## Command-line arguments
