@@ -1,11 +1,14 @@
   [Cytoscape]: http://www.cytoscape.org/
   [iRefIndex]: http://irefindex.org/
   [Java Development Kit 8]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+  [Omics Integrator]: http://fraenkel.mit.edu/omicsintegrator
   [PhosphoSitePlus]: http://www.phosphosite.org/
   [sbt]: https://github.com/sbt/sbt
   [sbt-extras]: https://github.com/paulp/sbt-extras
   [ScalaZ3]: https://github.com/epfl-lara/ScalaZ3
   [SIF]: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats
+  [Tukey's Honest Significant Difference test]: https://en.wikipedia.org/wiki/Tukey%27s_range_test
+  [TukeyHSD]: https://stat.ethz.ch/R-manual/R-patched/library/stats/html/TukeyHSD.html
 
 # TPS: Temporal Pathway Synthesizer
 
@@ -74,6 +77,27 @@ steps:
 - `--no-temporality`: Do not use temporal constraints.
 - `--no-monotonicity`: Do not use monotonicity constraints when inferring activity intervals for time series data.
 
+## Preparing input files
+
+We recommend the following strategies for preparing the required input files:
+- `--network <file>`: The network should be a subnetwork of a protein-protein
+interaction network that connects the phosphorylated proteins to the source node(s).
+The [Omics Integrator] implementation of the Prize-Collecting Steiner Forest
+algorithm can produce such a subnetwork. To generate more general subnetworks
+instead of tree-structured graphs, run Omics Integrator with the option to add random
+noise to edge weights and merge the graphs output by each randomized run.
+- `--timeseries <file>`: TPS expects a single intensity for each peptide at each time point,
+which can be calculated by taking the median intensity over all mass spectrometry replicates.
+- `--firstscores <file>`: Significance scores can be naively computed with t-tests
+comparing the phosphorylation intensity at each time point and the first time point.
+An alternative option is to account for the comparisons of multiple pairs of time
+points using [Tukey's Honest Significant Difference test], which is implemented as [TukeyHSD]
+in R. This test compares all pairs of time points, from which the comparisons to the
+first time point can be extracted.
+- `--prevscores <file>`: Significance scores can be computed in the same manner as the
+`--firstscores <file>` except the scores should be based on comparisons of the current
+time point and the preceding time point.
+
 ## Output
 
 ### Summary network
@@ -119,7 +143,9 @@ cellular response to EGF stimulation. This dataset will be described in a
 forthcoming manuscript. Please refrain from publishing analyses of this
 dataset until the manuscript appears.
 
-The example network is derived from [iRefIndex] and [PhosphoSitePlus].
+The example network was produced by [Omics Integrator] run on a network
+of [iRefIndex] and [PhosphoSitePlus] interactions.
+
 
 ## Authors
 
