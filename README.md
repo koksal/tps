@@ -1,5 +1,7 @@
   [Cytoscape]: http://www.cytoscape.org/
+  [iRefIndex]: http://irefindex.org/
   [Java Development Kit 8]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+  [PhosphoSitePlus]: http://www.phosphosite.org/
   [sbt]: https://github.com/sbt/sbt
   [sbt-extras]: https://github.com/paulp/sbt-extras
   [ScalaZ3]: https://github.com/epfl-lara/ScalaZ3
@@ -109,6 +111,15 @@ all three. Meanwhile, if you would like to use either of the two symbolic
 solvers on OS X, you will need to replace the `scalaz3.jar` with a packaged
 version of [ScalaZ3] built on the computer you will run TPS on. Instructions
 for building ScalaZ3 can be found on its project page.
+
+## Example data
+
+The example dataset included with TPS is a phosphoproteomic time course of the
+cellular response to EGF stimulation. This dataset will be described in a
+forthcoming manuscript. Please refrain from publishing analyses of this
+dataset until the manuscript appears.
+
+The example network is derived from [iRefIndex] and [PhosphoSitePlus].
 
 ## Authors
 
