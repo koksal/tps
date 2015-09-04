@@ -11,9 +11,19 @@ object TimeSeriesExtraction {
     val timeLabels = data.fields.tail
     val profiles = data.tuples map { tuple =>
       val Seq(profileID, values @ _*) = tuple
-      Profile(profileID, values map (_.toDouble))
+      Profile(profileID, values map parseOptDouble)
     }
 
     TimeSeries(timeLabels, profiles.toSet)
+  }
+
+  private def parseOptDouble(s: String): Option[Double] = {
+    try {
+      Some(s.toDouble)
+    } catch {
+      case e: NumberFormatException => s match {
+        case _ => None
+      }
+    }
   }
 }

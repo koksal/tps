@@ -41,38 +41,51 @@ class TriggerInterpretation(
     val firstAndPrev = firstScores zip prevScores
     val valuesAndPValues = p.values.tail zip firstAndPrev
 
-    for (((v, (fs, ps)), zipIndex) <- valuesAndPValues.zipWithIndex) {
+    for (((vOpt, (fs, ps)), zipIndex) <- valuesAndPValues.zipWithIndex) {
       val i = zipIndex + 1
-      val firstSignificant = fs < threshold
-      val firstValidDirection = eventType match {
-        case Activation => v > p.values.head
-        case Inhibition => v < p.values.head
+
+      val isAllowed = vOpt match {
+        case Some(v) => {
+          val firstSignificant = fs < threshold
+          val firstValid = firstSignificant && {
+            val firstValidDirection = eventType match {
+              case Activation => v > p.values.head.get
+              case Inhibition => v < p.values.head.get
+            }
+
+            val extremumSoFar = eventType match {
+              case Activation => p.values.take(i).filter(_.isDefined).forall(_.get < v)
+              case Inhibition => p.values.take(i).filter(_.isDefined).forall(_.get > v)
+            }
+
+            if (synthOpt.constraintOptions.monotonicity) {
+              firstValidDirection
+            } else {
+              firstValidDirection && extremumSoFar
+            }
+          }
+
+          val prevSignificant = ps < threshold
+          val prevValid = prevSignificant && {
+            val prevValidDirection = eventType match {
+              case Activation => v > p.values(i - 1).get
+              case Inhibition => v < p.values(i - 1).get
+            }
+
+            prevValidDirection
+          }
+
+          firstValid || prevValid
+        }
+        case None => false // the time point has no value
       }
 
-      val extremumSoFar = eventType match {
-        case Activation => p.values.take(i).forall(_ < v)
-        case Inhibition => p.values.take(i).forall(_ > v)
-      }
-
-      val prevSignificant = ps < threshold
-      val prevValidDirection = eventType match {
-        case Activation => v > p.values(i - 1)
-        case Inhibition => v < p.values(i - 1)
-      }
-      val firstValid = if (synthOpt.constraintOptions.monotonicity) {
-        firstSignificant && firstValidDirection && extremumSoFar
-      } else {
-        firstSignificant && firstValidDirection
-      }
-      val prevValid = prevSignificant && prevValidDirection
-      if (firstValid || prevValid) {
-        allowed = allowed ++ List(i)
-      }
+      if (isAllowed) { allowed = allowed ++ List(i) }
       all = all ++ List(i)
     }
 
-    val noSignificant = !(firstScores ++ prevScores).exists(_ < threshold)
-    if (noSignificant) all else allowed
+    val significantValueExists = (firstScores ++ prevScores).exists(_ < threshold)
+    if (significantValueExists) allowed else all
   }
 
   val allowedActivationIntervals: Map[Profile, Seq[Int]] = {

@@ -4,7 +4,8 @@ import Graphs._
 
 import tps.util.StringUtils
 
-case class Profile(id: String, values: Seq[Double])
+case class Profile(id: String, values: Seq[Option[Double]])
+
 case class TimeSeries(
   labels: Seq[String], 
   profiles: Set[Profile]
