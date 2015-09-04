@@ -3,6 +3,7 @@ package tps.synthesis
 import tps.Graphs._
 import tps.GraphSolutions._
 import tps.ResultReporter
+import tps.TabularData
 
 import tps.util.FileUtils
 
@@ -86,7 +87,7 @@ class DataflowSolver(
   def fixpointReached: Boolean = toProcess.isEmpty
 
   def logState(): Unit = {
-    def activationRow(v: Vertex): String = {
+    def activationTuple(v: Vertex): Seq[String] = {
       val actSets = actStates.getOrElse(v, Set())
       val inhSets = inhStates.getOrElse(v, Set())
 
@@ -95,7 +96,7 @@ class DataflowSolver(
 
       val nbWindows = interp.timeSeries.nbMeasurements - 1
 
-      val windows = for (wIndex <- 1 to nbWindows) yield {
+      val tupleWindowValues = for (wIndex <- 1 to nbWindows) yield {
         if (actTimes(wIndex) && inhTimes(wIndex)) {
           "ambiguous" 
         } else if (actTimes(wIndex)) {
@@ -106,12 +107,13 @@ class DataflowSolver(
           "inactive"
         }
       }
-      (v.id +: windows).mkString("\t")
+      v.id +: tupleWindowValues
     }
-    val lines = graph.V map (activationRow)
-    val content = lines.mkString("\n")
+    val tuples = graph.V.toSeq map activationTuple
+    val labels = "peptide" +: interp.timeSeries.labels.tail
+    val data = TabularData(labels, tuples)
 
-    resultReporter.writeOutput("activity-windows.tsv", content)
+    resultReporter.writeOutput("activity-windows.tsv", data.toTSVString())
   }
 
   def updateEdge(e: Edge) = {
