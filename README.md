@@ -93,7 +93,9 @@ Usage: tps [options]
 
 ## Output
 
-TPS outputs a Simple Interaction Format ([sif]) file that summarizes the valid
+### Summary network
+
+TPS outputs a Simple Interaction Format ([sif]) file `output.sif` that summarizes the valid
 pathway models.  The sif file can be imported into [Cytoscape] to visualize
 the network.  Each line has the form:
 ```
@@ -104,6 +106,14 @@ The TPS relationship types are:
 * **I**: ProteinA inhibits ProteinB
 * **N**: ProteinA regulates ProteinB but the edge sign is unknown
 * **U**: an undirected edge between ProteinA and ProteinB
+
+### Activity windows
+
+TPS also produces a tab-separated file `activity-windows.tsv` that lists, for each time series profile and for each time point, one of four possible activity types:
+* **activation**: the peptide may be activated at the given time point
+* **inhibition**: the peptide may be inhibited at the given time point
+* **ambiguous**: the peptide may be either activated or inhibited at the given time point
+* **inactive**: the peptide is inactive at the given time point
 
 ## Solvers
 
