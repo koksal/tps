@@ -50,7 +50,7 @@ object ArgHandling {
         o.copy(outFolder = new java.io.File(v)) 
       } text("folder that output files should be created in")
 
-      opt[String]("source") unbounded() action { (v, o) =>
+      opt[String]("source") required() unbounded() action { (v, o) =>
         o.copy(sources = o.sources + v) 
       } text("network source")
 
