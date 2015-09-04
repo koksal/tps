@@ -41,6 +41,10 @@ class TriggerInterpretation(
     val firstAndPrev = firstScores zip prevScores
     val valuesAndPValues = p.values.tail zip firstAndPrev
 
+    def getValueOrComplain(vOpt: Option[Double]): Double = {
+      vOpt.getOrElse(throw new Exception(s"Problem processing profile for ${p.id}"))
+    }
+
     for (((vOpt, (fs, ps)), zipIndex) <- valuesAndPValues.zipWithIndex) {
       val i = zipIndex + 1
 
@@ -49,13 +53,13 @@ class TriggerInterpretation(
           val firstSignificant = fs < threshold
           val firstValid = firstSignificant && {
             val firstValidDirection = eventType match {
-              case Activation => v > p.values.head.get
-              case Inhibition => v < p.values.head.get
+              case Activation => v > getValueOrComplain(p.values.head)
+              case Inhibition => v < getValueOrComplain(p.values.head)
             }
 
             val extremumSoFar = eventType match {
-              case Activation => p.values.take(i).filter(_.isDefined).forall(_.get < v)
-              case Inhibition => p.values.take(i).filter(_.isDefined).forall(_.get > v)
+              case Activation => p.values.take(i).filter(_.isDefined).forall(getValueOrComplain(_) < v)
+              case Inhibition => p.values.take(i).filter(_.isDefined).forall(getValueOrComplain(_) > v)
             }
 
             if (synthOpt.constraintOptions.monotonicity) {
@@ -68,8 +72,8 @@ class TriggerInterpretation(
           val prevSignificant = ps < threshold
           val prevValid = prevSignificant && {
             val prevValidDirection = eventType match {
-              case Activation => v > p.values(i - 1).get
-              case Inhibition => v < p.values(i - 1).get
+              case Activation => v > getValueOrComplain(p.values(i - 1))
+              case Inhibition => v < getValueOrComplain(p.values(i - 1))
             }
 
             prevValidDirection
