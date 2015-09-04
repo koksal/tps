@@ -50,46 +50,27 @@ steps:
 
 ## Command-line arguments
 
-```
-$ ./scripts/run --help
-tps 2.0
-Usage: tps [options]
+### Required arguments
 
-  --network <value>
-        input network file
-  --timeseries <value>
-        input time series file
-  --firstscores <value>
-        significance scores for time series points w.r.t. first time point
-  --prevscores <value>
-        significance scores for time series points w.r.t. previous time point
-  --partialmodel <value>
-        input partial model given as a network
-  --peptidemap <value>
-        peptide protein mapping
-  --outlabel <value>
-        prefix that will be added to output file names
-  --outfolder <value>
-        folder that output files should be created in
-  --source <value>
-        network source
-  --threshold <value>
-        significance score threshold
-  --solver <value>
-        solver (naive, bilateral or dataflow)
-  --slack <value>
-        limit path lengths from source to each node (only for symbolic solvers)
-  --bitvect <value>
-        use bitvectors for integer encoding
-  --no-connectivity
-        do not assert conectivity constraints
-  --no-temporality
-        do not assert temporal constraints
-  --no-monotonicity
-        do not assert monotonicity constraints
-  --help
-        print this help message
-```
+- `--network <file>`: Input network file in TSV format, where each row defines an undirected edge.
+- `--timeseries <file>`: Input time series file in TSV format. The first line defines the time point labels, and each subsequent line corresponds to one time series profile.
+- `--firstscores <file>`: Input file that contains significance scores for each time point of a profile (except the first time point), with respect to the first time point of the profile.
+- `--prevscores <file>`: Similarly to `--firstscores`, an input file that gives significance scores for each time point (except the first one), with respect to the previous time point.
+- `--source <value>`: Identifier for the network source node. Multiple source nodes can be provided.
+- `--threshold <value>`: Threshold value for significance scores, above which measurements are considered non-significant.
+
+### Optional arguments
+
+- `--partialModel <file>`: Input partial model file given as a signed directed SIF network. Each line corresponds to a directed interaction, where the relationship type can be **N** (directed, unsigned edge), **A** (directed activation edge), or **I** (directed inhibition edge). Multiple partial model files can be provided.
+- `--peptidemap <file>`: Input file in TSV format that defines a mapping between time series profile identifiers and input network node identifiers. A profile can be mapped to more than one node, in which case the second column is a pipe-separated list of node identifiers.
+- `--outlabel <value>`: Prefix string to be added to all output files.
+- `--outfolder <value>`: Folder in which the output files should be generated. By default, output files are generated in the current directory.
+- `--solver <value>`: Solver to use (`naive`, `bilateral`, or `dataflow`). The default, recommended solver is `dataflow`. Both `naive` and `bilateral` are symbolic solvers and use the Z3 backend. (See the **Solvers** section for notes related to the symbolic solvers.) 
+- `--slack <value>`: Integer value for limiting the length of paths from the source to any node to *n* + *k*, where *n* is the length of the shortest path from the source to the node in the undirected network, and *k* is the given slack value. This only applies to the symbolic solvers.
+- `--bitvect <value>`: Use bitvector encoding for representing integers when using the symbolic solvers, with bitvectors of the given integer length.
+- `--no-connectivity`: Do not use connectivity constraints.
+- `--no-temporality`: Do not use temporal constraints.
+- `--no-monotonicity`: Do not use monotonicity constraints when inferring activity intervals for time series data.
 
 ## Output
 
