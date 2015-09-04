@@ -3,7 +3,7 @@
   [sbt]: https://github.com/sbt/sbt
   [sbt-extras]: https://github.com/paulp/sbt-extras
   [ScalaZ3]: https://github.com/epfl-lara/ScalaZ3
-  [sif]: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats
+  [SIF]: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats
 
 # TPS: Temporal Pathway Synthesizer
 
@@ -95,8 +95,8 @@ Usage: tps [options]
 
 ### Summary network
 
-TPS outputs a Simple Interaction Format ([sif]) file `output.sif` that summarizes the valid
-pathway models.  The sif file can be imported into [Cytoscape] to visualize
+TPS outputs a Simple Interaction Format ([SIF]) file `output.sif` that summarizes the valid
+pathway models.  The SIF file can be imported into [Cytoscape] to visualize
 the network.  Each line has the form:
 ```
 ProteinA <relationship type> ProteinB
