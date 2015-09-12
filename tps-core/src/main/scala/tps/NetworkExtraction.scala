@@ -1,6 +1,6 @@
 package tps
 
-import Graphs._
+import UndirectedGraphs._
 
 /** Extracts edge node pairs froma a file without a header row. */
 object NetworkExtraction {

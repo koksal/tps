@@ -6,8 +6,7 @@ import Trees._
 import TreeOps._
 import TypeTrees._
 
-import tps.Graphs._
-import tps.GraphOps._
+import tps.UndirectedGraphs._
 import tps.GraphSolutions._
 
 import tps.util.LogUtils
@@ -162,7 +161,7 @@ class SymbolicGraph(
       And(leftToRight, rightToLeft)
     }
 
-    val shortestDist = shortestDistances(graph.sources, graph)
+    val shortestDist = graph.shortestDistances(graph.sources)
 
     // path lengths are at most k more than shortest path
     val atMostK = graph.V.map{ v =>

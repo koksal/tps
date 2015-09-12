@@ -1,7 +1,7 @@
 package tps.synthesis
 
 import tps.GraphSolutions._
-import tps.Graphs._
+import tps.UndirectedGraphs._
 import tps._
 
 object Synthesis {

@@ -2,7 +2,7 @@ package tps.synthesis
 
 import Trees._
 
-import tps.Graphs._
+import tps.UndirectedGraphs._
 import tps.Profile
 import tps.TimeSeries
 

@@ -1,7 +1,6 @@
 package tps
 
-import Graphs._
-import GraphOps._
+import UndirectedGraphs._
 import GraphSolutions._
 
 import util.{MathUtils,StringUtils}
@@ -38,6 +37,13 @@ object PeptideExpansion {
   }
 
   def expandGraph(g: UndirectedGraph, ppm: PeptideProteinMap): UndirectedGraph = {
+    def proteinToPeptideVertices(
+      v: Vertex, protPeptideM: Map[String, Set[String]]
+    ): Set[Vertex] = protPeptideM.get(v.id) match {
+      case Some(peps) => peps map (Vertex(_))
+      case None => Set(v)
+    }
+
     val proteinsToPeptides = proteinsToExpandedPeptides(ppm)
     val protCliques: Map[Vertex, UndirectedGraph] = (for (v <- g.V) yield {
       val expandedV = proteinToPeptideVertices(v, proteinsToPeptides)

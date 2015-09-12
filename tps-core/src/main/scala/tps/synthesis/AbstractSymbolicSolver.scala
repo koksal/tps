@@ -7,7 +7,7 @@ import language.existentials
 import Trees._
 import TypeTrees._
 
-import tps.Graphs._
+import tps.UndirectedGraphs._
 import tps.GraphSolutions._
 
 import tps.util.LogUtils

@@ -1,6 +1,6 @@
 package tps.synthesis
 
-import tps.Graphs._
+import tps.UndirectedGraphs._
 import tps.GraphSolutions._
 import tps.ResultReporter
 import tps.TabularData
