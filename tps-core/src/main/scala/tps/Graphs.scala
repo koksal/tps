@@ -14,30 +14,6 @@ object UndirectedGraphs {
     override def toString = v1.toString + " - " + v2.toString
   }
 
-  case class Path(edges: Seq[Edge]) {
-    override def toString: String = {
-      edges.head.v1.toString + " - " + edges.map(_.v2).mkString(" - ")
-    }
-
-    def start: Vertex = edges.head match {
-      case Edge(v, _) => v
-    }
-
-    def end: Vertex = edges.last match {
-      case Edge(_, v) => v
-    }
-
-    def intermediaryVertices: Set[Vertex] = {
-      edges.drop(1).map(_.v1).toSet
-    }
-
-    def vertices: Set[Vertex] = {
-      edges.flatMap{
-        case Edge(v1, v2) => Set(v1, v2)
-      }.toSet
-    }
-  }
-
   object UndirectedGraph {
     /** Creates a graph from given edges. */
     def apply(E: Iterable[Edge]): UndirectedGraph = {

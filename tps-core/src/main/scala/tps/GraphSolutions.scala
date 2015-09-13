@@ -70,61 +70,6 @@ object GraphSolutions {
     intersection
   }
 
-  def printSolutionSummary(sol: AmbiguousGraphSolution) {
-    val aes = ambigEdges(sol)
-    val naes = nonAmbigEdges(sol)
-
-    LogUtils.log("Summary:")
-    LogUtils.log("--------")
-    LogUtils.log(s"Non-ambiguous predictions (${naes.size}):")
-    for (e <- naes.toList.sortBy(_.v1.id)) {
-      LogUtils.log(printPrediction(e, sol))
-    }
-    LogUtils.log("--------")
-    LogUtils.log(s"Ambiguous predictions (${aes.size}):")
-    for (e <- aes.toList.sortBy(_.v1.id)) {
-      LogUtils.log(printPrediction(e, sol))
-    }
-    LogUtils.log("--------")
-  }
-
-  def parsableGraphSolutionString(sol: AmbiguousGraphSolution): String = {
-    val sb = new StringBuffer()
-    val fields = List(
-      "source",
-      "target",
-      "left-right-act",
-      "left-right-inh",
-      "right-left-act",
-      "right-left-inh"
-    )
-    sb append fields.mkString("\t")
-    sb append "\n"
-
-    for ((Edge(Vertex(v1), Vertex(v2)), ess) <- sol) {
-      assert(!ess.isEmpty)
-      if (!noDirection(ess)) {
-        val lra = ess contains ActiveEdge(Forward, Activating)
-        val lri = ess contains ActiveEdge(Forward, Inhibiting)
-        val rla = ess contains ActiveEdge(Backward, Activating)
-        val rli = ess contains ActiveEdge(Backward, Inhibiting)
-      
-        val row = List(
-          v1,
-          v2,
-          lra,
-          lri,
-          rla,
-          rli
-        )
-        sb append row.mkString("\t")
-        sb append "\n"
-      }
-    }
-
-    sb.toString
-  }
-
   def ambigSolFromFile(f: File): AmbiguousGraphSolution = {
     var sol: AmbiguousGraphSolution = Map.empty
     for (l <- FileUtils.lines(f).tail) {
