@@ -6,14 +6,14 @@ import Trees._
 import TreeOps._
 import TypeTrees._
 
-import tps.UndirectedGraphs._
+import tps.Graphs._
 import tps.GraphSolutions._
 
 import tps.util.LogUtils
 
 class SymbolicGraph(
   graph: UndirectedGraph, 
-  partialModel: AmbiguousGraphSolution, 
+  partialModel: SignedDirectedGraph, 
   opts: SynthesisOptions
 ) {
 
@@ -251,7 +251,7 @@ class SymbolicGraph(
   }
 
   /** Builds a formula that encodes the edge solution. */
-  def graphSolutionFormula(sol: AmbiguousGraphSolution): Expr = {
+  def graphSolutionFormula(sol: SignedDirectedGraph): Expr = {
     val conjuncts = for ((Edge(v1, v2), edgeSolSet) <- sol) yield {
       assert(!edgeSolSet.isEmpty)
       val possibilities = for (edgeSol <- edgeSolSet) yield {
@@ -274,7 +274,7 @@ class SymbolicGraph(
   }
 
   /** Recover edge directionality from model */
-  def solution(m: Map[Identifier, Expr]): AmbiguousGraphSolution = {
+  def solution(m: Map[Identifier, Expr]): SignedDirectedGraph = {
     val tuples = for (e @ Edge(v1, v2) <- graph.E) yield {
       val isActivatorEval = m(isActivatorVars(v1)(v2).id)
       val isActivateeEval = m(isActivateeVars(v1)(v2).id)
@@ -305,7 +305,7 @@ class SymbolicGraph(
         case _ => LogUtils.terminate("Type mismatch.")
       }
     }
-    tuples.map{ case (e, ae) => e -> Set[EdgeSolution](ae) }.toMap
+    tuples.map{ case (e, ae) => e -> Set[SignedDirectedEdgeLabel](ae) }.toMap
   }
 
   private def prepareVars(): Unit = {

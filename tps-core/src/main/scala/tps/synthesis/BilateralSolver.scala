@@ -1,6 +1,6 @@
 package tps.synthesis
 
-import tps.UndirectedGraphs._
+import tps.Graphs._
 import tps.GraphSolutions._
 
 import tps.util.LogUtils
@@ -13,19 +13,19 @@ class BilateralSolver(
   interpretation: Interpretation
 ) extends AbstractSymbolicSolver(opts, interpretation) {
 
-  private def emptySol(g: UndirectedGraph): AmbiguousGraphSolution = {
-    g.E.map{ e => e -> Set[EdgeSolution]() }.toMap
+  private def emptySol(g: UndirectedGraph): SignedDirectedGraph = {
+    g.E.map{ e => e -> Set[SignedDirectedEdgeLabel]() }.toMap
   }
 
-  private def fullSol(g: UndirectedGraph): AmbiguousGraphSolution = {
-    g.E.map{ e => e -> activeEdgeSolutionChoices }.toMap
+  private def fullSol(g: UndirectedGraph): SignedDirectedGraph = {
+    g.E.map{ e => e -> activeEdgeLabelChoices }.toMap
   }
 
   private def abstractConsequence(
-    lower: AmbiguousGraphSolution,
-    upper: AmbiguousGraphSolution,
+    lower: SignedDirectedGraph,
+    upper: SignedDirectedGraph,
     bfsEdgeOrder: Seq[Edge]
-  ): AmbiguousGraphSolution = {
+  ): SignedDirectedGraph = {
     bfsEdgeOrder.find{ e =>
       val lowerSet = lower(e)
       val upperSet = upper(e)
@@ -42,10 +42,10 @@ class BilateralSolver(
 
   private def bilateralCheck(
     phi: Expr,
-    q: AmbiguousGraphSolution,
-    upper: AmbiguousGraphSolution,
+    q: SignedDirectedGraph,
+    upper: SignedDirectedGraph,
     sg: SymbolicGraph
-  ): Option[AmbiguousGraphSolution] = {
+  ): Option[SignedDirectedGraph] = {
     // three ways to restart:
     restart()
     // z3Solver.reset()
@@ -77,9 +77,9 @@ class BilateralSolver(
   }
 
   private def meet(
-    s1: AmbiguousGraphSolution, 
-    s2: AmbiguousGraphSolution
-  ): AmbiguousGraphSolution = {
+    s1: SignedDirectedGraph, 
+    s2: SignedDirectedGraph
+  ): SignedDirectedGraph = {
     val common = s1.keySet intersect s2.keySet
     val met = common map { e =>
       e -> (s1(e) intersect s2(e))
@@ -88,9 +88,9 @@ class BilateralSolver(
   }
 
   private def join(
-    s1: AmbiguousGraphSolution, 
-    s2: AmbiguousGraphSolution
-  ): AmbiguousGraphSolution = {
+    s1: SignedDirectedGraph, 
+    s2: SignedDirectedGraph
+  ): SignedDirectedGraph = {
     val common = s1.keySet intersect s2.keySet
     val joined = common map { e =>
       e -> (s1(e) union s2(e))
@@ -98,7 +98,7 @@ class BilateralSolver(
     s1 ++ s2 ++ joined
   }
 
-  def summary(): AmbiguousGraphSolution = {
+  def summary(): SignedDirectedGraph = {
     restart()
     val (sg, si, phi) = createSymbolicGraphInterpretation()
 

@@ -5,7 +5,7 @@ import scala.collection.mutable.{Map => MutableMap}
 import Trees._
 import TypeTrees._
 
-import tps.UndirectedGraphs._
+import tps.Graphs._
 import tps.Profile
 import tps.TimeSeries
 

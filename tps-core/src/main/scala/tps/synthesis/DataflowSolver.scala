@@ -1,6 +1,6 @@
 package tps.synthesis
 
-import tps.UndirectedGraphs._
+import tps.Graphs._
 import tps.GraphSolutions._
 import tps.ResultReporter
 import tps.TabularData
@@ -24,7 +24,7 @@ object Dominators {
 
 class DataflowSolver(
   graph: UndirectedGraph,
-  partialModel: AmbiguousGraphSolution,
+  partialModel: SignedDirectedGraph,
   opts: SynthesisOptions,
   interp: TriggerInterpretation,
   resultReporter: ResultReporter
@@ -39,13 +39,13 @@ class DataflowSolver(
   var actStates = Map[Vertex, State]()
   var inhStates = Map[Vertex, State]()
 
-  var sol: AmbiguousGraphSolution = Map.empty
+  var sol: SignedDirectedGraph = Map.empty
 
   // tracking changes
   var toProcess : Set[Vertex] = Set.empty
   var dirty     : Set[Vertex] = Set.empty
 
-  def summary(): AmbiguousGraphSolution = {
+  def summary(): SignedDirectedGraph = {
     init()
 
     while (!fixpointReached) {
@@ -126,7 +126,7 @@ class DataflowSolver(
       case None => allEdgeSolutions
     }
     val validSol = toTest filter { ae => updateEdgeForSol(e, ae) }
-    sol += e -> (Set[EdgeSolution]() ++ validSol)
+    sol += e -> (Set[SignedDirectedEdgeLabel]() ++ validSol)
   }
 
   def updateEdgeForSol(e: Edge, ae: ActiveEdge) =  {

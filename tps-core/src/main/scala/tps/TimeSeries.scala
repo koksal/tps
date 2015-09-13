@@ -1,6 +1,6 @@
 package tps
 
-import UndirectedGraphs._
+import Graphs._
 
 import tps.util.StringUtils
 

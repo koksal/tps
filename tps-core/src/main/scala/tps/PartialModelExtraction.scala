@@ -1,10 +1,10 @@
 package tps
 
-import UndirectedGraphs._
+import Graphs._
 import GraphSolutions._
 
 object PartialModelExtraction {
-  def run(f: java.io.File): AmbiguousGraphSolution = {
+  def run(f: java.io.File): SignedDirectedGraph = {
     val data = new TSVSource(f, noHeaders = true).data
     val pairs = data.tuples map { tuple =>
       val Seq(id1, tpe, id2) = tuple
@@ -15,7 +15,7 @@ object PartialModelExtraction {
       }
     }
 
-    var sol = Map[Edge, Set[EdgeSolution]]()
+    var sol = Map[Edge, Set[SignedDirectedEdgeLabel]]()
     for ((e, ess) <- pairs) {
       sol.get(e) match {
         case None => sol += e -> ess
@@ -25,12 +25,12 @@ object PartialModelExtraction {
     sol
   }
 
-  private def lexicographicActivation(src: String, dst: String): EdgeSolution = {
+  private def lexicographicActivation(src: String, dst: String): SignedDirectedEdgeLabel = {
     val dir = if (src < dst) Forward else Backward
     ActiveEdge(dir, Activating)
   }
 
-  private def lexicographicInhibition(src: String, dst: String): EdgeSolution = {
+  private def lexicographicInhibition(src: String, dst: String): SignedDirectedEdgeLabel = {
     val dir = if (src < dst) Forward else Backward
     ActiveEdge(dir, Inhibiting)
   }

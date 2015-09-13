@@ -3,7 +3,7 @@ package tps
 import GraphSolutions._
 
 object SIFPrinter {
-  def print(sdg: AmbiguousGraphSolution): String = {
+  def print(sdg: SignedDirectedGraph): String = {
     val sb = new StringBuffer()
 
     for ((e, ess) <- sdg) {

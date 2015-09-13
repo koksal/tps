@@ -1,6 +1,6 @@
 package tps.synthesis
 
-import tps.UndirectedGraphs._
+import tps.Graphs._
 import tps.GraphSolutions._
 
 import tps.util.LogUtils
@@ -14,7 +14,7 @@ class NaiveSymbolicSolver(
     sg: SymbolicGraph, 
     si: SymbolicInterpretation, 
     e: Edge, 
-    es: EdgeSolution
+    es: SignedDirectedEdgeLabel
   ): Boolean = {
     z3Solver.push
 
@@ -34,19 +34,19 @@ class NaiveSymbolicSolver(
     result
   }
 
-  def summary(): AmbiguousGraphSolution = {
+  def summary(): SignedDirectedGraph = {
     restart()
     val (sg, si, validModelFla) = createSymbolicGraphInterpretation()
     assertExpr(validModelFla)
 
-    var solution: AmbiguousGraphSolution = Map.empty
+    var solution: SignedDirectedGraph = Map.empty
 
     val total = graph.E.size
     LogUtils.log(s"$total edges to test")
     var ctr = 0
 
     for (e <- graph.bfsEdgeOrder) {
-      var possibleSols = activeEdgeSolutionChoices filter {
+      var possibleSols = activeEdgeLabelChoices filter {
         es => ctr += 1; testSolution(sg, si, e, es)
       }
       possibleSols += InactiveEdge

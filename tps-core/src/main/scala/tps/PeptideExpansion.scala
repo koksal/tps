@@ -1,7 +1,8 @@
 package tps
 
-import UndirectedGraphs._
+import Graphs._
 import GraphSolutions._
+import UndirectedGraphOps._
 
 import util.{MathUtils,StringUtils}
 
@@ -80,11 +81,11 @@ object PeptideExpansion {
   }
 
   def collapseSolution(
-    sol: AmbiguousGraphSolution, 
+    sol: SignedDirectedGraph, 
     ppm: PeptideProteinMap
-  ): AmbiguousGraphSolution = {
+  ): SignedDirectedGraph = {
     val peptidesToProteins = expandedPeptidesToProteins(ppm)
-    var collapsedSol: AmbiguousGraphSolution = Map.empty
+    var collapsedSol: SignedDirectedGraph = Map.empty
 
     for ((e @ Edge(v1, v2), ess) <- sol) {
       val origSrc = peptidesToProteins.get(v1.id).getOrElse(v1.id)
@@ -102,9 +103,9 @@ object PeptideExpansion {
   }
 
   def expandSolution(
-    s: AmbiguousGraphSolution, 
+    s: SignedDirectedGraph, 
     ppm: PeptideProteinMap
-  ): AmbiguousGraphSolution = {
+  ): SignedDirectedGraph = {
     val proteinsToPeptides = proteinsToExpandedPeptides(ppm)
   
     val expandedSol = s flatMap { case (Edge(v1, v2), ess) =>

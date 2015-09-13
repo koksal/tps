@@ -1,7 +1,7 @@
 package tps.synthesis
 
 import tps.GraphSolutions._
-import tps.UndirectedGraphs._
+import tps.Graphs._
 import tps._
 
 object Synthesis {
@@ -10,13 +10,13 @@ object Synthesis {
     timeSeries: TimeSeries,
     firstScores: Map[String, Seq[Double]],
     prevScores: Map[String, Seq[Double]],
-    partialModels: Set[AmbiguousGraphSolution],
+    partialModels: Set[SignedDirectedGraph],
     peptideProteinMap: Map[String, Set[String]],
     sources: Set[String],
     significanceThreshold: Double,
     opts: SynthesisOptions,
     resultReporter: ResultReporter
-  ): AmbiguousGraphSolution = {
+  ): SignedDirectedGraph = {
     def networkWithSources = network.copy(sources = sources map (Vertex(_)))
 
     def filterWithTimeSeries(ppm: Map[String, Set[String]], ts: TimeSeries) = {
@@ -26,8 +26,8 @@ object Synthesis {
     }
 
     val unifiedPartialModel = 
-      partialModels.foldLeft[AmbiguousGraphSolution](
-        Map.empty)(intersectCommonEdges(_,_))
+      partialModels.foldLeft[SignedDirectedGraph](
+        Map.empty)(unifyByIntersectingCommonEdges(_,_))
 
     // filter ts with ppm (?)
     val ppmWithData = filterWithTimeSeries(peptideProteinMap, timeSeries)

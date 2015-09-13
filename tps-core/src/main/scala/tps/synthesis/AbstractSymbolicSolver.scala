@@ -7,7 +7,7 @@ import language.existentials
 import Trees._
 import TypeTrees._
 
-import tps.UndirectedGraphs._
+import tps.Graphs._
 import tps.GraphSolutions._
 
 import tps.util.LogUtils
@@ -63,11 +63,7 @@ abstract class AbstractSymbolicSolver(
     (symbolicGraph, symbolicInterpretation, validModel)
   }
 
-  private def edgeSolutionChoices: Set[EdgeSolution] = {
-    activeEdgeSolutionChoices + InactiveEdge
-  }
-
-  protected def activeEdgeSolutionChoices: Set[EdgeSolution] = {
+  protected def activeEdgeLabelChoices: Set[SignedDirectedEdgeLabel] = {
     for {
       d <- Set(Forward, Backward)
       s <- Set(Activating, Inhibiting)

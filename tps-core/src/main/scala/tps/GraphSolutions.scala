@@ -1,6 +1,6 @@
 package tps
 
-import UndirectedGraphs._
+import Graphs._
 
 import tps.util.FileUtils
 import tps.util.LogUtils
@@ -10,11 +10,11 @@ import java.io.File
 
 object GraphSolutions {
 
-  type AmbiguousGraphSolution = Map[Edge, Set[EdgeSolution]]
+  type SignedDirectedGraph = Map[Edge, Set[SignedDirectedEdgeLabel]]
 
-  sealed trait EdgeSolution
-  case class ActiveEdge(direction: EdgeDirection, sign: EdgeSign) extends EdgeSolution
-  case object InactiveEdge extends EdgeSolution
+  sealed trait SignedDirectedEdgeLabel
+  case class ActiveEdge(direction: EdgeDirection, sign: EdgeSign) extends SignedDirectedEdgeLabel
+  case object InactiveEdge extends SignedDirectedEdgeLabel
 
   sealed trait EdgeDirection
   case object Forward   extends EdgeDirection
@@ -24,21 +24,21 @@ object GraphSolutions {
   case object Activating  extends EdgeSign
   case object Inhibiting  extends EdgeSign
 
-  def activeSolVertices(s: AmbiguousGraphSolution): Set[Vertex] = {
+  def activeSolVertices(s: SignedDirectedGraph): Set[Vertex] = {
     s.flatMap{ case (Edge(v1, v2), ess) => 
-      if (!noDirection(ess)) Set(v1, v2) else Set[Vertex]()
+      if (!ess.isEmpty) Set(v1, v2) else Set[Vertex]()
     }.toSet
   }
 
   def aggregate(
-    s1: AmbiguousGraphSolution, 
-    s2: AmbiguousGraphSolution
-  ): AmbiguousGraphSolution = {
+    s1: SignedDirectedGraph, 
+    s2: SignedDirectedGraph
+  ): SignedDirectedGraph = {
     var es1 = s1.keySet
     var es2 = s2.keySet
 
     val aggregate = (es1 ++ es2).map{ e =>
-      var newEdgeSol = Set[EdgeSolution]()
+      var newEdgeSol = Set[SignedDirectedEdgeLabel]()
       for (s <- Set(s1, s2)) {
         s.get(e) match {
           case Some(ess) => newEdgeSol ++= ess
@@ -51,10 +51,10 @@ object GraphSolutions {
     aggregate
   }
 
-  def intersectCommonEdges(
-    s1: AmbiguousGraphSolution,
-    s2: AmbiguousGraphSolution
-  ): AmbiguousGraphSolution = {
+  def unifyByIntersectingCommonEdges(
+    s1: SignedDirectedGraph,
+    s2: SignedDirectedGraph
+  ): SignedDirectedGraph = {
     var es1 = s1.keySet
     var es2 = s2.keySet
 
@@ -70,12 +70,12 @@ object GraphSolutions {
     intersection
   }
 
-  def ambigSolFromFile(f: File): AmbiguousGraphSolution = {
-    var sol: AmbiguousGraphSolution = Map.empty
+  def ambigSolFromFile(f: File): SignedDirectedGraph = {
+    var sol: SignedDirectedGraph = Map.empty
     for (l <- FileUtils.lines(f).tail) {
       val List(src, tgt, lra, lri, rla, rli) = l.split("\t").toList
       val e = Edge(Vertex(src), Vertex(tgt))
-      var ess = Set[EdgeSolution]()
+      var ess = Set[SignedDirectedEdgeLabel]()
       if (lra == "true") ess += ActiveEdge(Forward, Activating)
       if (lri == "true") ess += ActiveEdge(Forward, Inhibiting)
       if (rla == "true") ess += ActiveEdge(Backward, Activating)
@@ -85,7 +85,7 @@ object GraphSolutions {
     sol
   }
 
-  def printPrediction(e: Edge, ps: AmbiguousGraphSolution): String = e match {
+  def printPrediction(e: Edge, ps: SignedDirectedGraph): String = e match {
     case Edge(Vertex(id1), Vertex(id2)) => {
       ps.get(e) match {
         case None => {
@@ -100,13 +100,11 @@ object GraphSolutions {
     }
   }
 
-  def printPrediction(e: Edge, ess: Set[EdgeSolution]): String = {
-    val onlyActive = ess filter (_ != InactiveEdge)
-    val toDisplay = if (onlyActive.isEmpty) ess else onlyActive
-    toDisplay.map(edgeSolString(e, _)).mkString(" / ")
+  def printPrediction(e: Edge, ess: Set[SignedDirectedEdgeLabel]): String = {
+    ess.map(edgeSolString(e, _)).mkString(" / ")
   }
 
-  private def edgeSolString(e: Edge, es: EdgeSolution) = e match {
+  private def edgeSolString(e: Edge, es: SignedDirectedEdgeLabel) = e match {
     case Edge(Vertex(id1), Vertex(id2)) => es match {
       case InactiveEdge =>
         s"$id1 -- $id2"
@@ -121,7 +119,7 @@ object GraphSolutions {
     }
   }
 
-  def reverse(es: EdgeSolution): EdgeSolution = es match {
+  def reverse(es: SignedDirectedEdgeLabel): SignedDirectedEdgeLabel = es match {
     case InactiveEdge => es
     case ActiveEdge(d, s) => ActiveEdge(reverse(d), s)
   }
@@ -131,7 +129,7 @@ object GraphSolutions {
     case Backward => Forward
   }
 
-  def inDegree(v: Vertex, sol: AmbiguousGraphSolution): Int = {
+  def inDegree(v: Vertex, sol: SignedDirectedGraph): Int = {
     val relevant = sol filter {
       case (Edge(v1, v2), es) => 
         v == v1 && canBeBackward(es) ||
@@ -140,115 +138,83 @@ object GraphSolutions {
     relevant.size
   }
 
-  def activeEdgeRatio(sol: AmbiguousGraphSolution): Double = {
-    val nbEdges = sol.size
-    val activeEdges = sol.filter {
-      case (e, es) => !noDirection(es)
-    }
-    MathUtils.roundTo(activeEdges.size.toDouble / nbEdges, 2)
-  }
-
-  def unidirEdgeRatio(sol: AmbiguousGraphSolution): Double = {
-    val nbEdges = sol.size
-    MathUtils.roundTo(nbUnidirEdges(sol).toDouble / nbEdges, 2)
-  }
-
-  def activeEdges(sol: AmbiguousGraphSolution): Set[Edge] = {
-    val es = sol collect { 
-      case (e, es) if !noDirection(es) => e
-    }
-    es.toSet
-  }
-
-  def noDirection(es: Set[EdgeSolution]): Boolean = {
-    es == Set(InactiveEdge)
-  }
-
-  def canBeInactive(es: Set[EdgeSolution]): Boolean = {
-    es contains InactiveEdge
-  }
-
-  def oneActiveDirection(es: Set[EdgeSolution]): Boolean = {
+  def oneActiveDirection(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     onlyForward(es) || onlyBackward(es)
   }
 
-  def onlyBackward(es: Set[EdgeSolution]): Boolean = {
+  def onlyBackward(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     canBeBackward(es) && !canBeForward(es)
   }
 
-  def onlyForward(es: Set[EdgeSolution]): Boolean = {
+  def onlyForward(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     canBeForward(es) && !canBeBackward(es)
   }
 
-  def canBeForward(es: Set[EdgeSolution]): Boolean = {
+  def canBeForward(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     es exists {
       case ActiveEdge(Forward, _) => true
       case _ => false
     }
   }
 
-  def canBeBackward(es: Set[EdgeSolution]): Boolean = {
+  def canBeBackward(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     es exists {
       case ActiveEdge(Backward, _) => true
       case _ => false
     }
   }
 
-  def onlyActivating(es: Set[EdgeSolution]): Boolean = {
+  def onlyActivating(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     canBeActivating(es) && !canBeInhibiting(es)
   }
 
-  def onlyInhibiting(es: Set[EdgeSolution]): Boolean = {
+  def onlyInhibiting(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     canBeInhibiting(es) && !canBeActivating(es)
   }
 
-  def canBeActivating(es: Set[EdgeSolution]): Boolean = {
+  def canBeActivating(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     es exists {
       case ActiveEdge(_, Activating) => true
       case _ => false
     }
   }
 
-  def canBeInhibiting(es: Set[EdgeSolution]): Boolean = {
+  def canBeInhibiting(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     es exists {
       case ActiveEdge(_, Inhibiting) => true
       case _ => false
     }
   }
 
-  def onlyForward(e: Edge, sol: AmbiguousGraphSolution): Boolean = {
+  def onlyForward(e: Edge, sol: SignedDirectedGraph): Boolean = {
     testSolution(e, sol, onlyForward, onlyBackward)
   }
 
-  def nonambiguous(es: Set[EdgeSolution]): Boolean = {
-    !noDirection(es) && !ambiguous(es)
-  }
-
-  def ambiguous(es: Set[EdgeSolution]): Boolean = {
+  def ambiguous(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     ambiguousDirection(es) || ambiguousSign(es)
   }
 
-  def ambiguousSign(es: Set[EdgeSolution]): Boolean = {
+  def ambiguousSign(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     canBeActivating(es) && canBeInhibiting(es)
   }
 
-  def ambiguousDirection(es: Set[EdgeSolution]): Boolean = {
+  def ambiguousDirection(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     canBeForward(es) && canBeBackward(es)
   }
 
-  def ambiguousDirection(e: Edge, sol: AmbiguousGraphSolution): Boolean = {
+  def ambiguousDirection(e: Edge, sol: SignedDirectedGraph): Boolean = {
     testSolution(e, sol, ambiguousDirection, ambiguousDirection)
   }
 
-  def canBeForward(e: Edge, sol: AmbiguousGraphSolution): Boolean = {
+  def canBeForward(e: Edge, sol: SignedDirectedGraph): Boolean = {
     testSolution(e, sol, 
-      (es: Set[EdgeSolution]) => canBeForward(es),
-      (es: Set[EdgeSolution]) => canBeBackward(es))
+      (es: Set[SignedDirectedEdgeLabel]) => canBeForward(es),
+      (es: Set[SignedDirectedEdgeLabel]) => canBeBackward(es))
   }
 
-  def testSolution(e: Edge, sol: AmbiguousGraphSolution, 
-      forwardTest: (Set[EdgeSolution]) => Boolean,
-      backwardTest: (Set[EdgeSolution]) => Boolean): Boolean = e match {
+  def testSolution(e: Edge, sol: SignedDirectedGraph, 
+      forwardTest: (Set[SignedDirectedEdgeLabel]) => Boolean,
+      backwardTest: (Set[SignedDirectedEdgeLabel]) => Boolean): Boolean = e match {
     case Edge(v1, v2) => {
       sol.get(Edge(v1, v2)) match {
         case Some(ds) => forwardTest(ds)
@@ -260,33 +226,19 @@ object GraphSolutions {
     }
   }
 
-  def nbUnidirEdges(sol: AmbiguousGraphSolution): Int = {
-    unidirEdges(sol).size
-  }
-
-  def nbNonAmbigEdges(sol: AmbiguousGraphSolution): Int = {
-    nonAmbigEdges(sol).size
-  }
-
-  def ambigEdges(sol: AmbiguousGraphSolution): Iterable[Edge] = {
+  def ambigEdges(sol: SignedDirectedGraph): Iterable[Edge] = {
     sol collect {
       case (e, es) if ambiguous(es) => e
     }
   }
 
-  def nonAmbigEdges(sol: AmbiguousGraphSolution): Iterable[Edge] = {
-    sol collect { 
-      case (e, es) if nonambiguous(es) => e
-    }
-  }
-
-  def unidirEdges(sol: AmbiguousGraphSolution): Iterable[Edge] = {
+  def unidirEdges(sol: SignedDirectedGraph): Iterable[Edge] = {
     sol collect {
       case (e, es) if oneActiveDirection(es) => e
     }
   }
 
-  def allIncidentEdgesAmb(g: UndirectedGraph, v: Vertex, s: AmbiguousGraphSolution) = {
+  def allIncidentEdgesAmb(g: UndirectedGraph, v: Vertex, s: SignedDirectedGraph) = {
     val incident = g.incidentEdges(v)
     incident.forall{
       ambiguousDirection(_, s)
