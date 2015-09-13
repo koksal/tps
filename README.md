@@ -88,6 +88,8 @@ instead of tree-structured graphs, run Omics Integrator with the option to add r
 noise to edge weights and merge the graphs output by each randomized run.
 - `--timeseries <file>`: TPS expects a single intensity for each peptide at each time point,
 which can be calculated by taking the median intensity over all mass spectrometry replicates.
+TPS allows missing data, which should be denoted by a non-numeric value such as **N/A**
+or an empty string.
 - `--firstscores <file>`: Significance scores can be naively computed with t-tests
 comparing the phosphorylation intensity at each time point and the first time point.
 An alternative option is to account for the comparisons of multiple pairs of time
