@@ -1,6 +1,5 @@
 package tps
 
-import GraphSolutions._
 import Graphs._
 
 object SignedDirectedNetworkPrinter {

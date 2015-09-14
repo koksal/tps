@@ -1,6 +1,6 @@
 package tps.synthesis
 
-import tps.GraphSolutions._
+import tps.Graphs._
 
 trait Solver {
   def summary(): SignedDirectedGraph

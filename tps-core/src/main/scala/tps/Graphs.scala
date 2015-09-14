@@ -1,7 +1,5 @@
 package tps
 
-import GraphSolutions._
-
 import tps.util.LogUtils._
 
 object Graphs {
@@ -110,4 +108,19 @@ object Graphs {
     }
 
   }
+
+  type SignedDirectedGraph = Map[Edge, Set[SignedDirectedEdgeLabel]]
+
+  sealed trait SignedDirectedEdgeLabel
+  case class ActiveEdge(direction: EdgeDirection, sign: EdgeSign) extends SignedDirectedEdgeLabel
+  case object InactiveEdge extends SignedDirectedEdgeLabel
+
+  sealed trait EdgeDirection
+  case object Forward   extends EdgeDirection
+  case object Backward  extends EdgeDirection
+
+  sealed trait EdgeSign
+  case object Activating  extends EdgeSign
+  case object Inhibiting  extends EdgeSign
+
 }

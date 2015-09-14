@@ -1,6 +1,7 @@
 package tps
 
-import GraphSolutions._
+import Graphs._
+import SignedDirectedGraphOps._
 
 object SIFPrinter {
   def print(sdg: SignedDirectedGraph): String = {

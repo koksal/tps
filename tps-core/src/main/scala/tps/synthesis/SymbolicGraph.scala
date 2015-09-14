@@ -7,7 +7,6 @@ import TreeOps._
 import TypeTrees._
 
 import tps.Graphs._
-import tps.GraphSolutions._
 
 import tps.util.LogUtils
 

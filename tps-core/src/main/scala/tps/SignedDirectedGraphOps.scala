@@ -8,21 +8,7 @@ import tps.util.MathUtils
 
 import java.io.File
 
-object GraphSolutions {
-
-  type SignedDirectedGraph = Map[Edge, Set[SignedDirectedEdgeLabel]]
-
-  sealed trait SignedDirectedEdgeLabel
-  case class ActiveEdge(direction: EdgeDirection, sign: EdgeSign) extends SignedDirectedEdgeLabel
-  case object InactiveEdge extends SignedDirectedEdgeLabel
-
-  sealed trait EdgeDirection
-  case object Forward   extends EdgeDirection
-  case object Backward  extends EdgeDirection
-
-  sealed trait EdgeSign
-  case object Activating  extends EdgeSign
-  case object Inhibiting  extends EdgeSign
+object SignedDirectedGraphOps {
 
   def activeSolVertices(s: SignedDirectedGraph): Set[Vertex] = {
     s.flatMap{ case (Edge(v1, v2), ess) => 

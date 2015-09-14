@@ -1,7 +1,6 @@
 package tps
 
 import Graphs._
-import GraphSolutions._
 
 object PartialModelExtraction {
   def run(f: java.io.File): SignedDirectedGraph = {
