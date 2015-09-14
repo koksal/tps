@@ -251,22 +251,26 @@ class SymbolicGraph(
 
   /** Builds a formula that encodes the edge solution. */
   def graphSolutionFormula(sol: SignedDirectedGraph): Expr = {
-    val conjuncts = for ((Edge(v1, v2), edgeSolSet) <- sol) yield {
+    val conjuncts = for ((e @ Edge(v1, v2), edgeSolSet) <- sol) yield {
       assert(!edgeSolSet.isEmpty)
-      val possibilities = for (edgeSol <- edgeSolSet) yield {
-        edgeSol match {
-          case InactiveEdge => isInactiveVars(v1)(v2)
-          case ActiveEdge(dir, sign) => {
-            (dir, sign) match {
-              case (Forward, Activating) => isActivateeVars(v1)(v2)
-              case (Backward, Activating) => isActivatorVars(v1)(v2)
-              case (Forward, Inhibiting) => isInhibiteeVars(v1)(v2)
-              case (Backward, Inhibiting) => isInhibitorVars(v1)(v2)
+      if (graph.E contains e) {
+        val possibilities = for (edgeSol <- edgeSolSet) yield {
+          edgeSol match {
+            case InactiveEdge => isInactiveVars(v1)(v2)
+            case ActiveEdge(dir, sign) => {
+              (dir, sign) match {
+                case (Forward, Activating) => isActivateeVars(v1)(v2)
+                case (Backward, Activating) => isActivatorVars(v1)(v2)
+                case (Forward, Inhibiting) => isInhibiteeVars(v1)(v2)
+                case (Backward, Inhibiting) => isInhibitorVars(v1)(v2)
+              }
             }
           }
         }
+        Or(possibilities.toSeq: _*)
+      } else {
+        BooleanLiteral(true)
       }
-      Or(possibilities.toSeq: _*)
     }
 
     And(conjuncts.toSeq: _*)

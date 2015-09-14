@@ -8,9 +8,10 @@ import Trees._
 
 class BilateralSolver(
   graph: UndirectedGraph,
+  partialModel: SignedDirectedGraph,
   opts: SynthesisOptions,
   interpretation: Interpretation
-) extends AbstractSymbolicSolver(opts, interpretation) {
+) extends AbstractSymbolicSolver(graph, partialModel, opts, interpretation) {
 
   private def emptySol(g: UndirectedGraph): SignedDirectedGraph = {
     g.E.map{ e => e -> Set[SignedDirectedEdgeLabel]() }.toMap

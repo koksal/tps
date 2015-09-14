@@ -12,6 +12,8 @@ import tps.Graphs._
 import tps.util.LogUtils
 
 abstract class AbstractSymbolicSolver(
+  val graph: UndirectedGraph,
+  val partialModel: SignedDirectedGraph,
   val opts: SynthesisOptions,
   val interpretation: Interpretation
 ) extends Solver {
@@ -49,7 +51,7 @@ abstract class AbstractSymbolicSolver(
 
   protected def createSymbolicGraphInterpretation(): 
       (SymbolicGraph, SymbolicInterpretation, Expr) = {
-    val symbolicGraph = new SymbolicGraph(???, ???, ???)
+    val symbolicGraph = new SymbolicGraph(graph, partialModel, opts)
     val symbolicInterpretation = interpretation.makeSymbolic()
 
     val validModel = And(

@@ -63,12 +63,14 @@ object Synthesis {
       case "naive" => 
         new NaiveSymbolicSolver(
           expandedNetwork,
+          expandedPartialModel,
           opts,
           interpretation
         )
       case "bilateral" => 
         new BilateralSolver(
           expandedNetwork,
+          expandedPartialModel,
           opts,
           interpretation
         )

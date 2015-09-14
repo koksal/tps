@@ -6,9 +6,10 @@ import tps.util.LogUtils
 
 class NaiveSymbolicSolver(
   graph: UndirectedGraph,
+  partialModel: SignedDirectedGraph,
   opts: SynthesisOptions,
   interpretation: Interpretation
-) extends AbstractSymbolicSolver(opts, interpretation) {
+) extends AbstractSymbolicSolver(graph, partialModel, opts, interpretation) {
   private def testSolution(
     sg: SymbolicGraph, 
     si: SymbolicInterpretation, 
