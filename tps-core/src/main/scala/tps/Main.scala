@@ -15,7 +15,7 @@ object Main {
       PeptideProteinMappingExtraction.run(p)
     } getOrElse Map.empty
 
-    val resultReporter = new ResultReporter(opts.outFolder, opts.outLabel)
+    val resultReporter = new FileReporter(opts.outFolder, opts.outLabel)
 
     util.LogUtils.log("Running solver.")
     val outputNetwork = synthesis.Synthesis.run(
@@ -34,6 +34,6 @@ object Main {
     // TODO
     // write output network in more detailed format
 
-    resultReporter.writeOutput("output.sif", SIFPrinter.print(outputNetwork))
+    resultReporter.output("output.sif", SIFPrinter.print(outputNetwork))
   }
 }

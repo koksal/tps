@@ -148,8 +148,6 @@ class BilateralSolver(
     LogUtils.log("# switches: " + nbSwitches)
     rsrcSW.stop
 
-    upper map { case (e, ess) =>
-      e -> (ess + InactiveEdge) 
-    }
+    upper
   }
 }

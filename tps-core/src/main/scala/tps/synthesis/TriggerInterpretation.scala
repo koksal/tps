@@ -93,8 +93,9 @@ class TriggerInterpretation(
   }
 
   val allowedActivationIntervals: Map[Profile, Seq[Int]] = {
-    val is = timeSeries.profiles map (p => 
-        (p, allowedIntervals(p, Activation, threshold, firstScores(p.id), prevScores(p.id))))
+    val is = timeSeries.profiles map { p => 
+        (p, allowedIntervals(p, Activation, threshold, firstScores(p.id), prevScores(p.id)))
+    }
     is.toMap
   }
 

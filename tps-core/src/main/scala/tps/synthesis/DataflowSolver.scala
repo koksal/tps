@@ -112,7 +112,7 @@ class DataflowSolver(
     val labels = "peptide" +: interp.timeSeries.labels.tail
     val data = TabularData(labels, tuples)
 
-    resultReporter.writeOutput("activity-windows.tsv", data.toTSVString())
+    resultReporter.output("activity-windows.tsv", data.toTSVString())
   }
 
   def updateEdge(e: Edge) = {

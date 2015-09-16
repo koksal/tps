@@ -49,7 +49,6 @@ class NaiveSymbolicSolver(
       var possibleSols = activeEdgeLabelChoices filter {
         es => ctr += 1; testSolution(sg, si, e, es)
       }
-      possibleSols += InactiveEdge
 
       val newPartialModel = Map(e -> possibleSols)
       solution ++= newPartialModel

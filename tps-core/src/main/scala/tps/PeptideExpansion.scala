@@ -148,20 +148,22 @@ object PeptideExpansion {
     expansionSets
   }
 
-  /* for every matching pep-prot, return value mapped by f */
-  private def mapPairs[A,B,C](mapping: Map[A, Set[B]], f: (A, B) => Option[C]): Iterable[C] = {
-    mapping flatMap { case (k, vs) =>
-      vs.map(v => f(k, v)).filter(_.isDefined).map(_.get)
-    }
-  }
-
-  private def expandMap[A](toExpand: Map[String, A], expansionMap: Map[String, Set[String]]): Map[String, A] = {
-    def f(pepID: String, protID: String): Option[(String, A)] = {
-      toExpand.get(pepID) map { mapped =>
-        val key = StringUtils.uniquePeptideID(pepID, protID)
-        key -> toExpand(pepID)
+  private def expandMap[A](
+    toExpand: Map[String, A], expansionMap: Map[String, Set[String]]
+  ): Map[String, A] = {
+    val pairs = toExpand flatMap { case (key, value) => 
+      expansionMap.get(key) match {
+        case Some(expandedValues) => {
+          expandedValues map { ev =>
+            val expandedKey = StringUtils.uniquePeptideID(key, ev)
+            expandedKey -> value
+          }
+        }
+        case None => {
+          List((key, value))
+        }
       }
     }
-    mapPairs(expansionMap, f).toMap
+    pairs.toMap
   }
 }
