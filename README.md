@@ -158,7 +158,6 @@ of [iRefIndex] and [PhosphoSitePlus] interactions.
 * Kirsten Beck
 * Aaron McKenna
 * Saurabh Srivastava
-* Nir Piterman
 * Rastislav Bodik
 * Alejandro Wolf-Yadlin
 * Ernest Fraenkel
