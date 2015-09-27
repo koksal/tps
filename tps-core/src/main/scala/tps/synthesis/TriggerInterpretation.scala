@@ -63,9 +63,9 @@ class TriggerInterpretation(
             }
 
             if (synthOpt.constraintOptions.monotonicity) {
-              firstValidDirection
-            } else {
               firstValidDirection && extremumSoFar
+            } else {
+              firstValidDirection
             }
           }
 

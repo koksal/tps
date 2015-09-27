@@ -29,16 +29,37 @@ object Synthesis {
       partialModels.foldLeft[SignedDirectedGraph](
         Map.empty)(unifyByIntersectingCommonEdges(_,_))
 
-    // filter ts with ppm (?)
-    val ppmWithData = filterWithTimeSeries(peptideProteinMap, timeSeries)
+    def profileIsSignificant(
+      p: Profile, 
+      firstScores: Map[String, Seq[Double]], 
+      prevScores: Map[String, Seq[Double]],
+      threshold: Double
+    ): Boolean = {
+      val fs = firstScores(p.id)
+      val ps = prevScores(p.id)
+      val toEval = p.values.tail
+      val filteredValues = for ((v, (f, p)) <- toEval zip (fs zip ps)) yield {
+        if (f < threshold || p < threshold) v else None
+      }
+      filteredValues.exists(_.isDefined)
+    }
+
+    val significantTimeSeries = timeSeries.copy(
+      profiles = timeSeries.profiles filter (p => 
+          profileIsSignificant(p, firstScores, prevScores, significanceThreshold)
+      )
+    )
+
+    // filter ts with ppm (do not expand insignificant profiles)
+    val ppmWithData = filterWithTimeSeries(peptideProteinMap, significantTimeSeries)
 
     // expand network, ts, scores, pms
     import PeptideExpansion._
-    val expandedNetwork       = expandGraph(networkWithSources, peptideProteinMap)
-    val expandedTimeSeries    = expandTimeSeries(timeSeries, peptideProteinMap)
-    val expandedFirstScores   = expandScores(firstScores, peptideProteinMap)
-    val expandedPrevScores    = expandScores(prevScores, peptideProteinMap)
-    val expandedPartialModel  = expandSolution(unifiedPartialModel, peptideProteinMap)
+    val expandedNetwork       = expandGraph(networkWithSources, ppmWithData)
+    val expandedTimeSeries    = expandTimeSeries(significantTimeSeries, ppmWithData)
+    val expandedFirstScores   = expandScores(firstScores, ppmWithData)
+    val expandedPrevScores    = expandScores(prevScores, ppmWithData)
+    val expandedPartialModel  = expandSolution(unifiedPartialModel, ppmWithData)
 
     // infer activity intervals from time series data
     val interpretation = new TriggerInterpretation(
@@ -77,6 +98,6 @@ object Synthesis {
     }
 
     val expandedSol = solver.summary()
-    collapseSolution(expandedSol, peptideProteinMap)
+    collapseSolution(expandedSol, ppmWithData)
   }
 }
