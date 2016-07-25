@@ -60,8 +60,8 @@ steps:
 - `--network <file>`: Input network file in TSV format, where each row defines an undirected edge.
 - `--timeseries <file>`: Input time series file in TSV format. The first line defines the time point labels, and each subsequent line corresponds to one time series profile.
 - `--firstscores <file>`: Input file that contains significance scores for each time point of a profile (except the first time point), with respect to the first time point of the profile.
-- `--prevscores <file>`: Similarly to `--firstscores`, an input file that gives significance scores for each time point (except the first one), with respect to the previous time point.
-- `--source <value>`: Identifier for the network source node. Multiple source nodes can be provided.
+- `--prevscores <file>`: Similar to `--firstscores`, an input file that gives significance scores for each time point (except the first one), with respect to the previous time point.
+- `--source <value>`: Identifier for the network source node. Multiple source nodes can be provided by repeating the argument multiple times. For example, `--source <node1> --source <node2> --source <node3>`.
 - `--threshold <value>`: Threshold value for significance scores, above which measurements are considered non-significant.
 
 ### Optional arguments
@@ -91,16 +91,21 @@ interaction type, must be removed before providing the file to TPS.
 - `--timeseries <file>`: TPS expects a single intensity for each peptide at each time point,
 which can be calculated by taking the median intensity over all mass spectrometry replicates.
 TPS allows missing data, which should be denoted by a non-numeric value such as **N/A**
-or an empty string.
+or an empty string. This file must contain a header row, which specifies the time point
+labels.
 - `--firstscores <file>`: Significance scores can be naively computed with t-tests
 comparing the phosphorylation intensity at each time point and the first time point.
 An alternative option is to account for the comparisons of multiple pairs of time
 points using [Tukey's Honest Significant Difference test], which is implemented as [TukeyHSD]
 in R. This test compares all pairs of time points, from which the comparisons to the
-first time point can be extracted.
+first time point can be extracted. This file should not contain a header row, and if a
+header row is provided it should be commented out with a leading **#** character. If
+there are *t* time points in the `--timeseries <file>`, this file should contain
+*t* - 1 significance score columns.
 - `--prevscores <file>`: Significance scores can be computed in the same manner as the
 `--firstscores <file>` except the scores should be based on comparisons of the current
-time point and the preceding time point.
+time point and the preceding time point. The file format is the same as the
+`--firstscores <file>`.
 
 ## Output
 
