@@ -31,7 +31,7 @@ object Graphs {
       assert(v1.id <= v2.id)
     }
 
-    private var neighborMap = Map[Vertex, Set[Vertex]().withDefaultValue(
+    private var neighborMap = Map[Vertex, Set[Vertex]]().withDefaultValue(
       Set.empty[Vertex])
     for (e <- E) {
       neighborMap += e.v1 -> (neighborMap(e.v1) + e.v2)
