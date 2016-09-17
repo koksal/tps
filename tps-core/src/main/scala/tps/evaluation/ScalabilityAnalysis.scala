@@ -2,7 +2,7 @@ package tps.evaluation
 
 import java.io.File
 
-import tps.Graphs.{UndirectedGraph, Vertex}
+import tps.Graphs.Vertex
 import tps._
 import tps.simulation.{RandomGraphGenerator, RandomTimeSeriesGenerator}
 import tps.synthesis.{Synthesis, SynthesisOptions}

@@ -31,23 +31,24 @@ object Graphs {
       assert(v1.id <= v2.id)
     }
 
+    private var neighborMap = Map[Vertex, Set[Vertex]().withDefaultValue(
+      Set.empty[Vertex])
+    for (e <- E) {
+      neighborMap += e.v1 -> (neighborMap(e.v1) + e.v2)
+      neighborMap += e.v2 -> (neighborMap(e.v2) + e.v1)
+    }
+
     override def toString = {
       V.mkString("V = {", ", ", "}") + "\n" +
       E.mkString("E = {", ", ", "}") + "\n" +
       sources.mkString("SRC = {", ", ", "}")
     }
 
-    def neighbors(v: Vertex): Set[Vertex] = {
-      E collect {
-        case Edge(v1, v2) if v1 == v => v2
-        case Edge(v1, v2) if v2 == v => v1
-      }
-    }
+    def neighbors(v: Vertex): Set[Vertex] = neighborMap(v)
 
     def incidentEdges(v: Vertex): Set[Edge] = {
-      E filter {
-        case Edge(v1, v2) => v1 == v || v2 == v
-      }
+      val ns = neighbors(v)
+      ns.map(n => GraphParsing.lexicographicEdge(n.id, v.id))
     }
 
     def contains(e: Edge): Boolean = {
