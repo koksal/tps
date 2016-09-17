@@ -41,7 +41,8 @@ object RandomTimeSeriesGenerator {
     timeSeries: TimeSeries
   ): Map[String, Seq[Double]] = {
     val pairs = for (p <- timeSeries.profiles) yield {
-      val sigScores = p.values.map { v =>
+      // compute scores for all time points except the first
+      val sigScores = p.values.tail.map { v =>
         if (v.isDefined) 0.0 else 1.0
       }
       p.id -> sigScores
