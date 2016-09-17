@@ -20,8 +20,9 @@ object ScalabilityAnalysis {
   def main(args: Array[String]): Unit = {
     val resultReporter = new NoopReporter()
 
-    val sourceGraph = UndirectedGraphParser.run(
+    val pin = PINParser.run(
       new File("data/networks/directed-pin-with-resource-edges.tsv"))
+    val sourceGraph = UndirectedGraphOps.fromDirectedGraph(pin)
     val sources = Set("EGF_HUMAN")
     val threshold = 0.01
 

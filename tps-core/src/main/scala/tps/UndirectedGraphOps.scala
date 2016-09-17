@@ -26,4 +26,13 @@ object UndirectedGraphOps {
   }
 
   def emptyGraph: UndirectedGraph = UndirectedGraph(Set.empty, Set.empty, Set.empty)
+
+  def fromDirectedGraph(g: DirectedGraph): UndirectedGraph = {
+    var V: Set[Vertex] = Set.empty
+    val E = g.keySet
+    for (e <- E) {
+      V ++= Set(e.v1, e.v2)
+    }
+    UndirectedGraph(V, E, Set.empty)
+  }
 }
