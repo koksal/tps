@@ -10,7 +10,7 @@
   [Tukey's Honest Significant Difference test]: https://en.wikipedia.org/wiki/Tukey%27s_range_test
   [TukeyHSD]: https://stat.ethz.ch/R-manual/R-patched/library/stats/html/TukeyHSD.html
 
-# TPS: Temporal Pathway Synthesizer
+# TPS: Temporal Pathway Synthesizer [![Circle CI](https://circleci.com/gh/koksal/tps.svg?style=svg)](https://circleci.com/gh/koksal/tps)
 
 TPS is a tool for combining time series global phosphoproteomic data and
 protein-protein interaction networks to reconstruct the vast signaling pathways
