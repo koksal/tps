@@ -8,7 +8,7 @@ import tps.TestResourceUtil.testFile
 
 class RandomGraphGeneratorTest extends FunSuite with Matchers {
 
-  test("random graph of desired size can be generated") {
+  test("random graph contains source and has right size") {
     val sourceGraph = UndirectedGraphParser.run(testFile("network.tsv")).copy(
         sources = Set(Vertex("A")))
     val maxNodeLimit = 3
@@ -17,6 +17,7 @@ class RandomGraphGeneratorTest extends FunSuite with Matchers {
       maxNodeLimit)
 
     generated.V.size should equal (3)
+    generated.V should contain (Vertex("A"))
   }
 
 }
