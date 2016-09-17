@@ -18,11 +18,11 @@ class SolverOutputTest extends FunSuite with Matchers {
   }
 
   test("output of solvers match") {
-    val network = NetworkExtraction.run(testFile("network.tsv"))
-    val timeSeries = TimeSeriesExtraction.run(testFile("time-series.tsv"))
-    val firstScores = TimeSeriesScoresExtraction.run(testFile("significance-first.tsv"))
-    val prevScores  = TimeSeriesScoresExtraction.run(testFile("significance-prev.tsv"))
-    val partialModel = PartialModelExtraction.run(testFile("partial-model.sif"))
+    val network = UndirectedGraphParser.run(testFile("network.tsv"))
+    val timeSeries = TimeSeriesParser.run(testFile("time-series.tsv"))
+    val firstScores = TimeSeriesScoresParser.run(testFile("significance-first.tsv"))
+    val prevScores  = TimeSeriesScoresParser.run(testFile("significance-prev.tsv"))
+    val partialModel = SignedDirectedGraphParser.run(testFile("partial-model.sif"))
     val ppm: Map[String, Set[String]] = Map.empty
     val sources = Set("A")
     val significanceThreshold = 0.05
