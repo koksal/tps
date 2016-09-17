@@ -14,7 +14,7 @@ import tps.util.LogUtils
 import tps.util.MathUtils
 
 class TriggerInterpretation(
-  synthOpt: SynthesisOptions,
+  useMonotonicity: Boolean,
   graph: UndirectedGraph,
   ts: TimeSeries,
   firstScores: Map[String, Seq[Double]],
@@ -62,7 +62,7 @@ class TriggerInterpretation(
               case Inhibition => p.values.take(i).filter(_.isDefined).forall(getValueOrComplain(_) > v)
             }
 
-            if (synthOpt.constraintOptions.monotonicity) {
+            if (useMonotonicity) {
               firstValidDirection && extremumSoFar
             } else {
               firstValidDirection

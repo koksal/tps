@@ -29,21 +29,6 @@ object Synthesis {
       partialModels.foldLeft[SignedDirectedGraph](
         Map.empty)(unifyByIntersectingCommonEdges(_,_))
 
-    def profileIsSignificant(
-      p: Profile, 
-      firstScores: Map[String, Seq[Double]], 
-      prevScores: Map[String, Seq[Double]],
-      threshold: Double
-    ): Boolean = {
-      val fs = firstScores(p.id)
-      val ps = prevScores(p.id)
-      val toEval = p.values.tail
-      val filteredValues = for ((v, (f, p)) <- toEval zip (fs zip ps)) yield {
-        if (f < threshold || p < threshold) v else None
-      }
-      filteredValues.exists(_.isDefined)
-    }
-
     val significantTimeSeries = timeSeries.copy(
       profiles = timeSeries.profiles filter (p => 
           profileIsSignificant(p, firstScores, prevScores, significanceThreshold)
@@ -63,13 +48,30 @@ object Synthesis {
 
     // infer activity intervals from time series data
     val interpretation = new TriggerInterpretation(
-      opts,
+      opts.constraintOptions.monotonicity,
       expandedNetwork,
       expandedTimeSeries,
       expandedFirstScores,
       expandedPrevScores,
       significanceThreshold
     )
+
+    def printCollapsedInterpretation() = {
+      val collapsedInterpretation = new TriggerInterpretation(
+        opts.constraintOptions.monotonicity, 
+        networkWithSources, 
+        significantTimeSeries, 
+        firstScores, 
+        prevScores, 
+        significanceThreshold
+      )
+      resultReporter.output(
+        "temporal-interpretation.tsv", 
+        InterpretationPrinter.print(collapsedInterpretation)
+      )
+    }
+
+    printCollapsedInterpretation()
 
     // dispatch solver
     val solver = opts.solver match {
@@ -100,4 +102,20 @@ object Synthesis {
     val expandedSol = solver.summary()
     collapseSolution(expandedSol, ppmWithData)
   }
+
+  def profileIsSignificant(
+    p: Profile, 
+    firstScores: Map[String, Seq[Double]], 
+    prevScores: Map[String, Seq[Double]],
+    threshold: Double
+  ): Boolean = {
+    val fs = firstScores(p.id)
+    val ps = prevScores(p.id)
+    val toEval = p.values.tail
+    val filteredValues = for ((v, (f, p)) <- toEval zip (fs zip ps)) yield {
+      if (f < threshold || p < threshold) v else None
+    }
+    filteredValues.exists(_.isDefined)
+  }
+
 }

@@ -10,7 +10,7 @@ class TSVSource(f: java.io.File, noHeaders: Boolean = false) {
     }
     val tuples = {
       val tplLines = if (noHeaders) ls else ls.tail
-      tplLines.map(_.split("\t").toList)
+      tplLines.map(_.split("\t", -1).toList)
     }
    TabularData(fields, tuples) 
   }

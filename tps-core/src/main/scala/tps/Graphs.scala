@@ -106,9 +106,9 @@ object Graphs {
 
       distances
     }
-
   }
 
+  type DirectedGraph       = Map[Edge, Set[EdgeDirection]]
   type SignedDirectedGraph = Map[Edge, Set[SignedDirectedEdgeLabel]]
 
   sealed trait SignedDirectedEdgeLabel
@@ -123,4 +123,30 @@ object Graphs {
   case object Activating  extends EdgeSign
   case object Inhibiting  extends EdgeSign
 
+  // TODO organize into a DirectedGraph entity
+  def getDirections(dg: DirectedGraph, src: String, dst: String): Set[EdgeDirection] = {
+    val lexicographicOrderFromSrc = src < dst
+    val (smallerID, largerID) = if (lexicographicOrderFromSrc) (src, dst) else (dst, src)
+    val e = Edge(Vertex(smallerID), Vertex(largerID))
+    dg.get(e) match {
+      case Some(ds) => {
+        if (lexicographicOrderFromSrc) ds else ds.map(reverseDirection)
+      }
+      case None => {
+        Set()
+      }
+    }
+  }
+
+  def toSignedDirectedGraph(dg: DirectedGraph): SignedDirectedGraph = {
+    dg map { case (e, ds) =>
+      val labelsWithSign = ds.flatMap(d => Set[SignedDirectedEdgeLabel](ActiveEdge(d, Activating), ActiveEdge(d, Inhibiting)))
+      e -> labelsWithSign
+    }
+  }
+
+  private def reverseDirection(d: EdgeDirection): EdgeDirection = d match {
+    case Forward => Backward
+    case Backward => Forward
+  }
 }

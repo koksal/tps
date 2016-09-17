@@ -3,7 +3,7 @@ package tps
 import Graphs._
 
 /** Extracts edge node pairs froma a file without a header row. */
-object NetworkExtraction {
+object UndirectedGraphParser {
   def run(f: java.io.File): UndirectedGraph = {
     val data = new TSVSource(f, noHeaders = true).data
     val edges = data.tuples map { tuple =>

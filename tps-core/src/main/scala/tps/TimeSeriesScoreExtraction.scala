@@ -1,6 +1,6 @@
 package tps
 
-object TimeSeriesScoresExtraction {
+object TimeSeriesScoresParser {
   def run(f: java.io.File): Map[String, Seq[Double]] = {
     val data = new TSVSource(f, noHeaders = true).data
     val m = data.tuples map { tuple => 
