@@ -5,7 +5,7 @@ import tps.util.LogUtils._
 
 import java.io.File
 
-object TimeSeriesExtraction {
+object TimeSeriesParser {
   def run(f: File): TimeSeries =  {
     val data = new TSVSource(f).data
     val timeLabels = data.fields.tail
@@ -14,7 +14,7 @@ object TimeSeriesExtraction {
       Profile(profileID, values map parseOptDouble)
     }
 
-    TimeSeries(timeLabels, profiles.toSet)
+    TimeSeries(timeLabels, profiles)
   }
 
   private def parseOptDouble(s: String): Option[Double] = {

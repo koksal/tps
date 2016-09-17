@@ -79,6 +79,24 @@ object PeptideExpansion {
     )
   }
 
+  def expandSolution(
+    s: SignedDirectedGraph, 
+    ppm: PeptideProteinMap
+  ): SignedDirectedGraph = {
+    val proteinsToPeptides = proteinsToExpandedPeptides(ppm)
+  
+    val expandedSol = s flatMap { case (Edge(v1, v2), ess) =>
+      val peptideIds1 = proteinsToPeptides.getOrElse(v1.id, Set(v1.id))
+      val peptideIds2 = proteinsToPeptides.getOrElse(v2.id, Set(v2.id))
+      MathUtils.cartesianProduct(peptideIds1, peptideIds2) map { case (id1, id2) =>
+        assert(id1 < id2)
+        Edge(Vertex(id1), Vertex(id2)) -> ess
+      }
+    }
+
+    expandedSol
+  }
+
   def collapseSolution(
     sol: SignedDirectedGraph, 
     ppm: PeptideProteinMap
@@ -99,24 +117,6 @@ object PeptideExpansion {
     }
 
     collapsedSol
-  }
-
-  def expandSolution(
-    s: SignedDirectedGraph, 
-    ppm: PeptideProteinMap
-  ): SignedDirectedGraph = {
-    val proteinsToPeptides = proteinsToExpandedPeptides(ppm)
-  
-    val expandedSol = s flatMap { case (Edge(v1, v2), ess) =>
-      val peptideIds1 = proteinsToPeptides.getOrElse(v1.id, Set(v1.id))
-      val peptideIds2 = proteinsToPeptides.getOrElse(v2.id, Set(v2.id))
-      MathUtils.cartesianProduct(peptideIds1, peptideIds2) map { case (id1, id2) =>
-        assert(id1 < id2)
-        Edge(Vertex(id1), Vertex(id2)) -> ess
-      }
-    }
-
-    expandedSol
   }
 
   // this one maps prot#pept IDs to prot IDs

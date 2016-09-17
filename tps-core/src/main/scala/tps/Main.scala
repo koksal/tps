@@ -4,15 +4,15 @@ object Main {
   def main(args: Array[String]): Unit = {
     val opts = ArgHandling.parseOptions(args)
 
-    val network       = NetworkExtraction.run(opts.networkPath)
-    val timeSeries    = TimeSeriesExtraction.run(opts.timeSeriesPath)
-    val firstScores   = TimeSeriesScoresExtraction.run(opts.firstScoresPath)
-    val prevScores    = TimeSeriesScoresExtraction.run(opts.prevScoresPath)
+    val network       = UndirectedGraphParser.run(opts.networkPath)
+    val timeSeries    = TimeSeriesParser.run(opts.timeSeriesPath)
+    val firstScores   = TimeSeriesScoresParser.run(opts.firstScoresPath)
+    val prevScores    = TimeSeriesScoresParser.run(opts.prevScoresPath)
     val partialModels = opts.partialModelPaths map { p =>
-      PartialModelExtraction.run(p)
+      SignedDirectedGraphParser.run(p)
     }
     val peptideProteinMap = opts.peptideProteinMapPath map { p =>
-      PeptideProteinMappingExtraction.run(p)
+      PeptideProteinMappingParser.run(p)
     } getOrElse Map.empty
 
     val resultReporter = new FileReporter(opts.outFolder, opts.outLabel)
@@ -31,9 +31,7 @@ object Main {
       resultReporter
     )
 
-    // TODO
-    // write output network in more detailed format
-
     resultReporter.output("output.sif", SIFPrinter.print(outputNetwork))
+    resultReporter.output("output.tsv", SignedDirectedNetworkPrinter.print(outputNetwork))
   }
 }

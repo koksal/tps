@@ -8,7 +8,7 @@ case class Profile(id: String, values: Seq[Option[Double]])
 
 case class TimeSeries(
   labels: Seq[String], 
-  profiles: Set[Profile]
+  profiles: Seq[Profile]
 ) {
   // Internal map for fast access
   private val profileMap: Map[String, Profile] = profiles.map{
