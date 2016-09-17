@@ -1,0 +1,13 @@
+#!/bin/bash
+
+timeseries=data/timeseries/median-time-series.tsv
+firstscores=data/timeseries/p-values-first.tsv
+prevscores=data/timeseries/p-values-prev.tsv
+mapping=data/timeseries/peptide-mapping.tsv
+
+for reference in data/resources/reference/*.tsv
+do
+  sbt \
+    "project tps-core" \
+    "run-main tps.evaluation.OverlapAnalysis $reference $timeseries $mapping $firstscores $prevscores"
+done

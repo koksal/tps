@@ -1,0 +1,6 @@
+#!/bin/bash
+
+TXNFILE="data/networks/comparison/TXN-ALL.edges"
+sbt \
+  "project tps-core" \
+  "run-main tps.evaluation.txn.GraphCreation $TXNFILE 1.0"
