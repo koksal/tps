@@ -1,5 +1,4 @@
 package tps
-package test
 
 import org.scalatest.FunSuite
 import org.scalatest.Matchers
@@ -7,15 +6,9 @@ import org.scalatest.Matchers
 import Graphs._
 import tps.synthesis.SynthesisOptions
 
-import java.io.File
+import TestResourceUtil.testFile
 
 class SolverOutputTest extends FunSuite with Matchers {
-
-  private val resourceBaseFolder = "/simple-example"
-  private def testFile(name: String): File = {
-    val url = getClass.getResource(s"$resourceBaseFolder/$name")
-    new File(url.getFile())
-  }
 
   test("output of solvers match") {
     val network = UndirectedGraphParser.run(testFile("network.tsv"))

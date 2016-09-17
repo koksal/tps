@@ -1,7 +1,5 @@
 package tps
 
-import tps.util.LogUtils._
-
 object Graphs {
 
   case class Vertex(id: String) extends Serializable {
@@ -88,20 +86,18 @@ object Graphs {
         distances += v -> 0
       }
 
-      while (!toProcess.isEmpty) {
+      while (toProcess.nonEmpty) {
         distance += 1
-        val nextStep = toProcess.flatMap{ v =>
+        val nextStep = toProcess.flatMap { v =>
           this.neighbors(v)
-          }.filter{ v =>
-            !alreadySeen.contains(v)
-          }
+        }.diff(alreadySeen)
 
-          for (v <- nextStep) {
-            distances += v -> distance
-          }
+        for (v <- nextStep) {
+          distances += v -> distance
+        }
 
-          alreadySeen ++= nextStep
-          toProcess = nextStep
+        alreadySeen ++= nextStep
+        toProcess = nextStep
       }
 
       distances
