@@ -2,7 +2,7 @@ package tps.evaluation
 
 import java.io.File
 
-import tps.Graphs.UndirectedGraph
+import tps.Graphs.{UndirectedGraph, Vertex}
 import tps._
 import tps.simulation.{RandomGraphGenerator, RandomTimeSeriesGenerator}
 import tps.synthesis.{Synthesis, SynthesisOptions}
@@ -22,8 +22,9 @@ object ScalabilityAnalysis {
 
     val pin = PINParser.run(
       new File("data/networks/directed-pin-with-resource-edges.tsv"))
-    val sourceGraph = UndirectedGraphOps.fromDirectedGraph(pin)
     val sources = Set("EGF_HUMAN")
+    val sourceGraph = UndirectedGraphOps.fromDirectedGraph(pin).copy(
+      sources = sources.map(Vertex(_)))
     val threshold = 0.01
 
     for (size <- Range(MIN_GRAPH_SIZE, MAX_GRAPH_SIZE, GRAPH_SIZE_STEP)) {
