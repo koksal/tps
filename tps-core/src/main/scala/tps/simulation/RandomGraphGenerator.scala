@@ -10,6 +10,7 @@ import tps.Graphs.{Edge, UndirectedGraph, Vertex}
 object RandomGraphGenerator {
 
   private val RANDOM_SEED = 131161511
+  private val random = new scala.util.Random(RANDOM_SEED)
 
   // for creating graphs from a source graph
   private val MAX_NODE_DEGREE = 3
@@ -20,8 +21,6 @@ object RandomGraphGenerator {
   object CannotExtendException extends Exception
 
   def generateRandomGraph(nbEdges: Int): UndirectedGraph = {
-    val random = new scala.util.Random(RANDOM_SEED)
-
     val src = Vertex("src")
     var V = Set[Vertex](src)
     var E = Set[Edge]()
@@ -35,11 +34,13 @@ object RandomGraphGenerator {
         Vertex(s"v_$i")
       } else {
         // add an edge to an existing node
-        val targetCandidates = V - srcVertex
-        targetCandidates.toIndexedSeq(random.nextInt(targetCandidates.size))
+        V.toIndexedSeq(random.nextInt(V.size))
       }
-      V += tgtVertex
-      E += Graphs.lexicographicEdge(srcVertex, tgtVertex)
+      // do not add self edges
+      if (srcVertex != tgtVertex) {
+        V += tgtVertex
+        E += Graphs.lexicographicEdge(srcVertex, tgtVertex)
+      }
     }
 
     UndirectedGraph(V, E, Set(src))
@@ -49,7 +50,6 @@ object RandomGraphGenerator {
                           maxNodeLimit: Int): UndirectedGraph = {
     assert(sourceGraph.sources.size <= maxNodeLimit)
 
-    val random = new scala.util.Random(RANDOM_SEED)
     var generatedGraph = UndirectedGraph(sourceGraph.sources, Set.empty,
       sourceGraph.sources)
 

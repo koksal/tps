@@ -1,12 +1,9 @@
 package tps.evaluation
 
-import java.io.File
-
-import tps.Graphs.Vertex
 import tps._
 import tps.simulation.{RandomGraphGenerator, RandomTimeSeriesGenerator}
 import tps.synthesis.{Synthesis, SynthesisOptions}
-import tps.util.Stopwatch
+import tps.util.{Stopwatch, TimingUtil}
 
 /**
   * Evaluates solver running time on randomly simulated data.
@@ -32,26 +29,24 @@ object ScalabilityAnalysis {
     for (size <- Range(MIN_GRAPH_SIZE, MAX_GRAPH_SIZE, GRAPH_SIZE_STEP)) {
       println(s"Evaluating with size $size")
 
-      val g = RandomGraphGenerator.generateRandomGraph(size)
-      val ts = RandomTimeSeriesGenerator.generateRandomTimeSeries(g)
-      val scores = RandomTimeSeriesGenerator.generateSignificanceScores(ts)
+      TimingUtil.timeReplicates(s"Scalability analysis for $size", 5) {
+        val g = RandomGraphGenerator.generateRandomGraph(size)
+        val ts = RandomTimeSeriesGenerator.generateRandomTimeSeries(g)
+        val scores = RandomTimeSeriesGenerator.generateSignificanceScores(ts)
 
-      val sw = new Stopwatch(s"Graph size: V = ${g.V.size}, E = ${g.E.size}",
-        verbose = true)
-      sw.start
-      Synthesis.run(
-        g,
-        ts,
-        scores,
-        scores,
-        Set.empty,
-        Map.empty,
-        g.sources map (_.id),
-        threshold,
-        SynthesisOptions(),
-        resultReporter
-      )
-      sw.stop
+        Synthesis.run(
+          g,
+          ts,
+          scores,
+          scores,
+          Set.empty,
+          Map.empty,
+          g.sources map (_.id),
+          threshold,
+          SynthesisOptions(),
+          resultReporter
+        )
+      }
     }
   }
 }
