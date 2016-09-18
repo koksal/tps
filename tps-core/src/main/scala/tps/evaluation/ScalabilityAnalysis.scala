@@ -13,22 +13,26 @@ import tps.util.Stopwatch
   */
 object ScalabilityAnalysis {
 
-  private val MIN_GRAPH_SIZE = 5000
-  private val MAX_GRAPH_SIZE = 100000
-  private val GRAPH_SIZE_STEP = 5000
+  private val MIN_GRAPH_SIZE = 1000
+  private val MAX_GRAPH_SIZE = 10000
+  private val GRAPH_SIZE_STEP = 1000
 
   def main(args: Array[String]): Unit = {
     val resultReporter = new NoopReporter()
 
+    /*
     val pin = PINParser.run(
       new File("data/networks/directed-pin-with-resource-edges.tsv"))
     val sources = Set("EGF_HUMAN")
     val sourceGraph = UndirectedGraphOps.fromDirectedGraph(pin).copy(
       sources = sources.map(Vertex(_)))
+    */
     val threshold = 0.01
 
     for (size <- Range(MIN_GRAPH_SIZE, MAX_GRAPH_SIZE, GRAPH_SIZE_STEP)) {
-      val g = RandomGraphGenerator.generateRandomGraph(sourceGraph, size)
+      println(s"Evaluating with size $size")
+
+      val g = RandomGraphGenerator.generateRandomGraph(size)
       val ts = RandomTimeSeriesGenerator.generateRandomTimeSeries(g)
       val scores = RandomTimeSeriesGenerator.generateSignificanceScores(ts)
 
@@ -42,7 +46,7 @@ object ScalabilityAnalysis {
         scores,
         Set.empty,
         Map.empty,
-        sources,
+        g.sources map (_.id),
         threshold,
         SynthesisOptions(),
         resultReporter

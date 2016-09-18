@@ -48,7 +48,7 @@ object Graphs {
 
     def incidentEdges(v: Vertex): Set[Edge] = {
       val ns = neighbors(v)
-      ns.map(n => GraphParsing.lexicographicEdge(n.id, v.id))
+      ns.map(n => lexicographicEdge(n, v))
     }
 
     def contains(e: Edge): Boolean = {
@@ -141,6 +141,9 @@ object Graphs {
       e -> labelsWithSign
     }
   }
+
+  def lexicographicEdge(v1: Vertex, v2: Vertex): Edge =
+    GraphParsing.lexicographicEdge(v1.id, v2.id)
 
   private def reverseDirection(d: EdgeDirection): EdgeDirection = d match {
     case Forward => Backward
