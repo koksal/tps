@@ -8,7 +8,7 @@ import tps.{Profile, TimeSeries}
   */
 object RandomTimeSeriesGenerator {
 
-  private val RANDOM_SEED = 0
+  private val RANDOM_SEED = 2483967
   private val random = new scala.util.Random(RANDOM_SEED)
 
   private val MAX_PROFILE_VALUE = 10
