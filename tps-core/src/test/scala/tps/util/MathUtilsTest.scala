@@ -33,7 +33,7 @@ class MathUtilsTest extends FunSuite with Matchers {
     MathUtils.mean(l1) should equal (1.0)
 
     val l2 = List(8.0, 2.0, 6.0, 4.0)
-    MathUtils.mean(l2) should equal (10.0)
+    MathUtils.mean(l2) should equal (5.0)
   }
 
   test("median of list") {
