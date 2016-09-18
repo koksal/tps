@@ -16,7 +16,7 @@ object RandomTimeSeriesGenerator {
   private val NB_TIME_POINTS = 10
 
   // probability of a node having time series data
-  private val COVERAGE_RATIO = 0.5
+  private val COVERAGE_RATIO = 0.6
 
   // probability of a measurement being significaint
   private val SIGNIFICANCE_RATIO = 0.2

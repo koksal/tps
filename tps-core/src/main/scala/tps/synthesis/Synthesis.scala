@@ -77,6 +77,7 @@ object Synthesis {
     printCollapsedInterpretation()
     println("Expanded graph stats:")
     GraphStats.computeGraphStats(expandedNetwork)
+    GraphStats.computeDataCoverageStats(expandedNetwork, expandedTimeSeries)
 
     // dispatch solver
     val solver = opts.solver match {
