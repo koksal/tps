@@ -3,6 +3,8 @@ package tps.synthesis
 import tps.Graphs._
 import tps.SignedDirectedGraphOps._
 import tps._
+import tps.evaluation.GraphStats
+import tps.util.TimingUtil
 
 object Synthesis {
   def run(
@@ -71,26 +73,29 @@ object Synthesis {
       )
     }
 
+    // debug and stats printing
     printCollapsedInterpretation()
+    println("Expanded graph stats:")
+    GraphStats.computeGraphStats(expandedNetwork)
 
     // dispatch solver
     val solver = opts.solver match {
-      case "dataflow" => 
+      case "dataflow" =>
         new DataflowSolver(
-          expandedNetwork, 
-          expandedPartialModel, 
-          opts, 
+          expandedNetwork,
+          expandedPartialModel,
+          opts,
           interpretation,
           resultReporter
         )
-      case "naive" => 
+      case "naive" =>
         new NaiveSymbolicSolver(
           expandedNetwork,
           expandedPartialModel,
           opts,
           interpretation
         )
-      case "bilateral" => 
+      case "bilateral" =>
         new BilateralSolver(
           expandedNetwork,
           expandedPartialModel,
@@ -99,7 +104,9 @@ object Synthesis {
         )
     }
 
-    val expandedSol = solver.summary()
+    val expandedSol = TimingUtil.time("solver") {
+      solver.summary()
+    }
     collapseSolution(expandedSol, ppmWithData)
   }
 

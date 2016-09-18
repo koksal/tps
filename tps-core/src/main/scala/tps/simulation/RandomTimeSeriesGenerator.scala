@@ -16,7 +16,10 @@ object RandomTimeSeriesGenerator {
   private val NB_TIME_POINTS = 10
 
   // probability of a node having time series data
-  private val COVERAGE_RATIO = 0.8
+  private val COVERAGE_RATIO = 0.5
+
+  // probability of a measurement being significaint
+  private val SIGNIFICANCE_RATIO = 0.2
 
   /**
     * Generates random time series data for the given graph.
@@ -34,8 +37,7 @@ object RandomTimeSeriesGenerator {
   }
 
   /**
-    * Generates trivial significance scores for the given time series data,
-    * depending on whether values are defined at each time point.
+    * Generates random significance scores for the given time series data.
     */
   def generateSignificanceScores(
     timeSeries: TimeSeries
@@ -43,7 +45,7 @@ object RandomTimeSeriesGenerator {
     val pairs = for (p <- timeSeries.profiles) yield {
       // compute scores for all time points except the first
       val sigScores = p.values.tail.map { v =>
-        if (v.isDefined) 0.0 else 1.0
+        if (random.nextDouble() < SIGNIFICANCE_RATIO) 0.0 else 1.0
       }
       p.id -> sigScores
     }
@@ -55,9 +57,9 @@ object RandomTimeSeriesGenerator {
   }
 
   private def generateProfile(id: String): Profile = {
-    // all profile values are defined
-    val values = (0 until NB_TIME_POINTS).map(i =>
-      Some(random.nextDouble() * MAX_PROFILE_VALUE))
+    val values = (0 until NB_TIME_POINTS) map { i =>
+      Some(random.nextDouble() * MAX_PROFILE_VALUE)
+    }
     Profile(id, values)
   }
 
