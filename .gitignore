@@ -1,4 +1,6 @@
 *.swp
+*.iml
+.idea
 .DS_Store
 sbt
 project/project
