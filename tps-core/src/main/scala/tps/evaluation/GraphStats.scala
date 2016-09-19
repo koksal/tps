@@ -3,6 +3,7 @@ package tps.evaluation
 import java.io.File
 
 import tps.Graphs.UndirectedGraph
+import tps.synthesis.Synthesis
 import tps.{TimeSeries, UndirectedGraphParser}
 import tps.util.MathUtils
 
@@ -30,6 +31,20 @@ object GraphStats {
     val verticesWithData = g.V.map(_.id).intersect(profileIds)
     val coverageRatio = verticesWithData.size.toDouble / g.V.size
     println(s"Ratio of vertices with data: ${coverageRatio}")
+  }
+
+  def computeProfileStats(
+    ts: TimeSeries,
+    firstScores: Map[String, Seq[Double]],
+    prevScores: Map[String, Seq[Double]],
+    threshold: Double
+  ): Unit
+  = {
+    val nbSigMeasurements = ts.profiles map { p =>
+      Synthesis.nbSignificantMeasurements(p, firstScores, prevScores, threshold)
+    }
+    val med = MathUtils.median(nbSigMeasurements.map(_.toDouble))
+    println(s"Median number of significant time points: $med")
   }
 
   def main(args: Array[String]): Unit = {

@@ -78,6 +78,8 @@ object Synthesis {
     println("Expanded graph stats:")
     GraphStats.computeGraphStats(expandedNetwork)
     GraphStats.computeDataCoverageStats(expandedNetwork, expandedTimeSeries)
+    GraphStats.computeProfileStats(expandedTimeSeries, expandedFirstScores,
+      expandedPrevScores, significanceThreshold)
 
     // dispatch solver
     val solver = opts.solver match {
@@ -117,13 +119,23 @@ object Synthesis {
     prevScores: Map[String, Seq[Double]],
     threshold: Double
   ): Boolean = {
+    nbSignificantMeasurements(p, firstScores, prevScores, threshold) > 0
+  }
+
+  // TODO move
+  def nbSignificantMeasurements(
+    p: Profile,
+    firstScores: Map[String, Seq[Double]],
+    prevScores: Map[String, Seq[Double]],
+    threshold: Double
+  ): Int = {
     val fs = firstScores(p.id)
     val ps = prevScores(p.id)
     val toEval = p.values.tail
     val filteredValues = for ((v, (f, p)) <- toEval zip (fs zip ps)) yield {
       if (f < threshold || p < threshold) v else None
     }
-    filteredValues.exists(_.isDefined)
+    filteredValues.filter(_.isDefined).size
   }
 
 }
