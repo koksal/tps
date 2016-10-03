@@ -34,7 +34,7 @@ object ScalabilityAnalysis {
           scores,
           scores,
           Set.empty,
-          Map.empty,
+          ppm,
           g.sources map (_.id),
           SIGNIFICANCE_THRESHOLD,
           SynthesisOptions(),
@@ -43,7 +43,7 @@ object ScalabilityAnalysis {
 
         println("Nb. phosphosites: " + ppm.keySet.size)
       }
-      
+
       size = size * 2
     } while (size <= MAX_GRAPH_SIZE)
   }
