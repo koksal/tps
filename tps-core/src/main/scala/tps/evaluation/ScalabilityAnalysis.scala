@@ -11,15 +11,15 @@ import tps.util.{Stopwatch, TimingUtil}
 object ScalabilityAnalysis {
 
   private val MIN_GRAPH_SIZE = 1000
-  private val MAX_GRAPH_SIZE = 10000
-  private val GRAPH_SIZE_STEP = 1000
+  private val MAX_GRAPH_SIZE = 100000
 
   private val SIGNIFICANCE_THRESHOLD = 0.01
 
   def main(args: Array[String]): Unit = {
     val resultReporter = new NoopReporter()
 
-    for (size <- Range(MIN_GRAPH_SIZE, MAX_GRAPH_SIZE, GRAPH_SIZE_STEP)) {
+    var size = MIN_GRAPH_SIZE
+    do {
       println(s"Evaluating with size $size")
 
       TimingUtil.timeReplicates(s"Scalability analysis for $size", 5) {
@@ -40,7 +40,11 @@ object ScalabilityAnalysis {
           SynthesisOptions(),
           resultReporter
         )
+
+        println("Nb. phosphosites: " + ppm.keySet.size)
       }
-    }
+      
+      size = size * 2
+    } while (size <= MAX_GRAPH_SIZE)
   }
 }
