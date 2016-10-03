@@ -92,8 +92,6 @@ object Synthesis {
     println("Expanded graph stats:")
     GraphStats.computeGraphStats(expandedNetwork)
     GraphStats.computeDataCoverageStats(expandedNetwork, expandedTimeSeries)
-    GraphStats.computeProfileStats(expandedTimeSeries, expandedFirstScores,
-      expandedPrevScores, significanceThreshold)
 
     // dispatch solver
     val solver = opts.solver match {

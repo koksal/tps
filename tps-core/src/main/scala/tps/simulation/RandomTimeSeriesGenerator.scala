@@ -17,9 +17,6 @@ object RandomTimeSeriesGenerator {
 
   private val NB_TIME_POINTS = 8
 
-  // probability of a measurement being significant
-  private val SIGNIFICANCE_RATIO = 0.25
-
   // Poisson parameter for drawing number of phosphosites
   private val NB_SITES_POISSON_PARAMETER = 1.7
   private val nbSitesDistribution = Poisson.distribution(

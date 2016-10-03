@@ -36,8 +36,6 @@ object GraphStats {
   def printMeanNbPhosphosites(
     g: UndirectedGraph, ts: TimeSeries, ppm: Map[String, Set[String]]
   ): Unit = {
-    // TODO remove this for the case where there is no mapping.
-    assert(g.V.map(_.id).intersect(ts.profiles.map(_.id).toSet).isEmpty)
     val phosphositeCardinalities = g.V.toSeq map { v =>
       // get peptides that map to the protein
       val matchingPeptides = ppm.filter{ case (pep, prots) =>
