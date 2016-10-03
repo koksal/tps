@@ -1,6 +1,8 @@
 package tps.simulation
 
+import breeze.stats.distributions.Poisson
 import tps.Graphs.UndirectedGraph
+import tps.PeptideExpansion.PeptideProteinMap
 import tps.{Profile, TimeSeries}
 
 /**
@@ -13,27 +15,40 @@ object RandomTimeSeriesGenerator {
 
   private val MAX_PROFILE_VALUE = 10
 
-  private val NB_TIME_POINTS = 10
+  private val NB_TIME_POINTS = 8
 
-  // probability of a node having time series data
-  private val COVERAGE_RATIO = 0.6
+  // probability of a measurement being significant
+  private val SIGNIFICANCE_RATIO = 0.25
 
-  // probability of a measurement being significaint
-  private val SIGNIFICANCE_RATIO = 0.2
+  // Poisson parameter for drawing number of phosphosites
+  private val NB_SITES_POISSON_PARAMETER = 1.7
+  private val nbSitesDistribution = Poisson.distribution(
+    NB_SITES_POISSON_PARAMETER)
 
-  /**
-    * Generates random time series data for the given graph.
-    *
-    * Data is generated for a subset of the nodes in the graph.
-    */
-  def generateRandomTimeSeries(graph: UndirectedGraph): TimeSeries = {
-    var profiles: Set[Profile] = Set.empty
+  private val NB_SIGNIFICANT_TIME_POINTS_POISSON_PARAMETER = 0.55
+  private val nbSignificantTimePointsDistribution = Poisson.distribution(
+    NB_SIGNIFICANT_TIME_POINTS_POISSON_PARAMETER)
+
+  def generateRandomPeptideProteinMap(
+    graph: UndirectedGraph
+  ): PeptideProteinMap = {
+    var mapping: PeptideProteinMap = Map.empty
     for (v <- graph.V) {
-      if (random.nextDouble() < COVERAGE_RATIO) {
-        profiles += generateProfile(v.id)
+      val nbSites = nbSitesDistribution.draw()
+      for (i <- 0 until nbSites) {
+        val siteName = s"${v.id}#site${i}"
+        assert(!mapping.isDefinedAt(siteName))
+        mapping += siteName -> Set(v.id)
       }
     }
-    TimeSeries(generateLabels(), profiles.toSeq)
+    mapping
+  }
+
+  def generateRandomTimeSeries(pepIDs: Set[String]): TimeSeries = {
+    val profiles = pepIDs.toSeq map { id =>
+      generateProfile(id)
+    }
+    TimeSeries(generateLabels(), profiles)
   }
 
   /**
@@ -43,9 +58,13 @@ object RandomTimeSeriesGenerator {
     timeSeries: TimeSeries
   ): Map[String, Seq[Double]] = {
     val pairs = for (p <- timeSeries.profiles) yield {
+      // decide how many points should be significant
+      val nbSignificantTimePoints = nbSignificantTimePointsDistribution.draw()
+      val significanceProb = nbSignificantTimePoints.toDouble / NB_TIME_POINTS
+
       // compute scores for all time points except the first
       val sigScores = p.values.tail.map { v =>
-        if (random.nextDouble() < SIGNIFICANCE_RATIO) 0.0 else 1.0
+        if (random.nextDouble() < significanceProb) 0.0 else 1.0
       }
       p.id -> sigScores
     }

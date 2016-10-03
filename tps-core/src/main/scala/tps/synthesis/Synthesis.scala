@@ -75,6 +75,20 @@ object Synthesis {
 
     // debug and stats printing
     printCollapsedInterpretation()
+    println("Non-expanded graph stats:")
+    println("Unfiltered data:")
+    GraphStats.printMeanNbPhosphosites(networkWithSources, timeSeries,
+      peptideProteinMap)
+    GraphStats.computeProfileStats(timeSeries, firstScores, prevScores,
+      significanceThreshold)
+    println("Filtered, significant data:")
+    GraphStats.printMeanNbPhosphosites(networkWithSources,
+      significantTimeSeries, ppmWithData)
+    GraphStats.computeProfileStats(significantTimeSeries, firstScores,
+      prevScores, significanceThreshold)
+    println("Ratio of significant profiles: " +
+      (significantTimeSeries.profiles.size.toDouble / timeSeries.profiles.size))
+
     println("Expanded graph stats:")
     GraphStats.computeGraphStats(expandedNetwork)
     GraphStats.computeDataCoverageStats(expandedNetwork, expandedTimeSeries)
