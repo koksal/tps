@@ -11,7 +11,7 @@ import tps.util.{Stopwatch, TimingUtil}
 object ScalabilityAnalysis {
 
   private val MIN_GRAPH_SIZE = 1000
-  private val MAX_GRAPH_SIZE = 100000
+  private val MAX_GRAPH_SIZE = 128000
 
   private val SIGNIFICANCE_THRESHOLD = 0.01
 
@@ -22,7 +22,7 @@ object ScalabilityAnalysis {
     do {
       println(s"Evaluating with size $size")
 
-      TimingUtil.timeReplicates(s"Scalability analysis for $size", 5) {
+      TimingUtil.timeReplicates(s"Scalability analysis for $size", 3) {
         val g = RandomGraphGenerator.generateRandomGraph(size)
         val ppm = RandomTimeSeriesGenerator.generateRandomPeptideProteinMap(g)
         val ts = RandomTimeSeriesGenerator.generateRandomTimeSeries(ppm.keySet)
