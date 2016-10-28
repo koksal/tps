@@ -115,7 +115,7 @@ def Main(argList):
     # Remove the temporary file
     os.remove(tmpFile)
     
-    if options.cyto3:
+    if not options.cyto28:
         # Write a Cytoscape attribute table file for the forest node frequency
         with open(options.outfile + "_nodeAnnotation.txt", "w") as f:
             f.write("Protein\tNodeFreq\tPrize\n")
@@ -229,7 +229,7 @@ def CreateParser():
     parser.add_option("--prizefile", type="string", dest="prizefile", help="The path and filename prefix of the prize file (optional).  Assumes the same prize file was used for all prizes.", default=None)
     parser.add_option("--outfile", type="string", dest="outfile", help="The path and filename prefix of the output.  Does not include an extension.", default=None)
     parser.add_option("--hubnode", type="string", dest="hubnode", help="The name of a hub node in the network (optional).  The degree of this node will be reported.", default=None)    
-    parser.add_option("--cyto3", action="store_true", dest="cyto3", help="This flag will generate node and edge frequency annotations files in the Cytoscape 3 table format instead of the default Cytoscape 2.8 style.", default=False)
+    parser.add_option("--cyto28", action="store_true", dest="cyto28", help="This flag will generate node and edge frequency annotation files in the Cytoscape 2.8 format instead of the default Cytoscape 3 style.", default=False)
     return parser
 
 
