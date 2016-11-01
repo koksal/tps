@@ -22,8 +22,9 @@ Request_disk = 1GB
 
 # Copy environment variables set in the submission wrapper script to
 # the execute node's environment
+Getenv = True
 # Also copy the Cluster and Process and the machine that runs the job
-Environment = "prizetype=$ENV(prizetype) conf=$ENV(conf) beta=$ENV(beta) mu=$ENV(mu) omega=$ENV(omega) seed=$ENV(seed) prizepath=$ENV(prizepath) edgefile=$ENV(edgefile) sources=$ENV(sources) outpath=$ENV(outpath) oipath=$ENV(oipath) msgsteinerpath=$ENV(msgsteinerpath) cluster=$(Cluster) process=$(Process) runningon=$$(Name)"
+Environment = "cluster=$(Cluster) process=$(Process) runningon=$$(Name)"
 
 Queue
 #END

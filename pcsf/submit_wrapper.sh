@@ -25,7 +25,7 @@ w=0.1
 ## phosphorylation at the previous and first time points
 prizes=egfr-prizes
 # The path to the prize file above
-export prizepath=../data/pcsf/
+export prizepath=../data/pcsf
 # The PPI network, including the path
 ## This example uses a combination of PhosphoSitePlus and iRefIndex interactions
 ## with UniProt entry name identifiers
@@ -44,6 +44,7 @@ g=1e-3
 r=0.01
 
 # Create the configuration file, removing an older copy of the file if it exists
+mkdir -p conf
 filename=conf/conf_w${w}_b${b}_D${D}_m${m}_r${r}_g${g}.txt
 rm -f $filename
 touch $filename
