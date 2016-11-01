@@ -87,7 +87,8 @@ algorithm can produce such a subnetwork. To generate more general subnetworks
 instead of tree-structured graphs, run Omics Integrator with the option to add random
 noise to edge weights and merge the graphs output by each randomized run.  Omics Integrator
 writes the network in a three column tab-separated format.  The second column, the
-interaction type, must be removed before providing the file to TPS.
+interaction type, must be removed before providing the file to TPS.  The scripts in
+the `pcsf` subdirectory demonstrate this process.
 - `--timeseries <file>`: TPS expects a single intensity for each peptide at each time point,
 which can be calculated by taking the median intensity over all mass spectrometry replicates.
 TPS allows missing data, which should be denoted by a non-numeric value such as **N/A**

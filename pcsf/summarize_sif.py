@@ -47,6 +47,9 @@ def Main(argList):
         forestEdges.append(set(map(SortEdge, curForest.edges())))
 
     print "%d forests loaded" % len(names)
+    
+    if len(names) == 0:
+        raise RuntimeError("Must provide 1 or more forests as input")
 
     # Store the Steiner nodes, which are the forest nodes that are not prizes
     steinerNodes = []
@@ -114,7 +117,17 @@ def Main(argList):
         csv.writer(afterTransFile, delimiter = '\t').writerows(transposed)
     # Remove the temporary file
     os.remove(tmpFile)
-    
+
+    # Write the union network in the TPS tab-delimited format
+    # Edge directions are not recorded and must be specified in
+    # the TPS partial model (prior knowledge) file
+    edgeFreqDict = SetFrequency(forestEdges)
+    with open(options.outfile + "_union.tsv", "w") as unionFile:
+        for (edge, freq) in edgeFreqDict.iteritems():
+            unionFile.write("%s\t%s\n" % (edge[0], edge[1]))
+
+    # Write the node and edge annotation files and union network in the
+    # Cytoscape format
     if not options.cyto28:
         # Write a Cytoscape attribute table file for the forest node frequency
         with open(options.outfile + "_nodeAnnotation.txt", "w") as f:
@@ -127,9 +140,9 @@ def Main(argList):
         with open(options.outfile + "_edgeAnnotation.txt", "w") as edaFile:
             edaFile.write("Interaction\tEdgeFreq\n")
             with open(options.outfile + "_union.sif", "w") as sifFile:
-                for (edge, freq) in SetFrequency(forestEdges).iteritems():
+                for (edge, freq) in edgeFreqDict.iteritems():
                     edaFile.write("%s (pp) %s\t%f\n" % (edge[0], edge[1], freq))
-                    sifFile.write("%s pp %s\n" % (edge[0], edge[1]))      
+                    sifFile.write("%s pp %s\n" % (edge[0], edge[1]))
     else:
         # Write a Cytoscape .noa file for the forest node frequency
         with open(options.outfile + "_nodeFreq.noa", "w") as f:
@@ -142,7 +155,7 @@ def Main(argList):
         with open(options.outfile + "_edgeFreq.eda", "w") as edaFile:
             with open(options.outfile + "_union.sif", "w") as sifFile:
                 edaFile.write("EdgeFrequency\n")
-                for (edge, freq) in SetFrequency(forestEdges).iteritems():
+                for (edge, freq) in edgeFreqDict.iteritems():
                     edaFile.write("%s (pp) %s = %f\n" % (edge[0], edge[1], freq))
                     sifFile.write("%s pp %s\n" % (edge[0], edge[1]))
 
