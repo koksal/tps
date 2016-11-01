@@ -13,6 +13,7 @@ The PCSF-TPS pipeline initially supports only Linux.
 ## Running on example data
 To run PCSF and generate an input network for TPS using the EGF
 response example dataset:
+
 1. Install Omics Integrator and msgsteiner.
 2. Edit the `oipath` and `msgsteinerpath` variables in `submit_wrapper.sh`
  with the paths where Omics Integrator and msgsteiner were installed.
@@ -27,6 +28,7 @@ response example dataset:
 ## Running on new data
 To run PCSF with new data follow the same steps for running PCSF on the example
 data with the following additional steps:
+
 1. Edit the `prizetype`, `prizepath`, `edgefile`, or `sources` variables in
  `submit_wrapper.sh` to use a different protein prize file, protein-protein
  interaction network, or source node file.
@@ -40,6 +42,7 @@ data with the following additional steps:
 ## Additional options
 Other elements in the `submit_wrapper.sh` can be modified if needed, but
 can generally be left at their default values.
+
 - You can change the number of forests in the family of Steiner forests
  (default 100, though 1000 or more can be preferable when running in parallel
  on a cluster).
