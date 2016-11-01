@@ -20,32 +20,32 @@ response example dataset:
  Optionally edit the `condor_submit submit_PCSF.sub` line if you are not using
  the HTCondor queueing system.
 3. Run `submit_wrapper.sh` to generate a family of Steiner forests and a script
- that summarizes them by generating the union graph (default script name
- `summarize_forests.sh`).
+ that summarizes them by taking the union of all forests (default
+ script name `summarize_forests.sh`).
 4. Run `summarize_forests.sh` to generate the tab-separated union graph for TPS.
 5. Run TPS (not yet part of the pipeline).
 
 ## Running on new data
 To run PCSF with new data follow the same steps for running PCSF on the example
-data with the following additional steps:
+data with these additional steps:
 
 1. Edit the `prizetype`, `prizepath`, `edgefile`, or `sources` variables in
  `submit_wrapper.sh` to use a different protein prize file, protein-protein
  interaction network, or source node file.
 2. Edit the `b`, `m`, and `w` variables in `submit_wrapper.sh` to set beta, mu,
- and omega to the optimal PCSF parameters.  The parameter sweep is not
+ and omega to the optimal PCSF parameters.  The PCSF parameter sweep is not
  directly supported by this pipeline.
 3. Optional edit the `outpath` variable in `submit_wrapper.sh` to store
  the results in a different directory or the `sumscript` variable to
  generate a different summarization script.
 
 ## Additional options
-Other elements in the `submit_wrapper.sh` can be modified if needed, but
+Other elements in the `submit_wrapper.sh` can be modified if needed but
 can generally be left at their default values.
 
 - You can change the number of forests in the family of Steiner forests
- (default 100, though 1000 or more can be preferable when running in parallel
- on a cluster).
+ (the default is 100, though 1000 or more can be preferable when running in
+ parallel on a cluster).
 - You can edit the msgsteiner parameters `D` and `g` (see [Omics Integrator]
  for details).
 - You can edit the `r` parameter to increase the edge noise, which will
