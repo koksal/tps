@@ -1,4 +1,4 @@
-  [Omics Integrator]: http://fraenkel.mit.edu/omicsintegrator
+  [Omics Integrator]: https://github.com/fraenkel-lab/OmicsIntegrator
 
 # PCSF-TPS pipeline
 This directory is a work-in-progress that will contain scripts to run the

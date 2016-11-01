@@ -8,9 +8,9 @@ export outpath=./results
 mkdir -p $outpath
 
 # Set the code paths for the Omics Integrator and msgsteiner dependencies
-# This directory contains scripts/forest.py
+## This is the directory that contains scripts/forest.py
 export oipath=.
-# This is the path to the msgsteiner executable, including the executable name
+## This is the path to the msgsteiner executable, including the executable name
 export msgsteinerpath=.
 
 # Parameters set during the parameter sweep
@@ -19,16 +19,21 @@ m=0.008
 w=0.1
 
 # Prize filename prefix (assume a .txt extension follows, e.g. firstprev.txt)
-# This example refers to a prize file derived from comparisons of phosphorylation
-# at some time t with the previous and first time points
-prizes=firstprev
+# It will be used to create an output prefix for the Steiner forest networks
+## This example uses the prizes derived from the statistical significance of each
+## protein's phosphorlyation intensity after EGF stimulation compared to its
+## phosphorylation at the previous and first time points
+prizes=egfr-prizes
 # The path to the prize file above
-export prizepath=.
+export prizepath=../data/pcsf/
 # The PPI network, including the path
-export edgefile=edges.txt
+## This example uses a combination of PhosphoSitePlus and iRefIndex interactions
+## with UniProt entry name identifiers
+export edgefile=../data/networks/phosphosite-irefindex13.0-uniprot.txt
 # A file listing the protein names that should be treated as source nodes,
 # including the path
-export sources=sources.txt
+## This example uses EGF as the source node for EGF stimulation response
+export sources=../data/pcsf/egfr-sources.txt
 
 # The following three parameters can typically be left at these default values
 # Depth from root of tree
