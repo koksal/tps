@@ -23,7 +23,7 @@ w=0.1
 ## This example uses the prizes derived from the statistical significance of each
 ## protein's phosphorlyation intensity after EGF stimulation compared to its
 ## phosphorylation at the previous and first time points
-prizes=egfr-prizes
+export prizetype=egfr-prizes
 # The path to the prize file above
 export prizepath=../data/pcsf
 # The PPI network, including the path
@@ -60,7 +60,6 @@ export conf=$filename
 export beta=$b
 export mu=$m
 export omega=$w
-export prizetype=$prizes
 
 # Use different seeds for each run, which will control the random edge noise
 # Create a family of 100 forests
@@ -75,3 +74,21 @@ do
 	# run locally.
 	condor_submit submit_PCSF.sub
 done
+
+# Generate a wrapper script to summarize the family of forests
+# This must be run after all PCSF runs terminate
+# HTCondor can manage these dependencies with the Directed Acyclic Graph Manager
+# but this strategy generalizes to other setups
+# Set the name of the summarization script, which overwrites an existing
+# file with the same name
+# The script assumes that the summarization Python code resides in the same
+# directory
+sumscript=summarize_forests.sh
+# A filename pattern used to collect all of the forest output files
+pattern=${prizetype}_beta${beta}_mu${mu}_omega${omega}
+rm -f $sumscript
+touch $sumscript
+printf "#!/bin/bash\n" >> $sumscript
+printf "#Summarize a family of Steiner forests\n" >> $sumscript
+printf "python summarize_sif.py --indir ${outpath} --pattern ${pattern}*optimalForest.sif --prizefile ${prizepath}/${prizetype}.txt --outfile ${outpath}/${pattern}_summary\n" >> $sumscript
+chmod u+x $sumscript
