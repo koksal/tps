@@ -153,8 +153,10 @@ forthcoming manuscript. Please refrain from publishing analyses of this
 dataset until the manuscript appears.
 
 The example network was produced by [Omics Integrator] run on a network
-of [iRefIndex] and [PhosphoSitePlus] interactions.
-
+of [iRefIndex] and [PhosphoSitePlus] interactions.  Please acknowledge
+and reference PhosphoSitePlus if you use `data/resources/kinase-substrate-interactions.sif`
+and both PhosphoSitePlus and iRefIndex if you use `data/networks/phosphosite-irefindex13.0-uniprot.txt`
+or `data/networks/input-network.tsv`.
 
 ## Authors
 
