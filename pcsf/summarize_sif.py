@@ -113,8 +113,8 @@ def Main(argList):
     # The reader iterator iterates over rows and izip is used to create new tuples
     # from the ith element in each row
     with open(tmpFile, "rb") as beforeTransFile, open(options.outfile + "_size.txt", "wb") as afterTransFile:
-        transposed = itertools.izip(*csv.reader(beforeTransFile, delimiter = '\t'))
-        csv.writer(afterTransFile, delimiter = '\t').writerows(transposed)
+        transposed = itertools.izip(*csv.reader(beforeTransFile, delimiter = "\t"))
+        csv.writer(afterTransFile, delimiter = "\t").writerows(transposed)
     # Remove the temporary file
     os.remove(tmpFile)
 
