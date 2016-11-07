@@ -96,13 +96,14 @@ or an empty string. This file must contain a header row, which specifies the tim
 labels.
 - `--firstscores <file>`: Significance scores can be naively computed with t-tests
 comparing the phosphorylation intensity at each time point and the first time point.
-An alternative option is to account for the comparisons of multiple pairs of time
+A preferable option is to account for the comparisons of multiple pairs of time
 points using [Tukey's Honest Significant Difference test], which is implemented as [TukeyHSD]
 in R. This test compares all pairs of time points, from which the comparisons to the
 first time point can be extracted. This file should not contain a header row, and if a
 header row is provided it should be commented out with a leading **#** character. If
 there are *t* time points in the `--timeseries <file>`, this file should contain
-*t* - 1 significance score columns.
+*t* - 1 significance score columns.  Missing values and **N/A** are not allowed and
+should be replaced by placeholder scores of **1.0**.
 - `--prevscores <file>`: Significance scores can be computed in the same manner as the
 `--firstscores <file>` except the scores should be based on comparisons of the current
 time point and the preceding time point. The file format is the same as the

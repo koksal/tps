@@ -6,15 +6,19 @@ Prize-Collecting Steiner Forest (PCSF) and Temporal Pathway Synthesizer (TPS)
 algorithms back-to-back.
 
 ## Requirements
-The PCSF-TPS pipeline initially supports only Linux.
+The PCSF-TPS pipeline initially supports only Linux and Mac OS X.
 * [Omics Integrator]
 * msgsteiner (see Omics Integrator for installation instructions)
+* pandas Python package (optional)
+
+The pandas package is only required to generate PCSF prizes from the TPS
+input files with `generate_prizes.sh`.
 
 ## Running on example data
 To run PCSF and generate an input network for TPS using the EGF
 response example dataset:
 
-1. Install Omics Integrator and msgsteiner.
+1. Install Omics Integrator, msgsteiner, and optionally pandas.
 2. Edit the `oipath` and `msgsteinerpath` variables in `submit_wrapper.sh`
  with the paths where Omics Integrator and msgsteiner were installed.
  Optionally edit the `condor_submit submit_PCSF.sub` line if you are not using
