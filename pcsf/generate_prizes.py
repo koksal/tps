@@ -2,7 +2,7 @@ import sys
 import pandas as pd
 import numpy as np
 from collections import defaultdict
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 __author__ = "Anthony Gitter"
 
@@ -11,7 +11,7 @@ def Main(arg_list):
     provided by the Python code calling this function
     """
     parser = CreateParser()
-    (options, args) = parser.parse_args(arg_list)
+    options = parser.parse_args(arg_list)
 
     assert options.firstfile is not None, "Must specify the firstfile"
     assert options.prevfile is not None, "Must specify the prevfile"
@@ -114,16 +114,16 @@ def CalcPrize(row):
 
 def CreateParser():
     """Setup the option parser"""
-    parser = OptionParser()
-    parser.add_option("--firstfile", type="string", dest="firstfile", help="The path and filename of the TPS firstscores file", default=None)
-    parser.add_option("--prevfile", type="string", dest="prevfile", help="The path and filename of the TPS prevscores file", default=None)
-    parser.add_option("--mapfile", type="string", dest="mapfile", help="The path and filename of the TPS peptidemap file", default=None)
-    parser.add_option("--outfile", type="string", dest="outfile", help="The path and filename of the output prize file.", default=None)
+    parser = ArgumentParser(description="Compute peptide prizes from the TPS first and previous scores files and map them to protein prizes.  See the TPS readme for the expected file formats.")
+    parser.add_argument("--firstfile", type=str, dest="firstfile", help="The path and filename of the TPS firstscores file", default=None, required=True)
+    parser.add_argument("--prevfile", type=str, dest="prevfile", help="The path and filename of the TPS prevscores file", default=None, required=True)
+    parser.add_argument("--mapfile", type=str, dest="mapfile", help="The path and filename of the TPS peptidemap file", default=None, required=True)
+    parser.add_argument("--outfile", type=str, dest="outfile", help="The path and filename of the output prize file.", default=None, required=True)
     return parser
 
 
 if __name__ == "__main__":
     """Use the command line arguments to setup the options
-    (the same as the default OptionParser behavior)
+    (the same as the default ArgumentParser behavior)
     """
     Main(sys.argv[1:])

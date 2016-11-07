@@ -1,6 +1,6 @@
 import os, sys, glob, csv, itertools
-from optparse import OptionParser
 import networkx as nx
+from argparse import ArgumentParser
 
 __author__ = "Anthony Gitter"
 
@@ -9,7 +9,7 @@ def Main(argList):
     provided by the Python code calling this function
     """
     parser = CreateParser()
-    (options, args) = parser.parse_args(argList)
+    options = parser.parse_args(argList)
 
     if options.indir is None or options.outfile is None:
         raise RuntimeError("Must specify --indir and --outfile")
@@ -235,19 +235,19 @@ def LoadPrizes(prizeFile):
 
 def CreateParser():
     """Setup the option parser"""
-    parser = OptionParser()
-    parser.add_option("--indir", type="string", dest="indir", help="The path to the directory that contains sif files.", default=None)
-    parser.add_option("--pattern", type="string", dest="pattern", help="The filename pattern of the sif files in indir.  Not needed if a siflist is provided instead", default=None)
-    parser.add_option("--siflist", type="string", dest="siflist", help="A list of sif files in indir delimited by '|'.  Not used if a pattern is provided.", default=None)
-    parser.add_option("--prizefile", type="string", dest="prizefile", help="The path and filename prefix of the prize file (optional).  Assumes the same prize file was used for all forests.", default=None)
-    parser.add_option("--outfile", type="string", dest="outfile", help="The path and filename prefix of the output.  Does not include an extension.", default=None)
-    parser.add_option("--hubnode", type="string", dest="hubnode", help="The name of a hub node in the network (optional).  The degree of this node will be reported.", default=None)    
-    parser.add_option("--cyto28", action="store_true", dest="cyto28", help="This flag will generate node and edge frequency annotation files in the Cytoscape 2.8 format instead of the default Cytoscape 3 style.", default=False)
+    parser = ArgumentParser(description="Summarize a collection of Steiner forests")
+    parser.add_argument("--indir", type=str, dest="indir", help="The path to the directory that contains sif files.", default=None, required=True)
+    parser.add_argument("--pattern", type=str, dest="pattern", help="The filename pattern of the sif files in indir.  Not needed if a siflist is provided instead", default=None)
+    parser.add_argument("--siflist", type=str, dest="siflist", help="A list of sif files in indir delimited by '|'.  Not used if a pattern is provided.", default=None)
+    parser.add_argument("--prizefile", type=str, dest="prizefile", help="The path and filename prefix of the prize file (optional).  Assumes the same prize file was used for all forests.", default=None)
+    parser.add_argument("--outfile", type=str, dest="outfile", help="The path and filename prefix of the output.  Does not include an extension.", default=None, required=True)
+    parser.add_argument("--hubnode", type=str, dest="hubnode", help="The name of a hub node in the network (optional).  The degree of this node will be reported.", default=None)    
+    parser.add_argument("--cyto28", action="store_true", dest="cyto28", help="This flag will generate node and edge frequency annotation files in the Cytoscape 2.8 format instead of the default Cytoscape 3 style.", default=False)
     return parser
 
 
 if __name__ == "__main__":
     """Use the command line arguments to setup the options
-    (the same as the default OptionParser behavior)
+    (the same as the default ArgumentParser behavior)
     """
     Main(sys.argv[1:])
