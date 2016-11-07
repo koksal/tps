@@ -78,11 +78,11 @@ def LoadPeptideMap(mapfile):
     print "Loaded {} unique peptides that map to {} unique proteins".format(len(pep_prot_map), len(unique_prots))
     return pep_prot_map
 
-# TODO: verify there are no N/A or missing values
 def LoadScores(firstfile, prevfile):
     """Load the first and previous scores.  For each peptide, compute a prize
     that is -log10(min p-value across all time points).  Assumes the scores
-    are p-values or equivalaent scores in (0, 1].
+    are p-values or equivalaent scores in (0, 1].  Do not allow null or missing
+    scores.
 
     Return: data frame with scores and prize for each peptide
     """
@@ -91,7 +91,8 @@ def LoadScores(firstfile, prevfile):
     first_shape = first_df.shape
     assert first_shape == prev_df.shape, "First and previous score files must have the same number of peptides and time points"
 
-    # TODO: Check for missing values in both files here
+    assert not first_df.isnull().values.any(), "First scores file contains N/A values.  Replace with 1.0"
+    assert not prev_df.isnull().values.any(), "Previous scores file contains N/A values.  Replace with 1.0"
 
     print "Loaded {} peptides and {} scores in the first and previous score files".format(first_shape[0], first_shape[1])
 
