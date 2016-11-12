@@ -51,7 +51,7 @@ def Main(arg_list):
 
 def LoadPeptideMap(mapfile):
     """Parse the peptide-to-protein map file.  The peptide is in the first column
-    and the protein or proteins are in the second.  The file contains no header row.
+    and the protein or proteins are in the second.  The file contains a header row.
     A peptide may map to a set of pipe-delimited proteins.  A peptide may also
     appear multiple times, and the map will include all proteins mapped to that
     peptide in any line.
@@ -62,6 +62,8 @@ def LoadPeptideMap(mapfile):
     unique_prots = set()
 
     with open(mapfile) as map_f:
+        # Skip the header row
+        map_f.readline()
         for line in map_f:
             parts = line.strip().split("\t")
             assert len(parts) == 2, "Expected tab-delimited peptide and protein (or pipe-delimited proteins) on each line"
