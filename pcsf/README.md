@@ -61,3 +61,64 @@ can generally be left at their default values.
  for details).
 - You can edit the `r` parameter to increase the edge noise, which will
  lead to more diverse forests in the family of Steiner forest solutions.
+
+## Usage messages
+```
+usage: permute_proteins.py [-h] --mapfile MAPFILE [--copies COPIES]
+                           [--seed SEED]
+
+Shuffle the protein(s) that map to each peptide. Creates the specified number
+of peptide-protein map files in the same directory as the input file. See the
+TPS readme for the expected file format.
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --mapfile MAPFILE  The path and filename of the original TPS peptidemap
+                     file, which must contain a file extension.
+  --copies COPIES    The number of shuffled copies to genereate (default 10).
+  --seed SEED        A seed for the pseudo-random number generator for
+                     reproducibility.
+```
+
+```
+usage: generate_prizes.py [-h] --firstfile FIRSTFILE --prevfile PREVFILE
+                          --mapfile MAPFILE --outfile OUTFILE
+
+Compute peptide prizes from the TPS first and previous scores files and map
+them to protein prizes. See the TPS readme for the expected file formats.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --firstfile FIRSTFILE
+                        The path and filename of the TPS firstscores file
+  --prevfile PREVFILE   The path and filename of the TPS prevscores file
+  --mapfile MAPFILE     The path and filename of the TPS peptidemap file
+  --outfile OUTFILE     The path and filename of the output prize file.
+```
+
+```
+usage: summarize_sif.py [-h] --indir INDIR [--pattern PATTERN]
+                        [--siflist SIFLIST] [--prizefile PRIZEFILE] --outfile
+                        OUTFILE [--hubnode HUBNODE] [--cyto28]
+
+Summarize a collection of Steiner forests
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --indir INDIR         The path to the directory that contains sif files.
+  --pattern PATTERN     The filename pattern of the sif files in indir. Not
+                        needed if a siflist is provided instead
+  --siflist SIFLIST     A list of sif files in indir delimited by '|'. Not
+                        used if a pattern is provided.
+  --prizefile PRIZEFILE
+                        The path and filename prefix of the prize file
+                        (optional). Assumes the same prize file was used for
+                        all forests.
+  --outfile OUTFILE     The path and filename prefix of the output. Does not
+                        include an extension.
+  --hubnode HUBNODE     The name of a hub node in the network (optional). The
+                        degree of this node will be reported.
+  --cyto28              This flag will generate node and edge frequency
+                        annotation files in the Cytoscape 2.8 format instead
+                        of the default Cytoscape 3 style.
+```
