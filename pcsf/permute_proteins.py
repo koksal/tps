@@ -23,6 +23,9 @@ def Main(arg_list):
 
     # Prepare the output file names
     filename, extension = os.path.splitext(options.mapfile)
+    if options.outdir is not None:
+        path, file_prefix = os.path.split(filename)
+        filename = os.path.join(os.path.normpath(options.outdir), file_prefix)
     print "Writing shuffled map files of the form {}-shuffled<i>{}".format(filename, extension)
 
     # Shuffle and write the random protein order
@@ -70,8 +73,9 @@ def LoadPeptideMap(mapfile):
 
 def CreateParser():
     """Setup the option parser"""
-    parser = ArgumentParser(description="Shuffle the protein(s) that map to each peptide.  Creates the specified number of peptide-protein map files in the same directory as the input file.  See the TPS readme for the expected file format.")
+    parser = ArgumentParser(description="Shuffle the protein(s) that map to each peptide.  Creates the specified number of peptide-protein map files.  See the TPS readme for the expected file format.")
     parser.add_argument("--mapfile", type=str, dest="mapfile", help="The path and filename of the original TPS peptidemap file, which must contain a file extension.", default=None, required=True)
+    parser.add_argument("--outdir", type=str, dest="outdir", help="The path of the output directory for the permuted map files (default is the directory of the mapfile).", default=None, required=False)
     parser.add_argument("--copies", type=int, dest="copies", help="The number of shuffled copies to genereate (default 10).", default=10, required=False)
     parser.add_argument("--seed", type=int, dest="seed", help="A seed for the pseudo-random number generator for reproducibility.", default=None, required=False)
     return parser

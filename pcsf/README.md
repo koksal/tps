@@ -64,17 +64,18 @@ can generally be left at their default values.
 
 ## Usage messages
 ```
-usage: permute_proteins.py [-h] --mapfile MAPFILE [--copies COPIES]
-                           [--seed SEED]
+usage: permute_proteins.py [-h] --mapfile MAPFILE [--outdir OUTDIR]
+                           [--copies COPIES] [--seed SEED]
 
 Shuffle the protein(s) that map to each peptide. Creates the specified number
-of peptide-protein map files in the same directory as the input file. See the
-TPS readme for the expected file format.
+of peptide-protein map files. See the TPS readme for the expected file format.
 
 optional arguments:
   -h, --help         show this help message and exit
   --mapfile MAPFILE  The path and filename of the original TPS peptidemap
                      file, which must contain a file extension.
+  --outdir OUTDIR    The path of the output directory for the permuted map
+                     files (default is the directory of the mapfile).
   --copies COPIES    The number of shuffled copies to genereate (default 10).
   --seed SEED        A seed for the pseudo-random number generator for
                      reproducibility.
