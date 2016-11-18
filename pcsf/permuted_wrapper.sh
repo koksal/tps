@@ -13,8 +13,19 @@ mkdir -p $outpath
 # Set the TPS input files, which will be passed to TPS and used to
 # generate prizes for PCSF
 export tpsfirstscores=../data/timeseries/p-values-first.tsv
-export tpsprevscores=../data/timeseries/p-values-prev.tsv 
-export peptidemap=../data/timeseries/peptide-mapping.tsv
+export tpsprevscores=../data/timeseries/p-values-prev.tsv
+# The other TPS inputs not needed to generate prizes for PCSF
+# The source nodes are set below
+export tpstimeseries=../data/timeseries/median-time-series.tsv
+export tpspartialmodel=../data/resources/kinase-substrate-interactions.sif
+export tpsthreshold=0.01
+
+# The peptide map path and filename is split into components to make it easier
+# to automatically build the path and filenames of the shuffled peptide maps
+export peptidemappath=../data/timeseries
+export peptidemapprefix=peptide-mapping
+export peptidemapext=.tsv
+peptidemap=${peptidemappath}/${peptidemapprefix}${peptidemapext}
 
 # Set the code paths for the Omics Integrator and msgsteiner dependencies
 ## This is the directory that contains scripts/forest.py
@@ -38,7 +49,7 @@ export prizename=egfr-prizes
 ## with UniProt entry name identifiers
 export edgefile=../data/networks/phosphosite-irefindex13.0-uniprot.txt
 # A file listing the protein names that should be treated as source nodes,
-# including the path
+# including the path.  These will be used for PCSF and TPS.
 ## This example uses EGF as the source node for EGF stimulation response
 export sources=../data/pcsf/egfr-sources.txt
 
@@ -52,8 +63,8 @@ r=0.01
 
 # Create the configuration file, removing an older copy of the file if it exists
 # Only one copy is needed for all of the PCSF runs on permuted prizes
-mkdir -p conf
-filename=conf/conf_w${w}_b${b}_D${D}_m${m}_r${r}_g${g}.txt
+mkdir -p ${outpath}/conf
+filename=${outpath}/conf/conf_w${w}_b${b}_D${D}_m${m}_r${r}_g${g}.txt
 rm -f $filename
 touch $filename
 printf "w = ${w}\n" >> $filename
@@ -68,10 +79,12 @@ export conf=$filename
 export beta=$b
 export mu=$m
 export omega=$w
+# The number of forests to generate and merge into the final TPS seed network
+export forests=10
 
 # Set the seed for permuting prizes and the number of permuted copies
 permuteseed=2016
-permutecopies=2
+export permutecopies=10
 
 # Permute the peptide-protein mapping
 python permute_proteins.py --mapfile=$peptidemap \

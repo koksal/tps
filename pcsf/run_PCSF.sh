@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run PCSF using the paramters set in the wrapper and HTCondor submit file
+# Run PCSF using the parameters set in the wrapper file
 
 echo _CONDOR_JOB_IWD $_CONDOR_JOB_IWD
 echo Cluster $cluster
