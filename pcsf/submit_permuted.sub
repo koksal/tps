@@ -6,7 +6,7 @@
 # 
 ###################################################################
 
-Executable = run_permuted_pipeline.sh
+Executable = pcsf/run_permuted_pipeline.sh
 Universe = vanilla
 
 # Disable notifications for now

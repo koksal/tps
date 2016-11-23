@@ -7,22 +7,22 @@
 # environment variables to pass other arguments to forest.py
 
 # Set the output directory for PCSF, TPS, and HTCondor output
-export outpath=./results
+export outpath=results
 mkdir -p $outpath
 
 # Set the TPS input files, which will be passed to TPS and used to
 # generate prizes for PCSF
-export tpsfirstscores=../data/timeseries/p-values-first.tsv
-export tpsprevscores=../data/timeseries/p-values-prev.tsv
+export tpsfirstscores=data/timeseries/p-values-first.tsv
+export tpsprevscores=data/timeseries/p-values-prev.tsv
 # The other TPS inputs not needed to generate prizes for PCSF
 # The source nodes are set below
-export tpstimeseries=../data/timeseries/median-time-series.tsv
-export tpspartialmodel=../data/resources/kinase-substrate-interactions.sif
+export tpstimeseries=data/timeseries/median-time-series.tsv
+export tpspartialmodel=data/resources/kinase-substrate-interactions.sif
 export tpsthreshold=0.01
 
 # The peptide map path and filename is split into components to make it easier
 # to automatically build the path and filenames of the shuffled peptide maps
-export peptidemappath=../data/timeseries
+export peptidemappath=data/timeseries
 export peptidemapprefix=peptide-mapping
 export peptidemapext=.tsv
 peptidemap=${peptidemappath}/${peptidemapprefix}${peptidemapext}
@@ -47,11 +47,11 @@ export prizename=egfr-prizes
 # The PPI network, including the path
 ## This example uses a combination of PhosphoSitePlus and iRefIndex interactions
 ## with UniProt entry name identifiers
-export edgefile=../data/networks/phosphosite-irefindex13.0-uniprot.txt
+export edgefile=data/networks/phosphosite-irefindex13.0-uniprot.txt
 # A file listing the protein names that should be treated as source nodes,
 # including the path.  These will be used for PCSF and TPS.
 ## This example uses EGF as the source node for EGF stimulation response
-export sources=../data/pcsf/egfr-sources.txt
+export sources=data/pcsf/egfr-sources.txt
 
 # The following three parameters can typically be left at these default values
 # Depth from root of tree
@@ -87,7 +87,7 @@ permuteseed=2016
 export permutecopies=10
 
 # Permute the peptide-protein mapping
-python permute_proteins.py --mapfile=$peptidemap \
+python pcsf/permute_proteins.py --mapfile=$peptidemap \
 	--outdir=$outpath \
 	--copies=$permutecopies \
 	--seed=$permuteseed
@@ -96,4 +96,4 @@ python permute_proteins.py --mapfile=$peptidemap \
 # Could replace this with a submission to a different queueing system
 # (e.g. qsub instead of condor_submit) but running the pipelines locally
 # is not recommended due to the long runtime of executing them serially
-condor_submit submit_permuted.sub
+condor_submit pcsf/submit_permuted.sub

@@ -19,7 +19,7 @@ mkdir -p $subdirpath
 # Generate PCSF prizes with the permuted peptide-protein map
 prizefile=${subdirpath}/${prizename}-shuffled${index}.txt
 shuffledmap=${outpath}/${peptidemapprefix}-shuffled${index}${peptidemapext}
-CMD="python generate_prizes.py --firstfile=$tpsfirstscores \
+CMD="python pcsf/generate_prizes.py --firstfile=$tpsfirstscores \
 	--prevfile=$tpsprevscores \
 	--mapfile=$shuffledmap \
 	--outfile=$prizefile"
@@ -58,7 +58,7 @@ done
 # The filename pattern is used to collect all of the PCSF output files
 pattern=${prizename}_beta${beta}_mu${mu}_omega${omega}
 
-CMD="python summarize_sif.py --indir ${subdirpath} \
+CMD="python pcsf/summarize_sif.py --indir ${subdirpath} \
 	--pattern ${pattern}*optimalForest.sif \
 	--prizefile $prizefile \
 	--outfile ${subdirpath}/${pattern}_summary"
@@ -77,22 +77,9 @@ done < $sources
 ## Strip undesired whitespace and convert to a single space
 sourcearg=`echo ${sourcearg} | tr -s [:space:] " "`
 
-## Workaround to accept file paths that are relative to the pcsf
-## subdirectory and run TPS from the main tps directory
-network=`readlink -e ${subdirpath}/${pattern}_summary_union.tsv`
-tpstimeseries=`readlink -e $tpstimeseries`
-tpsfirstscores=`readlink -e $tpsfirstscores`
-tpsprevscores=`readlink -e $tpsprevscores`
-tpspartialmodel=`readlink -e $tpspartialmodel`
-shuffledmap=`readlink -e $shuffledmap`
-oipath=`readlink -e $oipath`
-
 ## Use the shuffled peptide-protein map and the PCSF summary
 ## created above
-### TODO: Modify TPS to allow an output directory
-### Currently the output files from different jobs are overwritten
-cd ..
-CMD="./scripts/run \
+CMD="scripts/run \
 	--network $network \
 	--timeseries $tpstimeseries \
 	--firstscores $tpsfirstscores \
@@ -100,7 +87,9 @@ CMD="./scripts/run \
 	--partialmodel $tpspartialmodel \
 	--peptidemap $shuffledmap \
 	$sourcearg \
-	--threshold $tpsthreshold"
+	--threshold $tpsthreshold \
+	--outfolder $subdirpath\
+	--outlabel tps"
 
 echo
 echo $CMD

@@ -5,7 +5,7 @@
 # 
 ###################################################################
 
-Executable = run_PCSF.sh
+Executable = pcsf/run_PCSF.sh
 Universe = vanilla
 
 # Disable notifications for now
