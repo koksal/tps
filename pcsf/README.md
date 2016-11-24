@@ -3,7 +3,9 @@
 # PCSF-TPS pipeline
 This directory is a work-in-progress that will contain scripts to run the
 Prize-Collecting Steiner Forest (PCSF) and Temporal Pathway Synthesizer (TPS)
-algorithms back-to-back.
+algorithms back-to-back.  All scripts must be run from the main `tps` directory
+not this `pcsf` subdirectory.  For example, call `pcsf/submit_wrapper.sh`
+not `submit_wrapper.sh`.
 
 ## Requirements
 The PCSF-TPS pipeline initially supports only Linux and Mac OS X.
@@ -21,7 +23,7 @@ response example dataset:
 1. Install Omics Integrator, msgsteiner, and optionally pandas.
 2. Optionally run `generate_prizes.sh` to generate prizes for PCSF from the
  TPS score files and peptide-protein map file.  This will overwrite the
- existing prize file `../data/pcsf/egfr-prizes.txt` and is only used to
+ existing prize file `data/pcsf/egfr-prizes.txt` and is only used to
  illustrate the script usage.
 3. Edit the `oipath` and `msgsteinerpath` variables in `submit_wrapper.sh`
  with the paths where Omics Integrator and msgsteiner were installed.
@@ -61,6 +63,11 @@ can generally be left at their default values.
  for details).
 - You can edit the `r` parameter to increase the edge noise, which will
  lead to more diverse forests in the family of Steiner forest solutions.
+
+## Running on permuted data
+The full PCSF-TPS pipeline can be run on randomized protein prizes by
+permuting the peptide-protein map and regenerating the prizes.  Instructions
+are coming soon.
 
 ## Usage messages
 ```
