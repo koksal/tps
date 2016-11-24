@@ -77,6 +77,8 @@ done < $sources
 ## Strip undesired whitespace and convert to a single space
 sourcearg=`echo ${sourcearg} | tr -s [:space:] " "`
 
+network=${subdirpath}/${pattern}_summary_union.tsv
+
 ## Use the shuffled peptide-protein map and the PCSF summary
 ## created above
 CMD="scripts/run \
