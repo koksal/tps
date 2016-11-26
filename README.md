@@ -67,7 +67,7 @@ steps:
 ### Optional arguments
 
 - `--partialModel <file>`: Input partial model file given as a signed directed SIF network. Each line corresponds to a directed interaction, where the relationship type can be **N** (directed, unsigned edge), **A** (directed activation edge), or **I** (directed inhibition edge). Multiple partial model files can be provided.
-- `--peptidemap <file>`: Input file in TSV format that defines a mapping between time series profile identifiers and input network node identifiers. A profile can be mapped to more than one node, in which case the second column is a pipe-separated list of node identifiers.
+- `--peptidemap <file>`: Input file in TSV format that defines a mapping between time series profile identifiers and input network node identifiers. A profile can be mapped to more than one node, in which case the second column is a pipe-separated list of node identifiers. The file begins with a header row.
 - `--outlabel <value>`: Prefix string to be added to all output files.
 - `--outfolder <value>`: Folder in which the output files should be generated. By default, output files are generated in the current directory.
 - `--solver <value>`: Solver to use (`naive`, `bilateral`, or `dataflow`). The default, recommended solver is `dataflow`. Both `naive` and `bilateral` are symbolic solvers and use the Z3 backend. (See the **Solvers** section for notes related to the symbolic solvers.) 
@@ -85,9 +85,9 @@ interaction network that connects the phosphorylated proteins to the source node
 The [Omics Integrator] implementation of the Prize-Collecting Steiner Forest
 algorithm can produce such a subnetwork. To generate more general subnetworks
 instead of tree-structured graphs, run Omics Integrator with the option to add random
-noise to edge weights and merge the graphs output by each randomized run.  Omics Integrator
-writes the network in a three column tab-separated format.  The second column, the
-interaction type, must be removed before providing the file to TPS.  The scripts in
+noise to edge weights and merge the graphs output by each randomized run. Omics Integrator
+writes the network in a three column tab-separated format. The second column, the
+interaction type, must be removed before providing the file to TPS. The scripts in
 the `pcsf` subdirectory demonstrate this process.
 - `--timeseries <file>`: TPS expects a single intensity for each peptide at each time point,
 which can be calculated by taking the median intensity over all mass spectrometry replicates.
@@ -96,13 +96,14 @@ or an empty string. This file must contain a header row, which specifies the tim
 labels.
 - `--firstscores <file>`: Significance scores can be naively computed with t-tests
 comparing the phosphorylation intensity at each time point and the first time point.
-An alternative option is to account for the comparisons of multiple pairs of time
+A preferable option is to account for the comparisons of multiple pairs of time
 points using [Tukey's Honest Significant Difference test], which is implemented as [TukeyHSD]
 in R. This test compares all pairs of time points, from which the comparisons to the
 first time point can be extracted. This file should not contain a header row, and if a
 header row is provided it should be commented out with a leading **#** character. If
 there are *t* time points in the `--timeseries <file>`, this file should contain
-*t* - 1 significance score columns.
+*t* - 1 significance score columns. Missing values and **N/A** are not allowed and
+should be replaced by placeholder scores of **1.0**.
 - `--prevscores <file>`: Significance scores can be computed in the same manner as the
 `--firstscores <file>` except the scores should be based on comparisons of the current
 time point and the preceding time point. The file format is the same as the
@@ -113,8 +114,8 @@ time point and the preceding time point. The file format is the same as the
 ### Summary network
 
 TPS outputs a Simple Interaction Format ([SIF]) file `output.sif` that
-summarizes the valid pathway models.  The SIF file can be imported into
-[Cytoscape] to visualize the network.  Each line has the form:
+summarizes the valid pathway models. The SIF file can be imported into
+[Cytoscape] to visualize the network. Each line has the form:
 ```
 ProteinA <relationship type> ProteinB
 ```
@@ -154,7 +155,7 @@ forthcoming manuscript. Please refrain from publishing analyses of this
 dataset until the manuscript appears.
 
 The example network was produced by [Omics Integrator] run on a network
-of [iRefIndex] and [PhosphoSitePlus] interactions.  Please acknowledge
+of [iRefIndex] and [PhosphoSitePlus] interactions. Please acknowledge
 and reference PhosphoSitePlus if you use `data/resources/kinase-substrate-interactions.sif`
 and both PhosphoSitePlus and iRefIndex if you use `data/networks/phosphosite-irefindex13.0-uniprot.txt`
 or `data/networks/input-network.tsv`.

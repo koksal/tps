@@ -1,11 +1,12 @@
 ###################################################################
 #
-# Submit a PCSF run using the parameters set in the wrapper script.
+# Submit a PCSF-TPS pipeline on permuted prizes using the parameters
+# set in the wrapper script.
 # Assumes a shared file system and does not transfer files.
 # 
 ###################################################################
 
-Executable = pcsf/run_PCSF.sh
+Executable = pcsf/run_permuted_pipeline.sh
 Universe = vanilla
 
 # Disable notifications for now
@@ -26,5 +27,8 @@ Getenv = True
 # Also copy the Cluster and Process and the machine that runs the job
 Environment = "cluster=$(Cluster) process=$(Process) runningon=$$(Name)"
 
-Queue
+# Submit multiple copies of the pipeline, one for each copy of the permuted
+# peptide map.  Each instance of the PCSF-TPS pipeline will run on a different
+# copy of the permuted peptide map.
+Queue $ENV(permutecopies)
 #END
