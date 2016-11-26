@@ -14,7 +14,7 @@ object ArgHandling {
 
   private def parser = {
     new scopt.OptionParser[Options]("tps") {
-      head("tps", "2.0")
+      head("tps", Options.VERSION)
 
       // Options:
 
@@ -97,6 +97,8 @@ object ArgHandling {
           "do not assert monotonicity constraints")
 
       help("help") text("print this help message")
+
+      version("version") text("print the version number")
     }
   }
 }
