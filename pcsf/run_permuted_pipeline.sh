@@ -97,6 +97,11 @@ echo
 echo $CMD
 $CMD
 
+# Track which version of TPS was run
+echo
+echo "TPS version:"
+scripts/run --version
+
 # Track which version of Omics Integrator was run
 echo
 echo "Omics Integrator version:"
