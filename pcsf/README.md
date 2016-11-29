@@ -66,8 +66,24 @@ can generally be left at their default values.
 
 ## Running on permuted data
 The full PCSF-TPS pipeline can be run on randomized protein prizes by
-permuting the peptide-protein map and regenerating the prizes.  Instructions
-are coming soon.
+permuting the peptide-protein map and regenerating the prizes.  The script
+`permuted_wrapper.sh` initiates the entire run, running PCSF and TPS
+on multiple times on different shuffled peptide-protein maps.  To run the
+pipeline:
+
+1. Edit the variables in the script `permuted_wrapper.sh` to set the PCSF input
+ data, TPS input data, and parameters such as the number of random runs to
+ execute and the number of Steiner forests to generate in each run.
+2. Run `permuted_wrapper.sh`, which will generate the random peptide-protein
+ map files and submit `submit_permuted.sub` to the HTCondor queueing system.
+ The rest of the pipeline will run automatically.
+3. `submit_permuted.sub` launches the desired number of jobs, each of which
+ will run `run_permuted_pipeline.sh` with a different shuffled peptide-protein
+ map file.  Each job's HTCondor `Process` variable is used to track which
+ version of the shuffled data to use as input.
+4. `run_permuted_pipeline.sh` will generate prizes for PCSF, run PCSF multiple
+ times to generate a family of forests, summarize the family of forests to
+ produce a single input network for TPS, and run TPS.
 
 ## Usage messages
 ```
