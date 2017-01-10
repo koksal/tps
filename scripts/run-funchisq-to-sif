@@ -1,0 +1,9 @@
+#!/bin/bash
+
+FILE=$1
+P_VAL_THRESHOLD=$2
+MAX_NB_EDGES=$3
+
+sbt \
+  "project tps-core" \
+  "run-main tps.evaluation.funchisq.FunChisq2SIFConverter $FILE $P_VAL_THRESHOLD $MAX_NB_EDGES"
