@@ -1,7 +1,5 @@
 package tps
 
-import tps.util.LogUtils._
-
 object Graphs {
 
   case class Vertex(id: String) extends Serializable {
