@@ -16,8 +16,8 @@ object FunChisqGraphs {
     val mappedPairSeq = g.toSeq flatMap {
       case (edge, (edgeDir, score)) => {
         for {
-          mappedV1 <- mapping(edge.v1)
-          mappedV2 <- mapping(edge.v2)
+          mappedV1 <- mapping(edge.v1.id)
+          mappedV2 <- mapping(edge.v2.id)
         } yield {
           val mappedEdge = Edge(
             Vertex(mappedV1),
