@@ -1,9 +1,10 @@
 #!/bin/bash
 
-FILE=$1
-P_VAL_THRESHOLD=$2
-MAX_NB_EDGES=$3
+NETWORK_FILE=$1
+MAPPING_FILE=$2
+P_VAL_THRESHOLD=$3
+MAX_NB_EDGES=$4
 
 sbt \
   "project tps-core" \
-  "run-main tps.evaluation.funchisq.FunChisq2SIFConverter $FILE $P_VAL_THRESHOLD $MAX_NB_EDGES"
+  "run-main tps.evaluation.funchisq.FunChisq2SIFConverter $NETWORK_FILE $MAPPING_FILE $P_VAL_THRESHOLD $MAX_NB_EDGES"
