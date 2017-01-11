@@ -2,7 +2,8 @@ package tps.evaluation.parsing
 
 import java.io.File
 
-import tps.GraphParsing
+import tps.Graphs.Edge
+import tps.Graphs.Vertex
 import tps.TSVSource
 import tps.evaluation.funchisq.FunChisqGraphs.FunChisqGraph
 import tps.evaluation.funchisq.FunChisqGraphs.FunChisqScore
@@ -14,14 +15,13 @@ object FunChisqParser {
 
     val pairs = data.tuples map {
       case Seq(p1, p2, statString, pValString) => {
-        val edge = GraphParsing.lexicographicEdge(p1, p2)
-        val edgeDir = GraphParsing.lexicographicForwardDirection(p1, p2)
+        val edge = Edge(Vertex(p1), Vertex(p2))
         val statistic = statString.toDouble
         val pValue = pValString.toDouble
-        (edge, (edgeDir, FunChisqScore(statistic, pValue)))
+        (edge, FunChisqScore(statistic, pValue))))
       }
     }
 
-    pairs.toMap
+    pairs
   }
 }

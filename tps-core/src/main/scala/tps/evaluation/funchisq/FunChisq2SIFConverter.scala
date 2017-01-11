@@ -25,16 +25,16 @@ object FunChisq2SIFConverter {
 
     // filter by given p-value threshold
     funChisqGraph = funChisqGraph filter {
-      case (_, (_, score)) => score.pValue <= pValueThreshold
+      case (_, score) => score.pValue <= pValueThreshold
     }
 
     // order by decreasing statistic and limit to first N edges
-    val strongestEdges = funChisqGraph.toSeq.sortBy{
-      case (_, (_, score)) => score.statistic
+    val strongestEdges = funChisqGraph.sortBy{
+      case (_, score) => score.statistic
     }.reverse.take(maxNbEdges)
 
     // print in SIF format
-    println(FunChisqSIFPrinter.print(strongestEdges.toMap))
+    println(FunChisqSIFPrinter.print(strongestEdges))
   }
 
 }

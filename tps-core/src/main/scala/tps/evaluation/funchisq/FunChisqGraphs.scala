@@ -1,20 +1,20 @@
 package tps.evaluation.funchisq
 
 import tps.Graphs.Edge
-import tps.Graphs.EdgeDirection
 import tps.Graphs.Vertex
 
 object FunChisqGraphs {
 
+  // No lexicographic order imposed on edges
+  type FunChisqGraph = Seq[(Edge, FunChisqScore)]
   case class FunChisqScore(statistic: Double, pValue: Double)
-  type FunChisqGraph = Map[Edge, (EdgeDirection, FunChisqScore)]
 
   def mapNodes(
     g: FunChisqGraph, mapping: Map[String, Set[String]]
   ): FunChisqGraph = {
     // flatmap to all protein-level edges
-    val mappedPairSeq = g.toSeq flatMap {
-      case (edge, (edgeDir, score)) => {
+    val mappedPairSeq = g flatMap {
+      case (edge, score) => {
         for {
           mappedV1 <- mapping(edge.v1.id)
           mappedV2 <- mapping(edge.v2.id)
@@ -23,7 +23,7 @@ object FunChisqGraphs {
             Vertex(mappedV1),
             Vertex(mappedV2)
           )
-          (mappedEdge, (edgeDir, score))
+          (mappedEdge, score)
         }
       }
     }
@@ -32,7 +32,7 @@ object FunChisqGraphs {
     val groupedPairs = mappedPairSeq.groupBy(_._1)
     groupedPairs map {
       case (edge, pairSet) => {
-        pairSet.minBy(_._2._2.pValue)
+        pairSet.minBy(_._2.pValue)
       }
     }
   }

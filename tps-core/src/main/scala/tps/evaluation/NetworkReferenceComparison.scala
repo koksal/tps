@@ -112,6 +112,6 @@ object NetworkReferenceComparison {
       val ev = evidence(e)
       List(e.v1, e.v2, ev).mkString("\t")
     }
-    // util.FileUtils.writeToFile(conflictFile, conflictRows.mkString("\n"))
+    util.FileUtils.writeToFile(conflictFile, conflictRows.mkString("\n"))
   }
 }
