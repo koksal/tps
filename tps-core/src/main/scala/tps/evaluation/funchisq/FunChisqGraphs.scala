@@ -30,7 +30,7 @@ object FunChisqGraphs {
 
     // consolidate duplicate edges (take edge with minimum p-value)
     val groupedPairs = mappedPairSeq.groupBy(_._1)
-    groupedPairs map {
+    groupedPairs.toSeq map {
       case (edge, pairSet) => {
         pairSet.minBy(_._2.pValue)
       }

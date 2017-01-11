@@ -18,7 +18,7 @@ object FunChisqParser {
         val edge = Edge(Vertex(p1), Vertex(p2))
         val statistic = statString.toDouble
         val pValue = pValString.toDouble
-        (edge, FunChisqScore(statistic, pValue))))
+        (edge, FunChisqScore(statistic, pValue))
       }
     }
 
