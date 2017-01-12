@@ -10,11 +10,6 @@ object MathUtils {
 
   def log2(x: Double) = scala.math.log(x) / scala.math.log(2)
 
-  def foldChanges(vs: Seq[Double]): Seq[Double] = {
-    val baseline = vs.head
-    vs map (_ / baseline)
-  }
-
   def combination[A](l: List[A], k: Int): List[List[A]] = {
     if (k == 0) {
       List(Nil)

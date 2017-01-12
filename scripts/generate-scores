@@ -1,0 +1,8 @@
+#!/bin/bash
+
+TIME_SERIES_FILE=$1
+FOLD_CHANGE_THRESHOLD=$2
+
+sbt \
+  "project tps-core" \
+  "run-main tps.evaluation.SignificanceScoreProducer $TIME_SERIES_FILE $FOLD_CHANGE_THRESHOLD"
