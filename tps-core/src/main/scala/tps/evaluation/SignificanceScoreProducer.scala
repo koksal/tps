@@ -21,36 +21,63 @@ object SignificanceScoreProducer {
     val foldChangeThreshold = args(1).toDouble
     val timeSeries = TimeSeriesParser.run(timeSeriesFile)
 
+    val firstScoresStr = firstScores(
+      timeSeries, foldChangeThreshold).toTSVString()
     val prevScoresStr = prevScores(
       timeSeries, foldChangeThreshold).toTSVString()
 
+    println(firstScoresStr)
     println(prevScoresStr)
   }
 
-  def prevScores(ts: TimeSeries, foldChangeThreshold: Double): TabularData = {
+  def firstScores(ts: TimeSeries, foldChangeThreshold: Double): TabularData = {
     val baselineLabel = ts.labels.head
     val restLabels = ts.labels.tail
     val scoreLabels = restLabels map { l =>
       s"$l vs. $baselineLabel"
     }
-    val finalLabels: Seq[String] = "id" +: scoreLabels
+    val finalLabels = "id" +: scoreLabels
+
     val scoresPerProfile = ts.profiles map {
       case Profile(id, vs) => {
         val baseline = vs.head.get
         val restValues = vs.tail
         val foldChanges = restValues map (vOpt => vOpt.get / baseline)
-        val scores: Seq[String] = foldChanges map { fc =>
-          if (fc >= foldChangeThreshold) {
-            SIGNIFICANT_SCORE.toString
-          } else {
-            NON_SIGNIFICANT_SCORE.toString
-          }
-        }
-        id +: scores
+        id +: scoresFromFoldChanges(foldChanges, foldChangeThreshold)
       }
     }
 
     TabularData(finalLabels, scoresPerProfile)
   }
 
+  def prevScores(ts: TimeSeries, foldChangeThreshold: Double): TabularData = {
+    val scoreLabels = ts.labels.zip(ts.labels.tail).map {
+      case (prevLabel, currLabel) =>
+        s"$currLabel vs. $prevLabel"
+    }
+    val finalLabels = "id" +: scoreLabels
+
+    val scoresPerProfile = ts.profiles map {
+      case Profile(id, vs) => {
+        val foldChanges = vs.zip(vs.tail).map {
+          case (prevVal, currVal) => currVal.get / prevVal.get
+        }
+        id +: scoresFromFoldChanges(foldChanges, foldChangeThreshold)
+      }
+    }
+
+    TabularData(finalLabels, scoresPerProfile)
+  }
+
+  private def scoresFromFoldChanges(
+    foldChanges: Seq[Double], threshold: Double
+  ): Seq[String] = {
+    foldChanges map { fc =>
+      if (fc >= threshold) {
+        SIGNIFICANT_SCORE.toString
+      } else {
+        NON_SIGNIFICANT_SCORE.toString
+      }
+    }
+  }
 }
