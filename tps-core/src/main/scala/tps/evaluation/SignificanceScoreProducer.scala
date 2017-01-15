@@ -42,7 +42,8 @@ object SignificanceScoreProducer {
       case Profile(id, vs) => {
         val baseline = vs.head.get
         val restValues = vs.tail
-        val foldChanges = restValues map (vOpt => vOpt.get / baseline)
+        val foldChanges = restValues map ( vOpt =>
+          absLog2FoldChange(vOpt.get, baseline))
         id +: scoresFromFoldChanges(foldChanges, foldChangeThreshold)
       }
     }
@@ -60,13 +61,17 @@ object SignificanceScoreProducer {
     val scoresPerProfile = ts.profiles map {
       case Profile(id, vs) => {
         val foldChanges = vs.zip(vs.tail).map {
-          case (prevVal, currVal) => currVal.get / prevVal.get
+          case (prevVal, currVal) => absLog2FoldChange(currVal.get, prevVal.get)
         }
         id +: scoresFromFoldChanges(foldChanges, foldChangeThreshold)
       }
     }
 
     TabularData(finalLabels, scoresPerProfile)
+  }
+
+  private def absLog2FoldChange(value: Double, baseline: Double): Double = {
+    math.abs(math.log(value / baseline) / math.log(2))
   }
 
   private def scoresFromFoldChanges(
