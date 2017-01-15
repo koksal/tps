@@ -14,7 +14,7 @@ import tps.util.FileUtils
   * Generates significance score and protein prize files based on fold change
   * thresholding from a time series file with a single replicate.
   */
-object SignificanceScoreProducer {
+object SignificanceScoreAndPrizeProducer {
 
   val SIGNIFICANT_SCORE = 0.0
   val NON_SIGNIFICANT_SCORE = 1.0
