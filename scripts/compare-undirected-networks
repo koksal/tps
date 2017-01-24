@@ -1,0 +1,8 @@
+#!/bin/bash
+
+NETWORK_1=$1
+NETWORK_2=$2
+
+sbt \
+  "project tps-core" \
+  "run-main tps.evaluation.UndirectedNetworkComparison $NETWORK_1 $NETWORK_2"

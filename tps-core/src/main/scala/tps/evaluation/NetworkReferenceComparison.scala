@@ -53,7 +53,8 @@ object NetworkReferenceComparison {
     referenceName: String,
     evidence: Map[Edge, String]
   ) = {
-    // compute precision and recall where relevance is whether a selected edge is in the reference
+    // compute precision and recall where relevance is whether a selected edge
+    // is in the reference
 
     val candidateE = candidate.keySet
     val referenceE = reference.keySet
