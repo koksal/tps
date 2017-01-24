@@ -36,9 +36,13 @@ object UndirectedNetworkComparison {
     println(s"Common E: ${commonE.size}")
 
     println(s"Only in V1: ${exclusiveV1.size}")
+    println(exclusiveV1.mkString("\n"))
     println(s"Only in V2: ${exclusiveV2.size}")
+    println(exclusiveV2.mkString("\n"))
 
     println(s"Only in E1: ${exclusiveE1.size}")
+    println(exclusiveE1.mkString("\n"))
     println(s"Only in E2: ${exclusiveE2.size}")
+    println(exclusiveE2.mkString("\n"))
   }
 }
