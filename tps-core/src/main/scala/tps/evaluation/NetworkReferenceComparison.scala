@@ -26,6 +26,7 @@ object NetworkReferenceComparison {
         compare(network, referenceNetwork, s"network-$i", referenceName)
       }
     }
+    println(results.mkString("\n"))
 
     // compute aggregate metrics
     val aggregateResult = aggregateResults(results)
@@ -50,10 +51,15 @@ object NetworkReferenceComparison {
       MathUtils.average(results.map(_.undirectedPrecision)),
       MathUtils.average(results.map(_.undirectedRecall)),
       MathUtils.median(results.map(_.nbDirectedEdges)),
+      MathUtils.median(results.map(_.directedEdgeRatio)),
       MathUtils.median(results.map(_.nbCommonDirectedEdges)),
+      MathUtils.median(results.map(_.commonDirectedEdgeRatio)),
       MathUtils.median(results.map(_.nbMatchingDirectionEdges)),
+      MathUtils.median(results.map(_.matchingDirectionEdgeRatio)),
       MathUtils.median(results.map(_.nbConflictingDirectionEdges)),
-      MathUtils.median(results.map(_.nbUnconfirmedDirectionEdges))
+      MathUtils.median(results.map(_.conflictingDirectionEdgeRatio)),
+      MathUtils.median(results.map(_.nbUnconfirmedDirectionEdges)),
+      MathUtils.median(results.map(_.unconfirmedDirectionEdgeRatio))
     )
   }
 
@@ -104,10 +110,15 @@ object NetworkReferenceComparison {
     undirectedPrecision: Double,
     undirectedRecall: Double,
     nbDirectedEdges: Double,
+    directedEdgeRatio: Double,
     nbCommonDirectedEdges: Double,
+    commonDirectedEdgeRatio: Double,
     nbMatchingDirectionEdges: Double,
+    matchingDirectionEdgeRatio: Double,
     nbConflictingDirectionEdges: Double,
-    nbUnconfirmedDirectionEdges: Double
+    conflictingDirectionEdgeRatio: Double,
+    nbUnconfirmedDirectionEdges: Double,
+    unconfirmedDirectionEdgeRatio: Double
   )
 
   def compare(
@@ -164,10 +175,15 @@ object NetworkReferenceComparison {
       undirPrecision,
       undirRecall,
       directedE.size,
+      directedE.size.toDouble / candidateE.size,
       commonDirectedE.size,
+      commonDirectedE.size.toDouble / directedE.size.toDouble,
       matchingDirectionE.size,
+      matchingDirectionE.size.toDouble / directedE.size.toDouble,
       conflictingE.size,
-      unconfirmedDirectionE.size
+      conflictingE.size.toDouble / directedE.size.toDouble,
+      unconfirmedDirectionE.size,
+      unconfirmedDirectionE.size.toDouble / directedE.size.toDouble
     )
   }
 
