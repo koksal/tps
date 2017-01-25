@@ -3,14 +3,62 @@ package tps.evaluation
 import tps._
 import tps.Graphs._
 import tps.SignedDirectedGraphOps._
-
 import parsing.DBNNetworkParser
-
 import java.io.File
+
+import tps.util.MathUtils
 
 object NetworkReferenceComparison {
   def main(args: Array[String]): Unit = {
-    val refFn = args(0)
+    // first argument: reference network
+    val referenceFile = new File(args(0))
+    val referenceName = referenceFile.getName()
+    val (referenceNetwork, referenceEvidences) = ReferenceParser.run(
+      referenceFile)
+
+    // rest of arguments: network files to use for average/median analysis
+    val networkFiles = args.tail map (a => new File(a))
+    val networks = networkFiles map (f => SignedDirectedGraphParser.run(f))
+    println(s"Parsed ${networks.size} networks.")
+
+    val results = networks.zipWithIndex map {
+      case (network, i) => {
+        compare(network, referenceNetwork, s"network-$i", referenceName)
+      }
+    }
+
+    // compute aggregate metrics
+    val aggregateResult = aggregateResults(results)
+    println(aggregateResult)
+  }
+
+  def resultString(res: NetworkReferenceComparisonResult): String = {
+    ???
+  }
+
+  def aggregateResults(
+    results: Iterable[NetworkReferenceComparisonResult]
+  ): NetworkReferenceComparisonResult = {
+    assert(results.forall(_.referenceName == results.head.referenceName))
+
+    NetworkReferenceComparisonResult(
+      "aggregate-results",
+      results.head.referenceName,
+      MathUtils.median(results.map(_.nbCandidateEdges)),
+      results.head.nbReferenceEdges,
+      MathUtils.median(results.map(_.nbCommonEdges)),
+      MathUtils.average(results.map(_.undirectedPrecision)),
+      MathUtils.average(results.map(_.undirectedRecall)),
+      MathUtils.median(results.map(_.nbDirectedEdges)),
+      MathUtils.median(results.map(_.nbCommonDirectedEdges)),
+      MathUtils.median(results.map(_.nbMatchingDirectionEdges)),
+      MathUtils.median(results.map(_.nbConflictingDirectionEdges)),
+      MathUtils.median(results.map(_.nbUnconfirmedDirectionEdges))
+    )
+  }
+
+  // legacy analysis
+  def runComparativeAnalysis(refFn: String): Unit = {
     val refFile = new File(refFn)
     val refName = refFile.getName()
     val (refNetwork, refEvidence) = ReferenceParser.run(refFile)
@@ -42,16 +90,31 @@ object NetworkReferenceComparison {
     ) ++ sifNetworks
 
     for ((id, network) <- candidates) {
-      compare(network, refNetwork, id, refName, refEvidence)
+      println(resultString(compare(network, refNetwork, id, refName)))
     }
   }
+
+  // Use doubles instead of integers to compute aggregate statistics
+  case class NetworkReferenceComparisonResult(
+    candidateName: String,
+    referenceName: String,
+    nbCandidateEdges: Double,
+    nbReferenceEdges: Double,
+    nbCommonEdges: Double,
+    undirectedPrecision: Double,
+    undirectedRecall: Double,
+    nbDirectedEdges: Double,
+    nbCommonDirectedEdges: Double,
+    nbMatchingDirectionEdges: Double,
+    nbConflictingDirectionEdges: Double,
+    nbUnconfirmedDirectionEdges: Double
+  )
 
   def compare(
     candidate: SignedDirectedGraph, 
     reference: SignedDirectedGraph, 
     candidateName: String,
-    referenceName: String,
-    evidence: Map[Edge, String]
+    referenceName: String
   ) = {
     // compute precision and recall where relevance is whether a selected edge
     // is in the reference
@@ -60,7 +123,8 @@ object NetworkReferenceComparison {
     val referenceE = reference.keySet
 
     val commonE = candidateE intersect referenceE
-    val undirPrecision = commonE.size.toDouble / candidateE.size.toDouble
+    var undirPrecision = commonE.size.toDouble / candidateE.size.toDouble
+    if (candidateE.isEmpty) undirPrecision = 0.0
     val undirRecall    = commonE.size.toDouble / referenceE.size.toDouble
 
     val directedE = candidateE filter { e =>
@@ -91,11 +155,11 @@ object NetworkReferenceComparison {
       oneActiveDirection(candidate(e)) && ambiguousDirection(reference(e))
     }
 
-    val row = List(
-      referenceName,
+    NetworkReferenceComparisonResult(
       candidateName,
-      referenceE.size,
+      referenceName,
       candidateE.size,
+      referenceE.size,
       commonE.size,
       undirPrecision,
       undirRecall,
@@ -105,14 +169,6 @@ object NetworkReferenceComparison {
       conflictingE.size,
       unconfirmedDirectionE.size
     )
-    println(row.mkString("\t"))
-
-    val conflictFile = new File(s"conflicts-$candidateName-$referenceName.tsv")
-    // write contradictions into file
-    val conflictRows = for (e <- conflictingE) yield {
-      val ev = evidence(e)
-      List(e.v1, e.v2, ev).mkString("\t")
-    }
-    util.FileUtils.writeToFile(conflictFile, conflictRows.mkString("\n"))
   }
+
 }

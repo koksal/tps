@@ -5,5 +5,5 @@ do
   echo "Evaluating against $reference"
   sbt \
     "project tps-core" \
-    "run-main tps.evaluation.NetworkReferenceComparison $reference"
+    "run-main tps.evaluation.NetworkReferenceComparison $reference $*"
 done

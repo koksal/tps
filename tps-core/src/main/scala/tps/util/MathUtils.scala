@@ -8,6 +8,20 @@ object MathUtils {
   def max(xs: Seq[Double]): Double = xs.reduceLeft(Math.max)
   def min(xs: Seq[Double]): Double = xs.reduceLeft(Math.min)
 
+  def average(xs: Iterable[Double]): Double = {
+    xs.sum / xs.size
+  }
+
+  def median(xs: Iterable[Double]): Double = {
+    val sorted = xs.toIndexedSeq.sorted
+    val i = sorted.size / 2
+    if (sorted.size % 2 == 0) {
+      (sorted(i - 1) + sorted(i)) / 2.0
+    } else {
+      sorted(i)
+    }
+  }
+
   def log2(x: Double) = scala.math.log(x) / scala.math.log(2)
 
   def combination[A](l: List[A], k: Int): List[List[A]] = {
