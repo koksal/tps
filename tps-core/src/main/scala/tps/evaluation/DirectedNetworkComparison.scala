@@ -8,9 +8,14 @@ import tps.{SignedDirectedGraphOps, SignedDirectedGraphParser}
 
 object DirectedNetworkComparison {
   def main(args: Array[String]): Unit = {
-    // first argument: reference signed directed network
+    // first argument: prior knowledge network
+    val priorKnowledgeFile = new File(args.head)
+    val priorKnowledgeNetwork = SignedDirectedGraphParser.run(
+      priorKnowledgeFile)
+
+    // second argument: reference signed directed network
     // rest of arguments: collection of signed directed networks to compare to
-    val allNetworkFiles = args map (arg => new File(arg))
+    val allNetworkFiles = args.tail map (arg => new File(arg))
     val allNetworks = allNetworkFiles map (
       f => SignedDirectedGraphParser.run(f))
 
@@ -19,7 +24,7 @@ object DirectedNetworkComparison {
     println(s"Comparing first network to ${restNetworks.size} networks.")
 
     val results = restNetworks map { n =>
-      compareSignedDirectedNetworks(firstNetwork, n)
+      compareSignedDirectedNetworks(firstNetwork, n, priorKnowledgeNetwork)
     }
 
     val aggregateResult = aggregateResults(results)
@@ -30,6 +35,7 @@ object DirectedNetworkComparison {
     nbDirectedEdges1: Double,
     nbDirectedEdges2: Double,
     nbCommonDirectedEdges: Double,
+    nbCommonDirectedEdgesInPrior: Double,
     nbDirectedEdgesInAgreement: Double,
     nbDirectedEdgesInConflict: Double,
     nbDirectedEdgesOnlyIn1: Double,
@@ -38,7 +44,8 @@ object DirectedNetworkComparison {
 
   private def compareSignedDirectedNetworks(
     n1: SignedDirectedGraph,
-    n2: SignedDirectedGraph
+    n2: SignedDirectedGraph,
+    priorKnowledge: SignedDirectedGraph
   ): SignedDirectedGraphComparisonResult = {
     val directed1 = n1 filter {
       case (e, ess) => SignedDirectedGraphOps.oneActiveDirection(ess)
@@ -48,6 +55,7 @@ object DirectedNetworkComparison {
     }
 
     val commonDirectedE = directed1.keySet.intersect(directed2.keySet)
+
     val directedEdgesInAgreement = commonDirectedE filter { e =>
       val ess1 = n1(e)
       val ess2 = n2(e)
@@ -68,6 +76,9 @@ object DirectedNetworkComparison {
         SignedDirectedGraphOps.onlyForward(ess2))
     }
 
+    val commonDirectedEdgesInPrior = commonDirectedE.intersect(
+      priorKnowledge.keySet)
+
     val directedOnlyIn1 = directed1.keySet -- directed2.keySet
     val directedOnlyIn2 = directed2.keySet -- directed1.keySet
 
@@ -75,6 +86,7 @@ object DirectedNetworkComparison {
       directed1.size,
       directed2.size,
       commonDirectedE.size,
+      commonDirectedEdgesInPrior.size,
       directedEdgesInAgreement.size,
       directedEdgesInConflict.size,
       directedOnlyIn1.size,
@@ -89,6 +101,7 @@ object DirectedNetworkComparison {
       MathUtils.median(results.map(_.nbDirectedEdges1)),
       MathUtils.median(results.map(_.nbDirectedEdges2)),
       MathUtils.median(results.map(_.nbCommonDirectedEdges)),
+      MathUtils.median(results.map(_.nbCommonDirectedEdgesInPrior)),
       MathUtils.median(results.map(_.nbDirectedEdgesInAgreement)),
       MathUtils.median(results.map(_.nbDirectedEdgesInConflict)),
       MathUtils.median(results.map(_.nbDirectedEdgesOnlyIn1)),
