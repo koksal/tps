@@ -19,10 +19,8 @@ object FileUtils {
     }
   }
 
-  def lines(f: File): List[String] = lines(f.getAbsolutePath)
-  def lines(fname: String): List[String] = {
-
-    val br = new BufferedReader(new FileReader(fname))
+  def lines(f: File): List[String] = {
+    val br = new BufferedReader(new FileReader(f.getAbsolutePath()))
     var lines: List[String] = Nil
     try {
       var line = br.readLine();
@@ -38,9 +36,8 @@ object FileUtils {
     }
   }
 
-  def uncommentedLines(f: File): List[String] = uncommentedLines(f.getAbsolutePath)
-  def uncommentedLines(fname: String): List[String] = {
-    lines(fname) filter (!_.startsWith("#"))
+  def uncommentedLines(f: File): List[String] = {
+    lines(f) filter (!_.startsWith("#"))
   }
 
   def fileExists(fn: String): Boolean = new File(fn).isFile
