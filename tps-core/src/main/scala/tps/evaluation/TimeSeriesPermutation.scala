@@ -4,11 +4,11 @@ import java.io.File
 
 import tps.FileReporter
 import tps.Profile
-import tps.TabularData
 import tps.TimeSeriesParser
 import tps.TimeSeriesScoresParser
 import tps.printing.TimeSeriesPrinter
 import tps.printing.TimeSeriesScoresPrinter
+import tps.util.CollectionUtils
 
 import scala.util.Random
 
@@ -20,7 +20,7 @@ object TimeSeriesPermutation {
     val seed = args(3).toInt
 
     val rand = new Random(seed)
-    val permuteFun = permute(rand)
+    val permuteFun = permute(rand) _
 
 
     var permutedProfiles = Set[Profile]()
@@ -50,21 +50,18 @@ object TimeSeriesPermutation {
     profile: Profile, firstScores: Seq[Double], prevScores: Seq[Double]
   ): (Profile, Seq[Double], Seq[Double]) = {
     val n = profile.values.size - 1
-    val permutation = rand.shuffle(0 until n).toSeq
+    val permutation = rand.shuffle((0 until n).toList)
 
     // permute tail of profile values
-    val permutedTailValues = permuteSeq(profile.values.tail, permutation)
+    val permutedTailValues = CollectionUtils.permuteSeq(profile.values.tail,
+      permutation)
     val permutedProfile = profile.copy(
       values = profile.values.head +: permutedTailValues)
 
     (
       permutedProfile,
-      permuteSeq(firstScores, permutation),
-      permuteSeq(prevScores, permutation)
+      CollectionUtils.permuteSeq(firstScores, permutation),
+      CollectionUtils.permuteSeq(prevScores, permutation)
     )
-  }
-
-  private def permuteSeq[T](xs: Seq[T], permutation: Seq[Int]): Seq[T] = {
-    permutation map (i => xs(i))
   }
 }
