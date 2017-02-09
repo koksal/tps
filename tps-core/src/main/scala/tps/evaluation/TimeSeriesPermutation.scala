@@ -36,15 +36,16 @@ object TimeSeriesPermutation {
       permutedPrevScores += profile.id -> permutedPrev
     }
 
-    val permutedTimeSeries = timeSeries.copy(profiles = permutedProfiles.toSeq)
+    val permutedTimeSeries = timeSeries.copy(
+      profiles = permutedProfiles.toSeq.sortBy(_.id))
 
     val reporter = new FileReporter(outFolder, Some("permuted"))
     reporter.output("time-series.tsv",
       TimeSeriesPrinter(permutedTimeSeries))
     reporter.output("first-scores.tsv",
-      TimeSeriesScoresPrinter(firstScores))
+      TimeSeriesScoresPrinter(permutedFirstScores))
     reporter.output("prev-scores.tsv",
-      TimeSeriesScoresPrinter(prevScores))
+      TimeSeriesScoresPrinter(permutedPrevScores))
   }
 
   private def permute(rand: Random)(
