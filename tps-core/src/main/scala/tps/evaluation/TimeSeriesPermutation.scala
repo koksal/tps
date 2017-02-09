@@ -18,6 +18,7 @@ object TimeSeriesPermutation {
     val firstScores = TimeSeriesScoresParser.run(new File(args(1)))
     val prevScores = TimeSeriesScoresParser.run(new File(args(2)))
     val seed = args(3).toInt
+    val outFolder = new File(args(4))
 
     val rand = new Random(seed)
     val permuteFun = permute(rand) _
@@ -37,12 +38,12 @@ object TimeSeriesPermutation {
 
     val permutedTimeSeries = timeSeries.copy(profiles = permutedProfiles.toSeq)
 
-    val reporter = new FileReporter(new File("."), None)
-    reporter.output("permuted-time-series.tsv",
+    val reporter = new FileReporter(outFolder, Some("permuted"))
+    reporter.output("time-series.tsv",
       TimeSeriesPrinter(permutedTimeSeries))
-    reporter.output("permuted-first-scores.tsv",
+    reporter.output("first-scores.tsv",
       TimeSeriesScoresPrinter(firstScores))
-    reporter.output("permuted-prev-scores.tsv",
+    reporter.output("prev-scores.tsv",
       TimeSeriesScoresPrinter(prevScores))
   }
 
