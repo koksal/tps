@@ -2,6 +2,7 @@ package tps.evaluation
 
 import java.io.File
 
+import tps.Graphs.SignedDirectedEdgeLabel
 import tps.Graphs.SignedDirectedGraph
 import tps.util.MathUtils
 import tps.{SignedDirectedGraphOps, SignedDirectedGraphParser}
@@ -24,7 +25,7 @@ object DirectedNetworkComparison {
     println(s"Comparing first network to ${restNetworks.size} networks.")
 
     val results = restNetworks map { n =>
-      compareSignedDirectedNetworks(firstNetwork, n, priorKnowledgeNetwork)
+      runComparison(firstNetwork, n, priorKnowledgeNetwork)
     }
 
     val aggregateResult = aggregateResults(results)
@@ -32,65 +33,103 @@ object DirectedNetworkComparison {
   }
 
   case class SignedDirectedGraphComparisonResult(
-    nbDirectedEdges1: Double,
-    nbDirectedEdges2: Double,
-    nbCommonDirectedEdges: Double,
-    nbCommonDirectedEdgesInPrior: Double,
-    nbDirectedEdgesInAgreement: Double,
-    nbDirectedEdgesInConflict: Double,
-    nbDirectedEdgesOnlyIn1: Double,
-    nbDirectedEdgesOnlyIn2: Double
-  )
+    directedComparison: ComparisonSubResult,
+    signedDirectedComparison: ComparisonSubResult
+  ) {
+    override def toString(): String = {
+      s"""Directed comparison:
+        |${directedComparison}
+        |Signed directed comparison:
+        |${signedDirectedComparison}
+      """.stripMargin
+    }
+  }
 
-  private def compareSignedDirectedNetworks(
+  case class ComparisonSubResult(
+    nb1: Double,
+    nb2: Double,
+    nbCommon: Double,
+    nbCommonInPrior: Double,
+    nbAgreeing: Double,
+    nbConflicting: Double,
+    nbOnly1: Double,
+    nbOnly2: Double
+  ) {
+    override def toString(): String = {
+      val rows = List(
+        s"Nb. edges in 1: ${nb1}",
+        s"Nb. edges in 2: ${nb2}",
+        s"Nb. common: ${nbCommon}",
+        s"Nb. common in prior: ${nbCommonInPrior}",
+        s"Nb. agreeing: ${nbAgreeing}",
+        s"Nb. conflicting: ${nbConflicting}",
+        s"Nb. only in 1: ${nbOnly1}",
+        s"Nb. only in 2: ${nbOnly2}"
+      )
+      rows.mkString("\n")
+    }
+  }
+
+  private def runComparison(
     n1: SignedDirectedGraph,
     n2: SignedDirectedGraph,
     priorKnowledge: SignedDirectedGraph
   ): SignedDirectedGraphComparisonResult = {
-    val directed1 = n1 filter {
-      case (e, ess) => SignedDirectedGraphOps.oneActiveDirection(ess)
+    val directedComp = compareSubResults(n1, n2, priorKnowledge,
+      SignedDirectedGraphOps.oneActiveDirection,
+      SignedDirectedGraphOps.sameUniqueDirection,
+      SignedDirectedGraphOps.conflictingUniqueActiveDirection
+    )
+
+    val signedDirectedComp = compareSubResults(n1, n2, priorKnowledge,
+      SignedDirectedGraphOps.oneActiveEdge,
+      SignedDirectedGraphOps.sameUniqueActiveEdge,
+      SignedDirectedGraphOps.confictingUniqueActiveEdge
+    )
+
+    SignedDirectedGraphComparisonResult(directedComparison = directedComp,
+      signedDirectedComparison = signedDirectedComp)
+  }
+
+  private def compareSubResults(
+    n1: SignedDirectedGraph,
+    n2: SignedDirectedGraph,
+    priorKnowledge: SignedDirectedGraph,
+    filter: Set[SignedDirectedEdgeLabel] => Boolean,
+    agreementFun:
+      (Set[SignedDirectedEdgeLabel], Set[SignedDirectedEdgeLabel]) => Boolean,
+    conflictFun:
+      (Set[SignedDirectedEdgeLabel], Set[SignedDirectedEdgeLabel]) => Boolean
+  ): ComparisonSubResult = {
+    val edges1 = n1.collect{
+      case (e, ess) if filter(ess) => e
+    }.toSet
+    val edges2 = n2.collect{
+      case (e, ess) if filter(ess) => e
+    }.toSet
+
+    val commonE = edges1.intersect(edges2)
+    val commonEInPrior = commonE.intersect(priorKnowledge.keySet)
+
+    val agreeing = commonE filter { e =>
+      agreementFun(n1(e), n2(e))
     }
-    val directed2 = n2 filter {
-      case (e, ess) => SignedDirectedGraphOps.oneActiveDirection(ess)
+    val conflicting = commonE filter { e =>
+      conflictFun(n1(e), n2(e))
     }
 
-    val commonDirectedE = directed1.keySet.intersect(directed2.keySet)
+    val only1 = edges1 -- edges2
+    val only2 = edges2 -- edges1
 
-    val directedEdgesInAgreement = commonDirectedE filter { e =>
-      val ess1 = n1(e)
-      val ess2 = n2(e)
-
-      (SignedDirectedGraphOps.onlyForward(ess1) &&
-        SignedDirectedGraphOps.onlyForward(ess2)) ||
-      (SignedDirectedGraphOps.onlyBackward(ess1) &&
-        SignedDirectedGraphOps.onlyBackward(ess2))
-    }
-
-    val directedEdgesInConflict = commonDirectedE filter { e =>
-      val ess1 = n1(e)
-      val ess2 = n2(e)
-
-      (SignedDirectedGraphOps.onlyForward(ess1) &&
-        SignedDirectedGraphOps.onlyBackward(ess2)) ||
-      (SignedDirectedGraphOps.onlyBackward(ess1) &&
-        SignedDirectedGraphOps.onlyForward(ess2))
-    }
-
-    val commonDirectedEdgesInPrior = commonDirectedE.intersect(
-      priorKnowledge.keySet)
-
-    val directedOnlyIn1 = directed1.keySet -- directed2.keySet
-    val directedOnlyIn2 = directed2.keySet -- directed1.keySet
-
-    SignedDirectedGraphComparisonResult(
-      directed1.size,
-      directed2.size,
-      commonDirectedE.size,
-      commonDirectedEdgesInPrior.size,
-      directedEdgesInAgreement.size,
-      directedEdgesInConflict.size,
-      directedOnlyIn1.size,
-      directedOnlyIn2.size
+    ComparisonSubResult(
+      nb1 = edges1.size,
+      nb2 = edges2.size,
+      nbCommon = commonE.size,
+      nbCommonInPrior = commonEInPrior.size,
+      nbAgreeing = agreeing.size,
+      nbConflicting = conflicting.size,
+      nbOnly1 = only1.size,
+      nbOnly2 = only2.size
     )
   }
 
@@ -98,14 +137,25 @@ object DirectedNetworkComparison {
     results: Iterable[SignedDirectedGraphComparisonResult]
   ): SignedDirectedGraphComparisonResult = {
     SignedDirectedGraphComparisonResult(
-      MathUtils.median(results.map(_.nbDirectedEdges1)),
-      MathUtils.median(results.map(_.nbDirectedEdges2)),
-      MathUtils.median(results.map(_.nbCommonDirectedEdges)),
-      MathUtils.median(results.map(_.nbCommonDirectedEdgesInPrior)),
-      MathUtils.median(results.map(_.nbDirectedEdgesInAgreement)),
-      MathUtils.median(results.map(_.nbDirectedEdgesInConflict)),
-      MathUtils.median(results.map(_.nbDirectedEdgesOnlyIn1)),
-      MathUtils.median(results.map(_.nbDirectedEdgesOnlyIn2))
+      directedComparison =
+        aggregateSubResults(results.map(_.directedComparison)),
+      signedDirectedComparison =
+        aggregateSubResults(results.map(_.signedDirectedComparison))
+    )
+  }
+
+  private def aggregateSubResults(
+    results: Iterable[ComparisonSubResult]
+  ): ComparisonSubResult = {
+    ComparisonSubResult(
+      MathUtils.median(results.map(_.nb1)),
+      MathUtils.median(results.map(_.nb2)),
+      MathUtils.median(results.map(_.nbCommon)),
+      MathUtils.median(results.map(_.nbCommonInPrior)),
+      MathUtils.median(results.map(_.nbAgreeing)),
+      MathUtils.median(results.map(_.nbConflicting)),
+      MathUtils.median(results.map(_.nbOnly1)),
+      MathUtils.median(results.map(_.nbOnly2))
     )
   }
 }

@@ -124,8 +124,62 @@ object SignedDirectedGraphOps {
     relevant.size
   }
 
+  def activeDirections(
+    labels: Set[SignedDirectedEdgeLabel]
+  ): Set[EdgeDirection] = {
+    labels collect {
+      case ActiveEdge(dir, sign) => dir
+    }
+  }
+
+  def activeEdges(labels: Set[SignedDirectedEdgeLabel]): Set[ActiveEdge] = {
+    labels collect {
+      case ae: ActiveEdge => ae
+    }
+  }
+
+  def sameUniqueDirection(
+    ls1: Set[SignedDirectedEdgeLabel], ls2: Set[SignedDirectedEdgeLabel]
+  ): Boolean = {
+    val activeDir1 = activeDirections(ls1)
+    val activeDir2 = activeDirections(ls2)
+
+    activeDir1.size == 1 && activeDir2.size == 1 && activeDir1 == activeDir2
+  }
+
+  def sameUniqueActiveEdge(
+    ls1: Set[SignedDirectedEdgeLabel], ls2: Set[SignedDirectedEdgeLabel]
+  ): Boolean = {
+    val activeE1 = activeEdges(ls1)
+    val activeE2 = activeEdges(ls2)
+
+    activeE1.size == 1 && activeE2.size == 1 && activeE1 == activeE2
+  }
+
+  def confictingUniqueActiveEdge(
+    ls1: Set[SignedDirectedEdgeLabel], ls2: Set[SignedDirectedEdgeLabel]
+  ): Boolean = {
+    val activeE1 = activeEdges(ls1)
+    val activeE2 = activeEdges(ls2)
+
+    activeE1.size == 1 && activeE2.size == 1 && activeE1 != activeE2
+  }
+
+  def conflictingUniqueActiveDirection(
+    ls1: Set[SignedDirectedEdgeLabel], ls2: Set[SignedDirectedEdgeLabel]
+  ): Boolean = {
+    val activeDir1 = activeDirections(ls1)
+    val activeDir2 = activeDirections(ls2)
+
+    activeDir1.size == 1 && activeDir2.size == 1 && activeDir1 != activeDir2
+  }
+
   def oneActiveDirection(es: Set[SignedDirectedEdgeLabel]): Boolean = {
     onlyForward(es) || onlyBackward(es)
+  }
+
+  def oneActiveEdge(es: Set[SignedDirectedEdgeLabel]): Boolean = {
+    activeEdges(es).size == 1
   }
 
   def onlyBackward(es: Set[SignedDirectedEdgeLabel]): Boolean = {
