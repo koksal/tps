@@ -27,8 +27,16 @@ object SignificanceScoreAndPrizeProducer {
     val peptideProteinMap = PeptideProteinMappingParser.run(mappingFile)
 
     // compute fold changes
-    val firstFCs = firstFoldChanges(timeSeries)
-    val prevFCs = prevFoldChanges(timeSeries)
+    var firstFCs = firstFoldChanges(timeSeries)
+    var prevFCs = prevFoldChanges(timeSeries)
+
+    // find max fold change to replace NaN and infinity values with it
+    val maxFC = math.max(
+      maxNonInfNonNaNValue(firstFCs.values.flatten),
+      maxNonInfNonNaNValue(prevFCs.values.flatten)
+    )
+    firstFCs = replaceInfAndNan(firstFCs, maxFC)
+    prevFCs = replaceInfAndNan(prevFCs, maxFC)
 
     // convert fold changes to scores
     val firstScores = scoresFromFoldChanges(firstFCs, threshold)
@@ -44,6 +52,23 @@ object SignificanceScoreAndPrizeProducer {
     // take max peptide prize for each protein
     val protPrizes = collapsePrizes(pepPrizes, peptideProteinMap)
     savePrizes(protPrizes)
+  }
+
+  private def maxNonInfNonNaNValue(xs: Iterable[Double]): Double = {
+    xs.filter(x => !x.isNaN && !x.isInfinity).max
+  }
+
+  private def replaceInfAndNan(
+    foldChanges: Map[String, Seq[Double]],
+    maxFoldChange: Double
+  ): Map[String, Seq[Double]] = {
+    def replace(x: Double): Double = {
+      if (x.isNaN || x.isInfinity) maxFoldChange else x
+    }
+
+    foldChanges map {
+      case (id, vs) => id -> vs.map(replace)
+    }
   }
 
   private def saveScores(
