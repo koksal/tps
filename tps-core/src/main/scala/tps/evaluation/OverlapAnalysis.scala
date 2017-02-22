@@ -42,10 +42,13 @@ object OverlapAnalysis {
           Synthesis.profileIsSignificant(p, firstScores, prevScores, significanceThreshold)
       )
     )
+    println(s"There are ${significantTimeSeries.profiles.size} significant " +
+      s"profiles")
 
     val refProtNames = refNetwork.keySet.flatMap { 
       case Edge(Vertex(id1), Vertex(id2)) => Set(id1, id2)
     }
+    println(s"There are ${refProtNames.size} names to check in the network.")
 
     for ((label, i) <- significantTimeSeries.labels.zipWithIndex) {
       def overlappingProteins(profile: Profile): Set[String] = {
@@ -61,6 +64,14 @@ object OverlapAnalysis {
       val row = List(refName, label, overlappingProteinsForStep.size)
       println(row.mkString("\t"))
     }
+
+    // total overlap
+    val allProtsMappedByProfiles = significantTimeSeries.profiles.flatMap{
+      p => mapping(p.id)
+    }.toSet
+    val totalRow = List(refName, "all",
+      (allProtsMappedByProfiles intersect refProtNames).size)
+    println(totalRow.mkString("\t"))
 
   }
 }

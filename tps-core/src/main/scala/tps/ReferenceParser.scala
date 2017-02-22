@@ -10,7 +10,9 @@ object ReferenceParser {
 
     var evidencePerEdge: Map[Edge, String] = Map.empty
 
-    val tuples = data.tuples.collect{ case tuple if tuple.size >= 7 =>
+    val tuples = data.tuples.map{ tuple =>
+      assert(tuple.size >= 6)
+      
       val Seq(src, tgt, lra, lri, rla, rli, rest @ _*) = tuple
       val edge = lexicographicEdge(src, tgt)
 
