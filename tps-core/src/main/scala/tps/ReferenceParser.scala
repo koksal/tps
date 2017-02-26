@@ -7,7 +7,6 @@ object ReferenceParser {
   def run(f: java.io.File): (SignedDirectedGraph, Map[Edge, String]) = {
     val data = new TSVSource(f, noHeaders = false).data
 
-
     var evidencePerEdge: Map[Edge, String] = Map.empty
 
     val tuples = data.tuples.map{ tuple =>
