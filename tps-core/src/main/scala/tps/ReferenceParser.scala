@@ -22,6 +22,7 @@ object ReferenceParser {
       def labelValue(l: String): Boolean = l match {
         case "true" => true
         case "false" => false
+        case _ => sys.error(s"error parsing $l in $tuple")
       }
 
       if (labelValue(lra)) originalLabels += ActiveEdge(Forward, Activating)
