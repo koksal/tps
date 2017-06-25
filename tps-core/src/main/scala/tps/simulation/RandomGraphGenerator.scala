@@ -4,18 +4,15 @@ import tps.Graphs
 import tps.Graphs.{Edge, UndirectedGraph, Vertex}
 
 /**
-  * Generates a random graph of given size through a random walk on a given
-  * [[UndirectedGraph]], starting from its sources.
+  * Generates a random graph of given size, according to a predetermined
+  * likelihood of choosing between adding a new node and adding a new edge to
+  * it.
   */
 object RandomGraphGenerator {
 
   private val RANDOM_SEED = 131161511
   private val random = new scala.util.Random(RANDOM_SEED)
 
-  // for creating graphs from a source graph
-  private val MAX_NODE_DEGREE = 3
-
-  // for creating purely random graphs
   private val NODE_CREATION_PROBABILITY = 0.5
 
   object CannotExtendException extends Exception
