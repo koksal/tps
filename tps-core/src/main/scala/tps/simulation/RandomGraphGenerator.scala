@@ -15,8 +15,6 @@ object RandomGraphGenerator {
 
   private val NODE_CREATION_PROBABILITY = 0.5
 
-  object CannotExtendException extends Exception
-
   def generateRandomGraph(nbEdges: Int): UndirectedGraph = {
     val src = Vertex("src")
     var V = Set[Vertex](src)
