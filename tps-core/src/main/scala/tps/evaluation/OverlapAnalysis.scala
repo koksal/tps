@@ -51,27 +51,38 @@ object OverlapAnalysis {
     println(s"There are ${refProtNames.size} names to check in the network.")
 
     for ((label, i) <- significantTimeSeries.labels.zipWithIndex) {
-      def overlappingProteins(profile: Profile): Set[String] = {
-        val prots = mapping(profile.id)
-        if ((interp.allowedActivationIntervals(profile) contains i) ||
-            (interp.allowedInhibitionIntervals(profile) contains i)) {
-          refProtNames intersect prots
-        } else {
-          Set[String]()
-        }
-      }
-      val overlappingProteinsForStep = significantTimeSeries.profiles.flatMap(overlappingProteins)
-      val row = List(refName, label, overlappingProteinsForStep.size)
+      val protsChangingAtStep = significantTimeSeries.profiles.flatMap{ p =>
+        proteinsWithSignificantChange(p, i, interp, mapping)
+      }.toSet
+
+      val refProtsChangingAtStep = protsChangingAtStep.intersect(refProtNames)
+      val ratioOfRefOverlap = refProtsChangingAtStep.size.toDouble /
+        protsChangingAtStep.size
+      val row = List(
+        refName,
+        label,
+        protsChangingAtStep.size,
+        refProtsChangingAtStep.size,
+        ratioOfRefOverlap
+      )
       println(row.mkString("\t"))
     }
 
-    // total overlap
-    val allProtsMappedByProfiles = significantTimeSeries.profiles.flatMap{
-      p => mapping(p.id)
-    }.toSet
-    val totalRow = List(refName, "all",
-      (allProtsMappedByProfiles intersect refProtNames).size)
-    println(totalRow.mkString("\t"))
-
   }
+
+  def proteinsWithSignificantChange(
+    profile: Profile,
+    step: Int,
+    interpretation: TriggerInterpretation,
+    peptideToProteins: Map[String, Set[String]]
+  ): Set[String] = {
+    val profileProteins = peptideToProteins(profile.id)
+    if (interpretation.allowedActivationIntervals(profile).contains(step) ||
+      interpretation.allowedInhibitionIntervals(profile).contains(step)) {
+      profileProteins
+    } else {
+      Set[String]()
+    }
+  }
+
 }
