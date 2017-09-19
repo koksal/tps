@@ -161,8 +161,11 @@ of [iRefIndex] and [PhosphoSitePlus] interactions.
 * Ali Sinan Koksal
 * Anthony Gitter
 * Kirsten Beck
+* Dylan R Cronin
 * Aaron McKenna
+* Nathan D Camp
 * Saurabh Srivastava
+* Matthew E MacGilvray
 * Rastislav Bodik
 * Alejandro Wolf-Yadlin
 * Ernest Fraenkel
