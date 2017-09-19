@@ -1,7 +1,6 @@
 package tps
 
 import Graphs._
-import GraphParsing._
 
 object ReferenceParser {
   def run(f: java.io.File): (SignedDirectedGraph, Map[Edge, String]) = {
@@ -12,7 +11,7 @@ object ReferenceParser {
 
     val tuples = data.tuples.collect{ case tuple if tuple.size >= 7 =>
       val Seq(src, tgt, lra, lri, rla, rli, rest @ _*) = tuple
-      val edge = lexicographicEdge(src, tgt)
+      val edge = GraphParsing.lexicographicEdge(src, tgt)
 
       assert(!evidencePerEdge.isDefinedAt(edge))
       evidencePerEdge += edge -> rest.mkString(", ")
@@ -28,11 +27,12 @@ object ReferenceParser {
       if (labelValue(rla)) originalLabels += ActiveEdge(Backward, Activating)
       if (labelValue(rli)) originalLabels += ActiveEdge(Backward, Inhibiting)
 
-      val lexicOrientedLabels = originalLabels map { l => lexicographicLabel(src, tgt, l) }
+      val lexicOrientedLabels = originalLabels map { l =>
+        GraphParsing.lexicographicLabel(src, tgt, l) }
 
       (edge, lexicOrientedLabels)
     }
 
-    (aggregateLabels(tuples), evidencePerEdge)
+    (GraphParsing.aggregateLabels(tuples), evidencePerEdge)
   }
 }

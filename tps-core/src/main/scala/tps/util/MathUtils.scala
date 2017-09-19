@@ -8,6 +8,22 @@ object MathUtils {
   def max(xs: Seq[Double]): Double = xs.reduceLeft(Math.max)
   def min(xs: Seq[Double]): Double = xs.reduceLeft(Math.min)
 
+  def mean(vs: Iterable[Double]): Double = {
+    assert(vs.nonEmpty)
+    vs.sum / vs.size
+  }
+
+  def median(vs: Iterable[Double]): Double = {
+    assert(vs.nonEmpty)
+    val med = vs.size / 2
+    val sorted = vs.toIndexedSeq.sorted
+    if (vs.size % 2 == 0) {
+      (sorted(med - 1) + sorted(med)) / 2.0
+    } else {
+      sorted(med)
+    }
+  }
+
   def log2(x: Double) = scala.math.log(x) / scala.math.log(2)
 
   def foldChanges(vs: Seq[Double]): Seq[Double] = {

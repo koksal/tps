@@ -8,7 +8,7 @@ object SignedDirectedGraphParser {
     val data = new TSVSource(f, noHeaders = true).data
     val pairs = data.tuples map { tuple =>
       val Seq(id1, tpe, id2) = tuple
-      val edge = lexicographicEdge(id1, id2)
+      val edge = GraphParsing.lexicographicEdge(id1, id2)
       tpe match {
         case "N" => edge -> Set(
           lexicographicActivation(id1, id2), 

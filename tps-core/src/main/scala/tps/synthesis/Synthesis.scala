@@ -3,6 +3,8 @@ package tps.synthesis
 import tps.Graphs._
 import tps.SignedDirectedGraphOps._
 import tps._
+import tps.evaluation.GraphStats
+import tps.util.TimingUtil
 
 object Synthesis {
   def run(
@@ -71,26 +73,44 @@ object Synthesis {
       )
     }
 
+    // debug and stats printing
     printCollapsedInterpretation()
+    println("Non-expanded graph stats:")
+    println("Unfiltered data:")
+    GraphStats.printMeanNbPhosphosites(networkWithSources, timeSeries,
+      peptideProteinMap)
+    GraphStats.computeProfileStats(timeSeries, firstScores, prevScores,
+      significanceThreshold)
+    println("Filtered, significant data:")
+    GraphStats.printMeanNbPhosphosites(networkWithSources,
+      significantTimeSeries, ppmWithData)
+    GraphStats.computeProfileStats(significantTimeSeries, firstScores,
+      prevScores, significanceThreshold)
+    println("Ratio of significant profiles: " +
+      (significantTimeSeries.profiles.size.toDouble / timeSeries.profiles.size))
+
+    println("Expanded graph stats:")
+    GraphStats.computeGraphStats(expandedNetwork)
+    GraphStats.computeDataCoverageStats(expandedNetwork, expandedTimeSeries)
 
     // dispatch solver
     val solver = opts.solver match {
-      case "dataflow" => 
+      case "dataflow" =>
         new DataflowSolver(
-          expandedNetwork, 
-          expandedPartialModel, 
-          opts, 
+          expandedNetwork,
+          expandedPartialModel,
+          opts,
           interpretation,
           resultReporter
         )
-      case "naive" => 
+      case "naive" =>
         new NaiveSymbolicSolver(
           expandedNetwork,
           expandedPartialModel,
           opts,
           interpretation
         )
-      case "bilateral" => 
+      case "bilateral" =>
         new BilateralSolver(
           expandedNetwork,
           expandedPartialModel,
@@ -99,7 +119,9 @@ object Synthesis {
         )
     }
 
-    val expandedSol = solver.summary()
+    val expandedSol = TimingUtil.time("solver") {
+      solver.summary()
+    }
     collapseSolution(expandedSol, ppmWithData)
   }
 
@@ -109,13 +131,23 @@ object Synthesis {
     prevScores: Map[String, Seq[Double]],
     threshold: Double
   ): Boolean = {
+    nbSignificantMeasurements(p, firstScores, prevScores, threshold) > 0
+  }
+
+  // TODO move
+  def nbSignificantMeasurements(
+    p: Profile,
+    firstScores: Map[String, Seq[Double]],
+    prevScores: Map[String, Seq[Double]],
+    threshold: Double
+  ): Int = {
     val fs = firstScores(p.id)
     val ps = prevScores(p.id)
     val toEval = p.values.tail
     val filteredValues = for ((v, (f, p)) <- toEval zip (fs zip ps)) yield {
       if (f < threshold || p < threshold) v else None
     }
-    filteredValues.exists(_.isDefined)
+    filteredValues.filter(_.isDefined).size
   }
 
 }

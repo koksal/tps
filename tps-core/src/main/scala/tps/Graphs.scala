@@ -1,7 +1,5 @@
 package tps
 
-import tps.util.LogUtils._
-
 object Graphs {
 
   case class Vertex(id: String) extends Serializable {
@@ -33,23 +31,24 @@ object Graphs {
       assert(v1.id <= v2.id)
     }
 
+    private var neighborMap = Map[Vertex, Set[Vertex]]().withDefaultValue(
+      Set.empty[Vertex])
+    for (e <- E) {
+      neighborMap += e.v1 -> (neighborMap(e.v1) + e.v2)
+      neighborMap += e.v2 -> (neighborMap(e.v2) + e.v1)
+    }
+
     override def toString = {
       V.mkString("V = {", ", ", "}") + "\n" +
       E.mkString("E = {", ", ", "}") + "\n" +
       sources.mkString("SRC = {", ", ", "}")
     }
 
-    def neighbors(v: Vertex): Set[Vertex] = {
-      E collect {
-        case Edge(v1, v2) if v1 == v => v2
-        case Edge(v1, v2) if v2 == v => v1
-      }
-    }
+    def neighbors(v: Vertex): Set[Vertex] = neighborMap(v)
 
     def incidentEdges(v: Vertex): Set[Edge] = {
-      E filter {
-        case Edge(v1, v2) => v1 == v || v2 == v
-      }
+      val ns = neighbors(v)
+      ns.map(n => lexicographicEdge(n, v))
     }
 
     def contains(e: Edge): Boolean = {
@@ -88,20 +87,18 @@ object Graphs {
         distances += v -> 0
       }
 
-      while (!toProcess.isEmpty) {
+      while (toProcess.nonEmpty) {
         distance += 1
-        val nextStep = toProcess.flatMap{ v =>
+        val nextStep = toProcess.flatMap { v =>
           this.neighbors(v)
-          }.filter{ v =>
-            !alreadySeen.contains(v)
-          }
+        }.diff(alreadySeen)
 
-          for (v <- nextStep) {
-            distances += v -> distance
-          }
+        for (v <- nextStep) {
+          distances += v -> distance
+        }
 
-          alreadySeen ++= nextStep
-          toProcess = nextStep
+        alreadySeen ++= nextStep
+        toProcess = nextStep
       }
 
       distances
@@ -144,6 +141,9 @@ object Graphs {
       e -> labelsWithSign
     }
   }
+
+  def lexicographicEdge(v1: Vertex, v2: Vertex): Edge =
+    GraphParsing.lexicographicEdge(v1.id, v2.id)
 
   private def reverseDirection(d: EdgeDirection): EdgeDirection = d match {
     case Forward => Backward

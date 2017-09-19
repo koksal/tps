@@ -27,4 +27,20 @@ class MathUtilsTest extends FunSuite with Matchers {
     val c = MathUtils.combination(list, 0)
     c should equal (List(Nil))
   }
+
+  test("mean of list") {
+    val l1 = List(1.0)
+    MathUtils.mean(l1) should equal (1.0)
+
+    val l2 = List(8.0, 2.0, 6.0, 4.0)
+    MathUtils.mean(l2) should equal (5.0)
+  }
+
+  test("median of list") {
+    val l1 = List(1.0)
+    MathUtils.median(l1) should equal (1.0)
+
+    val l2 = List(8.0, 2.0, 6.0, 4.0)
+    MathUtils.median(l2) should equal (5.0)
+  }
 }

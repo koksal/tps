@@ -2,8 +2,6 @@ package tps
 
 import tps.util.LogUtils
 
-import java.io.File
-
 object ArgHandling {
   def parseOptions(args: Array[String]) = {
     val opts = new Options()

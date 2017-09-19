@@ -15,7 +15,14 @@ object ApplicationBuild extends Build {
 
     showSuccess := false,
       
-    resolvers += "sonatype-public" at "https://oss.sonatype.org/content/groups/public"
+    resolvers ++= Seq(
+      "sonatype-public" at 
+        "https://oss.sonatype.org/content/groups/public",
+      "Sonatype Snapshots" at 
+        "https://oss.sonatype.org/content/repositories/snapshots/",
+      "Sonatype Releases" at 
+        "https://oss.sonatype.org/content/repositories/releases/"
+    )
   )
 
   val coreSettings = commonSettings ++ Seq(
@@ -25,7 +32,8 @@ object ApplicationBuild extends Build {
 
     libraryDependencies ++= Seq(
       "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
-      "com.github.scopt" %% "scopt" % "3.3.0"
+      "com.github.scopt" %% "scopt" % "3.3.0",
+      "org.scalanlp" %% "breeze" % "0.12"
     ),
 
     mainClass in (Compile, run) := Some("tps.Main"),
