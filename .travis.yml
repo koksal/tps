@@ -1,0 +1,35 @@
+# Config file for automatic testing at travis-ci.org
+# Inspired by https://github.com/soft-matter/trackpy/blob/master/.travis.yml
+# These tests only pertain to the Python code in the pcsf subdirectory
+
+language: python
+
+cache: pip
+
+python:
+  - "2.7"
+
+notifications:
+  email: false
+
+before_install:
+  # install conda to help with numpy/scipy system dependencies
+  - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - export CONDA_PREFIX=/home/travis/mc
+  - ./miniconda.sh -b -p "$CONDA_PREFIX"
+  - export PATH="$CONDA_PREFIX/bin":$PATH
+
+install: 
+  # setup python environment and required packages
+  - conda create -n pcsf -y python=$TRAVIS_PYTHON_VERSION pytest numpy pandas networkx
+  - source activate pcsf
+
+  # log stat for debugging
+  - echo $PATH
+  - echo $CONDA_PREFIX
+  - which python
+
+  # there is no package to install, only a collection of scripts
+
+script: py.test
