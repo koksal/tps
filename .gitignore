@@ -2,6 +2,7 @@
 *.iml
 .idea
 .DS_Store
+.cache
 sbt
 project/project
 project/target
