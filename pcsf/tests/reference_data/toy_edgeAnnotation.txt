@@ -1,0 +1,6 @@
+Interaction	EdgeFreq
+B (pp) C	0.500000
+B (pp) E	0.250000
+A (pp) B	1.000000
+C (pp) D	0.750000
+B (pp) D	1.000000

@@ -1,0 +1,5 @@
+Forest name	Forest size
+toy_graph_0.sif	4
+toy_graph_1.sif	4
+toy_graph_2.sif	3
+toy_graph_3.sif	5
