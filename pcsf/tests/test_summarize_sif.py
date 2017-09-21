@@ -1,4 +1,4 @@
-import glob, os, sys, tempfile
+import glob, os, string, sys, tempfile
 
 # Create the path to forest relative to the test_generate_prizes.py path
 # Workaround due to lack of a formal Python package for the pcsf scripts
@@ -16,10 +16,9 @@ def files_match(generated_file, reference_file):
     the file
     '''
     with open(generated_file) as gen, open(reference_file) as ref:
-        generated_contents = sorted(gen.readlines())
-        print(generated_contents)
-        reference_contents = sorted(ref.readlines())
-        print(reference_contents)
+        # Strip end of line characters, which are operating system dependent
+        generated_contents = sorted(map(string.strip, gen.readlines()))
+        reference_contents = sorted(map(string.strip, ref.readlines()))
         return generated_contents == reference_contents
 
 class TestSummarizeSif:
