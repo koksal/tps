@@ -36,9 +36,24 @@ class TestGeneratePrizes:
             args = ["--firstfile", first_file, "--prevfile", prev_file, \
                 "--mapfile", map_file, "--outfile", out_prize_file.name]
 
+            # Test that the individual files are loaded correctly
+            pep_prot_map = gp.LoadPeptideMap(map_file)
+            assert len(pep_prot_map) == 2917, "Unexpected number of peptides"
+            unique_proteins = set()
+            for proteins in pep_prot_map.values():
+                unique_proteins.update(proteins)           
+            assert len(unique_proteins) == 1555, "Unexpected number of proteins"
+
+            merged_scores_df = gp.LoadScores(first_file, prev_file)
+            assert merged_scores_df.shape == (1068, 15), "Unexpected merged scores"
+            assert np.isclose(merged_scores_df.loc["K.n[305.21]AY[243.03]HEQLSVAEITNAC[160.03]FEPANQMVK[432.30].C", "prize"], \
+                5.367872), "Unexpected peptide prize"
+            assert np.isclose(merged_scores_df.loc["R.n[305.21]YSEEGLS[167.00]PSK[432.30].R", "prize"], \
+                1.358383), "Unexpected peptide prize"
+
             # Generate a new EGFR prize file
             gp.Main(args)
-            assert os.path.isfile(out_prize_file.name)
+            assert os.path.isfile(out_prize_file.name), "Prize file was not written"
 
             # Test that the generated file matches the reference version
             ref_prize_file = os.path.join(data_dir, "pcsf", "egfr-prizes.txt")
