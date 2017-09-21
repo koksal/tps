@@ -16,10 +16,11 @@ def files_match(generated_file, reference_file):
     the file
     '''
     with open(generated_file) as gen, open(reference_file) as ref:
-        print(gen.readlines())
-        print()
-        print(ref.readlines())
-        return sorted(gen.readlines()) == sorted(ref.readlines())
+        generated_contents = sorted(gen.readlines())
+        print(generated_contents)
+        reference_contents = sorted(ref.readlines())
+        print(reference_contents)
+        return generated_contents == reference_contents
 
 class TestSummarizeSif:
 
