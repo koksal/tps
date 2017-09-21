@@ -2,6 +2,10 @@ package tps
 
 import tps.synthesis.SynthesisOptions
 
+object Options {
+  val VERSION = "2.0"
+}
+
 case class Options(
   synthesisOptions:               SynthesisOptions = SynthesisOptions(),
   networkPath:                    java.io.File = null,

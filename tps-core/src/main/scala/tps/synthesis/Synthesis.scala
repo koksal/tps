@@ -17,15 +17,18 @@ object Synthesis {
     opts: SynthesisOptions,
     resultReporter: ResultReporter
   ): SignedDirectedGraph = {
-    def networkWithSources = network.copy(sources = sources map (Vertex(_)))
-
     def filterWithTimeSeries(ppm: Map[String, Set[String]], ts: TimeSeries) = {
       ppm filter { case (peptID, _) =>
         ts.profiles.exists(_.id == peptID)
       }
     }
 
-    val unifiedPartialModel = 
+    val sourceVerticesInNetwork = sources.map(Vertex(_)).intersect(network.V)
+    assert(sourceVerticesInNetwork.nonEmpty,
+      "No source nodes appear in input network.")
+    val networkWithSources = network.copy(sources = sourceVerticesInNetwork)
+
+    val unifiedPartialModel =
       partialModels.foldLeft[SignedDirectedGraph](
         Map.empty)(unifyByIntersectingCommonEdges(_,_))
 
