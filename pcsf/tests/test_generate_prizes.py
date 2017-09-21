@@ -16,7 +16,7 @@ class TestGeneratePrizes:
     data_dir = os.path.join(test_dir, "..", "..", "data")
     first_file = os.path.join(data_dir, "timeseries", "p-values-first.tsv")
     prev_file = os.path.join(data_dir, "timeseries", "p-values-prev.tsv")
-    map_file = os.path.join(data_dir, "timeseries", "peptide-mapping.tsv")    
+    map_file = os.path.join(data_dir, "timeseries", "peptide-mapping.tsv")
 
     def test_CalcPrize(self):
         '''

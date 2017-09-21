@@ -1,6 +1,6 @@
 import glob, os, string, sys, tempfile
 
-# Create the path to forest relative to the test_generate_prizes.py path
+# Create the path to forest relative to the test_summarize_sif.py path
 # Workaround due to lack of a formal Python package for the pcsf scripts
 test_dir = os.path.dirname(__file__)
 path = os.path.abspath(os.path.join(test_dir, ".."))
