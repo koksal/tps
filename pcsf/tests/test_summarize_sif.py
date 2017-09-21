@@ -16,6 +16,9 @@ def files_match(generated_file, reference_file):
     the file
     '''
     with open(generated_file) as gen, open(reference_file) as ref:
+        print(gen.readlines())
+        print()
+        print(ref.readlines())
         return sorted(gen.readlines()) == sorted(ref.readlines())
 
 class TestSummarizeSif:
