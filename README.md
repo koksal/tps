@@ -9,6 +9,7 @@
   [SIF]: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats
   [Tukey's Honest Significant Difference test]: https://en.wikipedia.org/wiki/Tukey%27s_range_test
   [TukeyHSD]: https://stat.ethz.ch/R-manual/R-patched/library/stats/html/TukeyHSD.html
+  [doi:10.1101/209676]: https://doi.org/10.1101/209676
 
 # TPS: Temporal Pathway Synthesizer [![Circle CI](https://circleci.com/gh/koksal/tps.svg?style=svg)](https://circleci.com/gh/koksal/tps) [![Build Status](https://travis-ci.org/koksal/tps.svg?branch=master)](https://travis-ci.org/koksal/tps)
 
@@ -49,7 +50,7 @@ steps:
           --threshold 0.01
    This command will generate, in the current folder:
    - a network file named `output.sif`
-   - a tab-separated file named `activity-windows.tsv` 
+   - a tab-separated file named `activity-windows.tsv`
 
    The output files are described in the **Output** section.
 
@@ -70,7 +71,7 @@ steps:
 - `--peptidemap <file>`: Input file in TSV format that defines a mapping between time series profile identifiers and input network node identifiers. A profile can be mapped to more than one node, in which case the second column is a pipe-separated list of node identifiers. The file begins with a header row.
 - `--outlabel <value>`: Prefix string to be added to all output files.
 - `--outfolder <value>`: Folder in which the output files should be generated. By default, output files are generated in the current directory.
-- `--solver <value>`: Solver to use (`naive`, `bilateral`, or `dataflow`). The default, recommended solver is `dataflow`. Both `naive` and `bilateral` are symbolic solvers and use the Z3 backend. (See the **Solvers** section for notes related to the symbolic solvers.) 
+- `--solver <value>`: Solver to use (`naive`, `bilateral`, or `dataflow`). The default, recommended solver is `dataflow`. Both `naive` and `bilateral` are symbolic solvers and use the Z3 backend. (See the **Solvers** section for notes related to the symbolic solvers.)
 - `--slack <value>`: Integer value for limiting the length of paths from the source to any node to *n* + *k*, where *n* is the length of the shortest path from the source to the node in the undirected network, and *k* is the given slack value. This only applies to the symbolic solvers.
 - `--bitvect <value>`: Use bitvector encoding for representing integers when using the symbolic solvers, with bitvectors of the given integer length.
 - `--no-connectivity`: Do not use connectivity constraints.
@@ -139,7 +140,7 @@ per time point:
 
 TPS uses by default a custom solver (`DataflowSolver`), but it also includes
 two symbolic solvers (`NaiveSymbolicSolver` and `BilateralSolver`) that
-implement the same functionality as the custom solver. 
+implement the same functionality as the custom solver.
 
 We recommend using the default solver, which is the most recent and fastest of
 all three. Meanwhile, if you would like to use either of the two symbolic
@@ -149,10 +150,8 @@ for building ScalaZ3 can be found on its project page.
 
 ## Example data
 
-The example dataset included with TPS is a phosphoproteomic time course of the
-cellular response to EGF stimulation. This dataset will be described in a
-forthcoming manuscript. Please refrain from publishing analyses of this
-dataset until the manuscript appears.
+The example dataset included with TPS is our phosphoproteomic time course of the
+cellular response to EGF stimulation. See the citation information below.
 
 The example network was produced by [Omics Integrator] run on a network
 of [iRefIndex] and [PhosphoSitePlus] interactions. Please acknowledge
@@ -160,17 +159,13 @@ and reference PhosphoSitePlus if you use `data/resources/kinase-substrate-intera
 and both PhosphoSitePlus and iRefIndex if you use `data/networks/phosphosite-irefindex13.0-uniprot.txt`
 or `data/networks/input-network.tsv`.
 
-## Authors
+## Citation
 
-* Ali Sinan Koksal
-* Anthony Gitter
-* Kirsten Beck
-* Dylan R Cronin
-* Aaron McKenna
-* Nathan D Camp
-* Saurabh Srivastava
-* Matthew E MacGilvray
-* Rastislav Bodik
-* Alejandro Wolf-Yadlin
-* Ernest Fraenkel
-* Jasmin Fisher
+Please cite the following manuscript if you make use of the TPS software or our
+EGF response phosphoproteomic data:
+
+Synthesizing Signaling Pathways from Temporal Phosphoproteomic Data. Ali Sinan
+Köksal, Kirsten Beck, Dylan R. Cronin, Aaron McKenna, Nathan D. Camp, Saurabh
+Srivastava, Matthew E. MacGilvray, Rastislav Bodík, Alejandro Wolf-Yadlin,
+Ernest Fraenkel, Jasmin Fisher, Anthony Gitter. *bioRxiv* 2017.
+[doi:10.1101/209676]
