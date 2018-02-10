@@ -76,7 +76,7 @@ def CreateParser():
     parser = ArgumentParser(description="Shuffle the protein(s) that map to each peptide.  Creates the specified number of peptide-protein map files.  See the TPS readme for the expected file format.")
     parser.add_argument("--mapfile", type=str, dest="mapfile", help="The path and filename of the original TPS peptidemap file, which must contain a file extension.", default=None, required=True)
     parser.add_argument("--outdir", type=str, dest="outdir", help="The path of the output directory for the permuted map files (default is the directory of the mapfile).", default=None, required=False)
-    parser.add_argument("--copies", type=int, dest="copies", help="The number of shuffled copies to genereate (default 10).", default=10, required=False)
+    parser.add_argument("--copies", type=int, dest="copies", help="The number of shuffled copies to generate (default 10).", default=10, required=False)
     parser.add_argument("--seed", type=int, dest="seed", help="A seed for the pseudo-random number generator for reproducibility.", default=None, required=False)
     return parser
 
