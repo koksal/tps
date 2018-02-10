@@ -15,7 +15,7 @@ def Main(arg_list):
     assert options.prevfile is not None, "Must specify the prevfile"
     assert options.tsfile is not None, "Must specify the tsfile"
 
-    assert options.fraction >= 0 and options.fraction <= 1.0, "The fraction must be in [0,1]"
+    assert options.fraction >= 0 and options.fraction <= 1.0, "The fraction must be in (0,1)"
     assert options.copies > 0, "The number of copies must be positive"
 
     # Set the pseudo-random number generator seed if one was provided
