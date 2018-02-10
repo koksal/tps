@@ -12,6 +12,7 @@ def Main(arg_list):
     options = parser.parse_args(arg_list)
 
     assert options.mapfile is not None, "Must specify the mapfile"
+    assert options.copies > 0, "The number of copies must be positive"
 
     # Set the pseudo-random number generator seed if one was provided
     if options.seed is not None:

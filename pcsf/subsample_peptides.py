@@ -16,6 +16,7 @@ def Main(arg_list):
     assert options.tsfile is not None, "Must specify the tsfile"
 
     assert options.fraction >= 0 and options.fraction <= 1.0, "The fraction must be in [0,1]"
+    assert options.copies > 0, "The number of copies must be positive"
 
     # Set the pseudo-random number generator seed if one was provided
     if options.seed is not None:
@@ -27,7 +28,7 @@ def Main(arg_list):
     # Compute the length of the subsampled files
     subsampled_len = int(round(len(data)*options.fraction))
     assert subsampled_len > 0, "Must increase the fraction to subsample at least one row"
-    assert subsampled_len == len(data), "Must decrease the fraction to subsample less than the total number of rows"
+    assert subsampled_len < len(data), "Must decrease the fraction to subsample less than the total number of rows"
     print "Subsampling {} of {} rows".format(subsampled_len, len(data))
 
     # Prepare the output file names
