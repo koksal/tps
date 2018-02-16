@@ -2,7 +2,7 @@
 # Permute the peptide-protein mapping to generate random PCSF prizes.
 # Submit PCSF-TPS runs, each using a different permuated mapping.
 # Execute PCSF runs with different seeds for random edge noise.
-# Summarize the PCSF runs and run TPS on on the union network.
+# Summarize the PCSF runs and run TPS on the union network.
 # Sets up a new configuration file if needed and uses
 # environment variables to pass other arguments to forest.py
 
