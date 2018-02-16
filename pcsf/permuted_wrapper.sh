@@ -39,7 +39,7 @@ m=0.008
 w=0.1
 
 # Prize filename prefix
-# It will be used to to create a prize file for PCSF from the TPS input score
+# It will be used to create a prize file for PCSF from the TPS input score
 # files and the permuted peptide-protein map and will also create an output prefix
 # for the Steiner forest networks
 # The prize files will be written in the output directory
