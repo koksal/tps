@@ -1,6 +1,7 @@
 #!/bin/bash
-# Generate PCSF prizes, run PCSF multiple times using the parameters
-# set in the wrapper, summarize the PCSF output, and run TPS
+# Generate PCSF prizes from subsampled data, run PCSF multiple times
+# using the parameters set in the wrapper, summarize the PCSF output,
+# and run TPS
 
 echo _CONDOR_JOB_IWD $_CONDOR_JOB_IWD
 echo Cluster $cluster
@@ -8,20 +9,22 @@ echo Process $process
 echo RunningOn $runningon
 echo
 
-# The shuffled peptide-protein map index is 1-based but the process id
+# The subsampled file indices are 1-based but the process id
 # is 0-based
 index=$((process+1))
 
-# Create an output subdirectory for each set of shuffled prizes
-subdirpath=${outpath}/shuffled${index}
+# Create an output subdirectory for each set of bootstrapped prizes
+subdirpath=${outpath}/${fraction}-bootstrapped${index}
 mkdir -p $subdirpath
 
-# Generate PCSF prizes with the permuted peptide-protein map
-prizefile=${subdirpath}/${prizename}-shuffled${index}.txt
-shuffledmap=${outpath}/${peptidemapprefix}-shuffled${index}${peptidemapext}
-CMD="python pcsf/generate_prizes.py --firstfile=$tpsfirstscores \
-	--prevfile=$tpsprevscores \
-	--mapfile=$shuffledmap \
+# Generate PCSF prizes with the subsampled files
+prizefile=${subdirpath}/${fraction}-bootstrapped${index}.txt
+subsampledfirstscores=${outpath}/${tpsfirstscoresprefix}-${fraction}-subsampled${index}${ext}
+subsampledprevscores=${outpath}/${tpsprevscoresprefix}-${fraction}-subsampled${index}${ext}
+subsampledtimeseries=${outpath}/${tpstimeseriesprefix}-${fraction}-subsampled${index}${ext}
+CMD="python pcsf/generate_prizes.py --firstfile=$subsampledfirstscores \
+	--prevfile=$subsampledprevscores \
+	--mapfile=$peptidemap \
 	--outfile=$prizefile"
 
 # Write the commands for logging before executing them
@@ -79,15 +82,14 @@ sourcearg=`echo ${sourcearg} | tr -s [:space:] " "`
 
 network=${subdirpath}/${pattern}_summary_union.tsv
 
-## Use the shuffled peptide-protein map and the PCSF summary
-## created above
+## Use the subsampled data and the PCSF summary created above
 CMD="scripts/run \
 	--network $network \
-	--timeseries $tpstimeseries \
-	--firstscores $tpsfirstscores \
-	--prevscores $tpsprevscores \
+	--timeseries $subsampledtimeseries \
+	--firstscores $subsampledfirstscores \
+	--prevscores $subsampledprevscores \
 	--partialmodel $tpspartialmodel \
-	--peptidemap $shuffledmap \
+	--peptidemap $peptidemap \
 	$sourcearg \
 	--threshold $tpsthreshold \
 	--outfolder $subdirpath\
