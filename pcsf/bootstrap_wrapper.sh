@@ -1,5 +1,6 @@
 #!/bin/bash
 # Subsample the peptide scores and re-generate PCSF prizes.
+# This is used to implement bootstrapping.
 # Submit PCSF-TPS runs, each using a different subsampled dataset.
 # Execute PCSF runs with different seeds for random edge noise.
 # Summarize the PCSF runs and run TPS on the union network.
@@ -10,7 +11,7 @@
 export outpath=results
 mkdir -p $outpath
 
-# Set the TPS input files that will be boostrapped, which will be
+# Set the TPS input files that will be bootstrapped, which will be
 # passed to TPS and used to generate prizes for PCSF
 # These are split into components to make it easier to automatically build
 # the path and filenames of the subsampled data files
@@ -86,7 +87,7 @@ export omega=$w
 # The number of forests to generate and merge into the final TPS seed network
 export forests=10
 
-# Set the seed for bootstrapping prizes, the number of bootstrap copies
+# Set the seed for bootstrapping prizes and the number of bootstrap copies
 bootstrapseed=2016
 export bootstrapcopies=10
 
