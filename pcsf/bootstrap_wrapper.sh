@@ -94,7 +94,7 @@ export bootstrapcopies=10
 # Iterate over different fraction of subsampled peptides to retain
 for frac in 0.5 0.9
 do
-	export fraction=frac
+	export fraction=$frac
 
 	# Subsample the peptide scores for bootstrapping
 	python pcsf/subsample_peptides.py --firstfile=$tpsfirstscores \
