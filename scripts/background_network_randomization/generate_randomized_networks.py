@@ -10,18 +10,12 @@ def run(args):
     undirected_subgraph, directed_subgraph = partition_edges(input_data)
 
     for i in range(1, options.copies + 1):
-        randomized = randomize(undirected_subgraph, directed_subgraph)
-        output_file = make_output_filename(options.network, options.outdir, i)
-        randomized.to_csv(output_file, sep = '\t', header = True, index = False)
+        randomized_ug, randomized_dg = randomize(undirected_subgraph, directed_subgraph)
+        merged_network = merge_result(randomized_ug, randomized_dg)
+        merged_file, partial_model_file = make_output_filenames(options.network, options.outdir, i)
 
-def make_output_filename(input_file, outdir, i):
-    input_prefix, extension = os.path.splitext(input_file)
-    output_prefix = input_prefix
-    if outdir:
-        input_parent, input_file_prefix = os.path.split(input_prefix)
-        output_prefix = os.path.join(os.path.normpath(outdir), input_file_prefix)
-
-    return "{}-randomized{}{}".format(output_prefix, i, extension)
+        merged_network.to_csv(merged_file, sep = '\t', header = True, index = False)
+        save_partial_model(randomized_dg, partial_model_file)
 
 def randomize(undirected_subgraph, directed_subgraph):
     randomized_ug = randomize_undirected(undirected_subgraph)
@@ -33,7 +27,24 @@ def randomize(undirected_subgraph, directed_subgraph):
     add_orientation_info(randomized_ug, 'U')
     add_orientation_info(randomized_dg, 'D')
 
-    return merge_result(randomized_ug, randomized_dg)
+    return randomized_ug, randomized_dg
+
+def make_output_filenames(input_file, outdir, i):
+    input_prefix, extension = os.path.splitext(input_file)
+    output_prefix = input_prefix
+    if outdir:
+        input_parent, input_file_prefix = os.path.split(input_prefix)
+        output_prefix = os.path.join(os.path.normpath(outdir), input_file_prefix)
+
+    network_file = "{}-randomized{}{}".format(output_prefix, i, extension)
+    partial_model_file = "{}-partial-model-randomized{}.sif".format(output_prefix, i)
+
+    return network_file, partial_model_file
+
+def save_partial_model(network, filename):
+    network_in_sif = network[['id1', 'orientation', 'id2']]
+    network_in_sif['orientation'] = 'N'
+    network_in_sif.to_csv(filename, sep = '\t', header = False, index = False)
 
 def parse_file(input_file):
     return pandas.read_csv(input_file, sep = "\t")
