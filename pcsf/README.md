@@ -86,6 +86,22 @@ pipeline:
 
 ## Usage messages
 ```
+usage: generate_prizes.py [-h] --firstfile FIRSTFILE --prevfile PREVFILE
+                          --mapfile MAPFILE --outfile OUTFILE
+
+Compute peptide prizes from the TPS first and previous scores files and map
+them to protein prizes. See the TPS readme for the expected file formats.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --firstfile FIRSTFILE
+                        The path and filename of the TPS firstscores file
+  --prevfile PREVFILE   The path and filename of the TPS prevscores file
+  --mapfile MAPFILE     The path and filename of the TPS peptidemap file
+  --outfile OUTFILE     The path and filename of the output prize file.
+```
+
+```
 usage: permute_proteins.py [-h] --mapfile MAPFILE [--outdir OUTDIR]
                            [--copies COPIES] [--seed SEED]
 
@@ -101,22 +117,6 @@ optional arguments:
   --copies COPIES    The number of shuffled copies to generate (default 10).
   --seed SEED        A seed for the pseudo-random number generator for
                      reproducibility.
-```
-
-```
-usage: generate_prizes.py [-h] --firstfile FIRSTFILE --prevfile PREVFILE
-                          --mapfile MAPFILE --outfile OUTFILE
-
-Compute peptide prizes from the TPS first and previous scores files and map
-them to protein prizes. See the TPS readme for the expected file formats.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --firstfile FIRSTFILE
-                        The path and filename of the TPS firstscores file
-  --prevfile PREVFILE   The path and filename of the TPS prevscores file
-  --mapfile MAPFILE     The path and filename of the TPS peptidemap file
-  --outfile OUTFILE     The path and filename of the output prize file.
 ```
 
 ```
