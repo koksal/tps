@@ -1,11 +1,10 @@
   [Omics Integrator]: https://github.com/fraenkel-lab/OmicsIntegrator
 
 # PCSF-TPS pipeline
-This directory is a work-in-progress that will contain scripts to run the
-Prize-Collecting Steiner Forest (PCSF) and Temporal Pathway Synthesizer (TPS)
-algorithms back-to-back.  All scripts must be run from the main `tps` directory
-not this `pcsf` subdirectory.  For example, call `pcsf/submit_wrapper.sh`
-not `submit_wrapper.sh`.
+This directory contains scripts to run the Prize-Collecting Steiner Forest
+(PCSF) and Temporal Pathway Synthesizer (TPS) algorithms back-to-back.  All
+scripts must be run from the main `tps` directory not this `pcsf` subdirectory.
+For example, call `pcsf/submit_wrapper.sh` not `submit_wrapper.sh`.
 
 ## Requirements
 The PCSF-TPS pipeline initially supports only Linux and Mac OS X.
@@ -99,7 +98,7 @@ optional arguments:
                      file, which must contain a file extension.
   --outdir OUTDIR    The path of the output directory for the permuted map
                      files (default is the directory of the mapfile).
-  --copies COPIES    The number of shuffled copies to genereate (default 10).
+  --copies COPIES    The number of shuffled copies to generate (default 10).
   --seed SEED        A seed for the pseudo-random number generator for
                      reproducibility.
 ```
@@ -118,6 +117,31 @@ optional arguments:
   --prevfile PREVFILE   The path and filename of the TPS prevscores file
   --mapfile MAPFILE     The path and filename of the TPS peptidemap file
   --outfile OUTFILE     The path and filename of the output prize file.
+```
+
+```
+usage: subsample_peptides.py [-h] --firstfile FIRSTFILE --prevfile PREVFILE
+                             --tsfile TSFILE [--outdir OUTDIR]
+                             [--fraction FRACTION] [--copies COPIES]
+                             [--seed SEED]
+
+Subsample the peptides in the time series and score files for bootstrapping.
+See the TPS readme for the expected file formats.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --firstfile FIRSTFILE
+                        The path and filename of the TPS firstscores file
+  --prevfile PREVFILE   The path and filename of the TPS prevscores file
+  --tsfile TSFILE       The path and filename of the TPS timeseries file
+  --outdir OUTDIR       The path of the output directory for the subsamples
+                        files (default is the directory of the input files).
+  --fraction FRACTION   The fraction of peptides to keep in the subsampled
+                        datasets (default 0.9).
+  --copies COPIES       The number of subsampled copies to generate (default
+                        10).
+  --seed SEED           A seed for the pseudo-random number generator for
+                        reproducibility.
 ```
 
 ```
