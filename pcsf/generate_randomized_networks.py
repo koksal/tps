@@ -71,7 +71,7 @@ def randomize_undirected(undirected_subgraph):
 
     subprocess.check_call([
         'Rscript',
-        'scripts/background_network_randomization/randomizeUndirectedNetwork.R', 
+        'pcsf/randomizeUndirectedNetwork.R', 
         input_file, 
         output_file])
 
@@ -94,7 +94,7 @@ def randomize_directed(directed_subgraph):
     output_file = make_temp_file('directed_birewire_output')
     subprocess.check_call([
         'Rscript',
-        'scripts/background_network_randomization/randomizeDirectedNetwork.R', 
+        'pcsf/randomizeDirectedNetwork.R', 
         input_file, 
         output_file])
 
