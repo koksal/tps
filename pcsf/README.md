@@ -84,6 +84,31 @@ pipeline:
  times to generate a family of forests, summarize the family of forests to
  produce a single input network for TPS, and run TPS.
 
+## Running on bootstrapped data
+The full PCSF-TPS pipeline can be run on bootstrapped peptide-level data by
+subsampling the three types of peptide scores and regenerating protein prizes.
+The script `bootstrap_wrapper.sh` initiates the entire run, running PCSF and TPS
+on multiple times on different subsampled datasets.  To run the pipeline:
+
+1. Edit the variables in the script `bootstrap_wrapper.sh` to set the PCSF input
+data, TPS input data, and parameters such as the number of random runs to
+execute, the fraction of peptide scores to retain, and the number of Steiner
+forests to generate in each run.
+2. Run `bootstrap_wrapper.sh`, which will generate the subsampled peptide-level
+files and submit `submit_bootstrap.sub` to the HTCondor queueing system. The
+rest of the pipeline will run automatically.
+3. `submit_bootstrap.sub` launches the desired number of jobs, each of which
+will run `run_bootstrap_pipeline.sh` with a different set of subsampled files.
+Each job's HTCondor `Process` variable is used to track which version of the
+subsampled files to use as input.
+4. `run_bootstrap_pipeline.sh` will generate prizes for PCSF, run PCSF multiple
+times to generate a family of forests, summarize the family of forests to
+produce a single input network for TPS, and run TPS.
+
+Note that the subsampling script `subsample_peptides.py` expects the
+`firstfile`, `prevfile`, and `tsfile` inputs to all begin with a single header
+row, as in the example input files in the `data/timeseries` subdirectory.
+
 ## Usage messages
 ```
 usage: generate_prizes.py [-h] --firstfile FIRSTFILE --prevfile PREVFILE
