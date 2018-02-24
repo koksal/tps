@@ -1,6 +1,6 @@
 #!/bin/bash
-# Permute the peptide-protein mapping to generate random PCSF prizes.
-# Submit PCSF-TPS runs, each using a different permuated mapping.
+# Submit PCSF-TPS runs, each using a different randomized network.
+# The randomized networks must be generated before running this script.
 # Execute PCSF runs with different seeds for random edge noise.
 # Summarize the PCSF runs and run TPS on on the union network.
 # Sets up a new configuration file if needed and uses
@@ -14,18 +14,18 @@ mkdir -p $outpath
 # generate prizes for PCSF
 export tpsfirstscores=data/timeseries/p-values-first.tsv
 export tpsprevscores=data/timeseries/p-values-prev.tsv
+export tpspeptidemap=data/timeseries/peptide-mapping.tsv
 # The other TPS inputs not needed to generate prizes for PCSF
 # The source nodes are set below
 export tpstimeseries=data/timeseries/median-time-series.tsv
-export tpspartialmodel=data/resources/kinase-substrate-interactions.sif
 export tpsthreshold=0.01
 
-# The peptide map path and filename is split into components to make it easier
-# to automatically build the path and filenames of the shuffled peptide maps
-export peptidemappath=data/timeseries
-export peptidemapprefix=peptide-mapping
-export peptidemapext=.tsv
-peptidemap=${peptidemappath}/${peptidemapprefix}${peptidemapext}
+# The prefixes for the previously randomized background network
+# and TPS partial model file, which is re-derived for each random
+# background.  Here the randomized networks are stored in the
+# output directory.
+export tpspartialmodelprefix=${outpath}/phosphosite-irefindex13.0-uniprot-with-header-partial-model-randomized
+export networkprefix=${outpath}/phosphosite-irefindex13.0-uniprot-with-header-randomized
 
 # Set the code paths for the Omics Integrator and msgsteiner dependencies
 ## This is the directory that contains scripts/forest.py
@@ -38,16 +38,9 @@ b=0.55
 m=0.008
 w=0.1
 
-# Prize filename prefix
-# It will be used to to create a prize file for PCSF from the TPS input score
-# files and the permuted peptide-protein map and will also create an output prefix
-# for the Steiner forest networks
-# The prize files will be written in the output directory
+# The prize file does not need to be regenerated when running with randomized networks
+export prizefile=data/pcsf/egfr-prizes.txt
 export prizename=egfr-prizes
-# The PPI network, including the path
-## This example uses a combination of PhosphoSitePlus and iRefIndex interactions
-## with UniProt entry name identifiers
-export edgefile=data/networks/phosphosite-irefindex13.0-uniprot.txt
 # A file listing the protein names that should be treated as source nodes,
 # including the path.  These will be used for PCSF and TPS.
 ## This example uses EGF as the source node for EGF stimulation response
@@ -62,7 +55,7 @@ g=1e-3
 r=0.01
 
 # Create the configuration file, removing an older copy of the file if it exists
-# Only one copy is needed for all of the PCSF runs on permuted prizes
+# Only one copy is needed for all of the PCSF runs on randomized networks
 mkdir -p ${outpath}/conf
 filename=${outpath}/conf/conf_w${w}_b${b}_D${D}_m${m}_r${r}_g${g}.txt
 rm -f $filename
@@ -80,20 +73,13 @@ export beta=$b
 export mu=$m
 export omega=$w
 # The number of forests to generate and merge into the final TPS seed network
-export forests=10
+export forests=100
 
-# Set the seed for permuting prizes and the number of permuted copies
-permuteseed=2016
-export permutecopies=10
+# Set the number of network randomization runs
+export netrandcopies=100
 
-# Permute the peptide-protein mapping
-python pcsf/permute_proteins.py --mapfile=$peptidemap \
-	--outdir=$outpath \
-	--copies=$permutecopies \
-	--seed=$permuteseed
-
-# Submit permutecopies of the job to HTCondor
+# Submit netrandcopies of the job to HTCondor
 # Could replace this with a submission to a different queueing system
 # (e.g. qsub instead of condor_submit) but running the pipelines locally
 # is not recommended due to the long runtime of executing them serially
-condor_submit pcsf/submit_permuted.sub
+condor_submit pcsf/submit_net_rand.sub

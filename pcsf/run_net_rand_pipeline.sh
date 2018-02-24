@@ -1,6 +1,6 @@
 #!/bin/bash
-# Generate PCSF prizes, run PCSF multiple times using the parameters
-# set in the wrapper, summarize the PCSF output, and run TPS
+# Run PCSF multiple times using the parameters set in the wrapper
+# on a randomized network, summarize the PCSF output, and run TPS
 
 echo _CONDOR_JOB_IWD $_CONDOR_JOB_IWD
 echo Cluster $cluster
@@ -8,25 +8,13 @@ echo Process $process
 echo RunningOn $runningon
 echo
 
-# The shuffled peptide-protein map index is 1-based but the process id
-# is 0-based
+# The randomized network index is 1-based but the process id is 0-based
 index=$((process+1))
+edgefile=${networkprefix}${index}.txt
 
-# Create an output subdirectory for each set of shuffled prizes
-subdirpath=${outpath}/shuffled${index}
+# Create an output subdirectory for each randomized network
+subdirpath=${outpath}/randomized${index}
 mkdir -p $subdirpath
-
-# Generate PCSF prizes with the permuted peptide-protein map
-prizefile=${subdirpath}/${prizename}-shuffled${index}.txt
-shuffledmap=${outpath}/${peptidemapprefix}-shuffled${index}${peptidemapext}
-CMD="python pcsf/generate_prizes.py --firstfile=$tpsfirstscores \
-	--prevfile=$tpsprevscores \
-	--mapfile=$shuffledmap \
-	--outfile=$prizefile"
-
-# Write the commands for logging before executing them
-echo $CMD
-$CMD
 
 # Use different seeds for each run, which will control the random edge noise
 # Create a family of the requested number of forests
@@ -78,8 +66,9 @@ done < $sources
 sourcearg=`echo ${sourcearg} | tr -s [:space:] " "`
 
 network=${subdirpath}/${pattern}_summary_union.tsv
+tpspartialmodel=${tpspartialmodelprefix}${index}.sif
 
-## Use the shuffled peptide-protein map and the PCSF summary
+## Use the randomized network-derived partial model and the PCSF summary
 ## created above
 CMD="scripts/run \
 	--network $network \
@@ -87,10 +76,10 @@ CMD="scripts/run \
 	--firstscores $tpsfirstscores \
 	--prevscores $tpsprevscores \
 	--partialmodel $tpspartialmodel \
-	--peptidemap $shuffledmap \
+	--peptidemap $tpspeptidemap \
 	$sourcearg \
 	--threshold $tpsthreshold \
-	--outfolder $subdirpath\
+	--outfolder $subdirpath \
 	--outlabel tps"
 
 echo
