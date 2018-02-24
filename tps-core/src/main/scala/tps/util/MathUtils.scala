@@ -13,12 +13,18 @@ object MathUtils {
   }
 
   def median(xs: Iterable[Double]): Double = {
+    percentile(xs, 50)
+  }
+
+  def percentile(xs: Iterable[Double], p: Int): Double = {
     val sorted = xs.toIndexedSeq.sorted
-    val i = sorted.size / 2
-    if (sorted.size % 2 == 0) {
-      (sorted(i - 1) + sorted(i)) / 2.0
+
+    val rank = (sorted.size * (p / 100.0)).toInt
+
+    if (rank * (100 / p) == sorted.size) {
+      (sorted(rank - 1) + sorted(rank)) / 2
     } else {
-      sorted(i)
+      sorted(rank)
     }
   }
 

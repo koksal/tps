@@ -28,8 +28,18 @@ object DirectedNetworkComparison {
       runComparison(firstNetwork, n, priorKnowledgeNetwork)
     }
 
-    val aggregateResult = aggregateResults(results)
-    println(aggregateResult)
+    printAggregateResults(results)
+  }
+
+  def printAggregateResults(
+    results: Iterable[SignedDirectedGraphComparisonResult]
+  ): Unit = {
+    val percentiles = List(25, 50, 75)
+
+    for (percentile <- percentiles) {
+      println(s"${percentile}th percentile:")
+      println(aggregateResults(results, percentile))
+    }
   }
 
   case class SignedDirectedGraphComparisonResult(
@@ -134,28 +144,34 @@ object DirectedNetworkComparison {
   }
 
   private def aggregateResults(
-    results: Iterable[SignedDirectedGraphComparisonResult]
+    results: Iterable[SignedDirectedGraphComparisonResult],
+    percentile: Int
   ): SignedDirectedGraphComparisonResult = {
     SignedDirectedGraphComparisonResult(
       directedComparison =
-        aggregateSubResults(results.map(_.directedComparison)),
+        aggregateSubResults(results.map(_.directedComparison), percentile),
       signedDirectedComparison =
-        aggregateSubResults(results.map(_.signedDirectedComparison))
+        aggregateSubResults(results.map(_.signedDirectedComparison), percentile)
     )
   }
 
   private def aggregateSubResults(
-    results: Iterable[ComparisonSubResult]
+    results: Iterable[ComparisonSubResult],
+    percentile: Int
   ): ComparisonSubResult = {
+    def aggregation(xs: Iterable[Double]) = {
+      MathUtils.percentile(xs, percentile)
+    }
+
     ComparisonSubResult(
-      MathUtils.median(results.map(_.nb1)),
-      MathUtils.median(results.map(_.nb2)),
-      MathUtils.median(results.map(_.nbCommon)),
-      MathUtils.median(results.map(_.nbCommonInPrior)),
-      MathUtils.median(results.map(_.nbAgreeing)),
-      MathUtils.median(results.map(_.nbConflicting)),
-      MathUtils.median(results.map(_.nbOnly1)),
-      MathUtils.median(results.map(_.nbOnly2))
+      aggregation(results.map(_.nb1)),
+      aggregation(results.map(_.nb2)),
+      aggregation(results.map(_.nbCommon)),
+      aggregation(results.map(_.nbCommonInPrior)),
+      aggregation(results.map(_.nbAgreeing)),
+      aggregation(results.map(_.nbConflicting)),
+      aggregation(results.map(_.nbOnly1)),
+      aggregation(results.map(_.nbOnly2))
     )
   }
 }
