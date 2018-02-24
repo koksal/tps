@@ -42,16 +42,31 @@ object DirectedNetworkComparison {
     }
   }
 
-  case class SignedDirectedGraphComparisonResult(
-    directedComparison: ComparisonSubResult,
-    signedDirectedComparison: ComparisonSubResult
+  case class AggregateSignedDirectedGraphComparisonResult(
+    directedComparison: AggregateComparisonSubResult,
+    signedDirectedComparison: AggregateComparisonSubResult
   ) {
     override def toString(): String = {
       s"""Directed comparison:
-        |${directedComparison}
-        |Signed directed comparison:
-        |${signedDirectedComparison}
+         |${directedComparison}
+         |Signed directed comparison:
+         |${signedDirectedComparison}
       """.stripMargin
+    }
+  }
+
+  case class SignedDirectedGraphComparisonResult(
+    directedComparison: ComparisonSubResult,
+    signedDirectedComparison: ComparisonSubResult
+  )
+
+  case class AggregateComparisonSubResult(
+    nbRunsWithMoreEdgesThanOriginal: Int,
+    medianResults: ComparisonSubResult
+  ) {
+    override def toString: String = {
+      s"Nb. runs with more edges: $nbRunsWithMoreEdgesThanOriginal\n" +
+        medianResults.toString()
     }
   }
 
@@ -146,8 +161,8 @@ object DirectedNetworkComparison {
   private def aggregateResults(
     results: Iterable[SignedDirectedGraphComparisonResult],
     percentile: Int
-  ): SignedDirectedGraphComparisonResult = {
-    SignedDirectedGraphComparisonResult(
+  ): AggregateSignedDirectedGraphComparisonResult = {
+    AggregateSignedDirectedGraphComparisonResult(
       directedComparison =
         aggregateSubResults(results.map(_.directedComparison), percentile),
       signedDirectedComparison =
@@ -158,12 +173,12 @@ object DirectedNetworkComparison {
   private def aggregateSubResults(
     results: Iterable[ComparisonSubResult],
     percentile: Int
-  ): ComparisonSubResult = {
+  ): AggregateComparisonSubResult = {
     def aggregation(xs: Iterable[Double]) = {
       MathUtils.percentile(xs, percentile)
     }
 
-    ComparisonSubResult(
+    val medianResult = ComparisonSubResult(
       aggregation(results.map(_.nb1)),
       aggregation(results.map(_.nb2)),
       aggregation(results.map(_.nbCommon)),
@@ -173,5 +188,18 @@ object DirectedNetworkComparison {
       aggregation(results.map(_.nbOnly1)),
       aggregation(results.map(_.nbOnly2))
     )
+
+    AggregateComparisonSubResult(
+      countRunsWithMoreEdges(results),
+      medianResult
+    )
+  }
+
+  private def countRunsWithMoreEdges(
+    results: Iterable[ComparisonSubResult]
+  ): Int = {
+    val nb1 = results.head.nb1
+    val nb2s = results.map(_.nb2)
+    nb2s.count(nb2 => nb2 > nb1)
   }
 }
