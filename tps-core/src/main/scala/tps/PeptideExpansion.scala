@@ -89,7 +89,7 @@ object PeptideExpansion {
       val peptideIds1 = proteinsToPeptides.getOrElse(v1.id, Set(v1.id))
       val peptideIds2 = proteinsToPeptides.getOrElse(v2.id, Set(v2.id))
       MathUtils.cartesianProduct(peptideIds1, peptideIds2) map { case (id1, id2) =>
-        assert(id1 < id2)
+        assert(id1 <= id2)
         Edge(Vertex(id1), Vertex(id2)) -> ess
       }
     }
