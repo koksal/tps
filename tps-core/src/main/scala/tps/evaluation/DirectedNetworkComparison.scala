@@ -178,7 +178,7 @@ object DirectedNetworkComparison {
       MathUtils.percentile(xs, percentile)
     }
 
-    val medianResult = ComparisonSubResult(
+    val aggregatedResult = ComparisonSubResult(
       aggregation(results.map(_.nb1)),
       aggregation(results.map(_.nb2)),
       aggregation(results.map(_.nbCommon)),
@@ -191,7 +191,7 @@ object DirectedNetworkComparison {
 
     AggregateComparisonSubResult(
       countRunsWithMoreEdges(results),
-      medianResult
+      aggregatedResult
     )
   }
 
