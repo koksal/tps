@@ -34,7 +34,7 @@ object DirectedNetworkComparison {
   def printAggregateResults(
     results: Iterable[SignedDirectedGraphComparisonResult]
   ): Unit = {
-    val percentiles = List(25, 50, 75)
+    val percentiles = List(5, 25, 50, 75, 95)
 
     for (percentile <- percentiles) {
       println(s"${percentile}th percentile:")
