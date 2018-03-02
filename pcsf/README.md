@@ -1,11 +1,10 @@
   [Omics Integrator]: https://github.com/fraenkel-lab/OmicsIntegrator
 
 # PCSF-TPS pipeline
-This directory is a work-in-progress that will contain scripts to run the
-Prize-Collecting Steiner Forest (PCSF) and Temporal Pathway Synthesizer (TPS)
-algorithms back-to-back.  All scripts must be run from the main `tps` directory
-not this `pcsf` subdirectory.  For example, call `pcsf/submit_wrapper.sh`
-not `submit_wrapper.sh`.
+This directory contains scripts to run the Prize-Collecting Steiner Forest
+(PCSF) and Temporal Pathway Synthesizer (TPS) algorithms back-to-back.  All
+scripts must be run from the main `tps` directory not this `pcsf` subdirectory.
+For example, call `pcsf/submit_wrapper.sh` not `submit_wrapper.sh`.
 
 ## Requirements
 The PCSF-TPS pipeline initially supports only Linux and Mac OS X.
@@ -85,25 +84,32 @@ pipeline:
  times to generate a family of forests, summarize the family of forests to
  produce a single input network for TPS, and run TPS.
 
+## Running on bootstrapped data
+The full PCSF-TPS pipeline can be run on bootstrapped peptide-level data by
+subsampling the three types of peptide scores and regenerating protein prizes.
+The script `bootstrap_wrapper.sh` initiates the entire run, running PCSF and TPS
+on multiple times on different subsampled datasets.  To run the pipeline:
+
+1. Edit the variables in the script `bootstrap_wrapper.sh` to set the PCSF input
+data, TPS input data, and parameters such as the number of random runs to
+execute, the fraction of peptide scores to retain, and the number of Steiner
+forests to generate in each run.
+2. Run `bootstrap_wrapper.sh`, which will generate the subsampled peptide-level
+files and submit `submit_bootstrap.sub` to the HTCondor queueing system. The
+rest of the pipeline will run automatically.
+3. `submit_bootstrap.sub` launches the desired number of jobs, each of which
+will run `run_bootstrap_pipeline.sh` with a different set of subsampled files.
+Each job's HTCondor `Process` variable is used to track which version of the
+subsampled files to use as input.
+4. `run_bootstrap_pipeline.sh` will generate prizes for PCSF, run PCSF multiple
+times to generate a family of forests, summarize the family of forests to
+produce a single input network for TPS, and run TPS.
+
+Note that the subsampling script `subsample_peptides.py` expects the
+`firstfile`, `prevfile`, and `tsfile` inputs to all begin with a single header
+row, as in the example input files in the `data/timeseries` subdirectory.
+
 ## Usage messages
-```
-usage: permute_proteins.py [-h] --mapfile MAPFILE [--outdir OUTDIR]
-                           [--copies COPIES] [--seed SEED]
-
-Shuffle the protein(s) that map to each peptide. Creates the specified number
-of peptide-protein map files. See the TPS readme for the expected file format.
-
-optional arguments:
-  -h, --help         show this help message and exit
-  --mapfile MAPFILE  The path and filename of the original TPS peptidemap
-                     file, which must contain a file extension.
-  --outdir OUTDIR    The path of the output directory for the permuted map
-                     files (default is the directory of the mapfile).
-  --copies COPIES    The number of shuffled copies to genereate (default 10).
-  --seed SEED        A seed for the pseudo-random number generator for
-                     reproducibility.
-```
-
 ```
 usage: generate_prizes.py [-h] --firstfile FIRSTFILE --prevfile PREVFILE
                           --mapfile MAPFILE --outfile OUTFILE
@@ -118,6 +124,49 @@ optional arguments:
   --prevfile PREVFILE   The path and filename of the TPS prevscores file
   --mapfile MAPFILE     The path and filename of the TPS peptidemap file
   --outfile OUTFILE     The path and filename of the output prize file.
+```
+
+```
+usage: permute_proteins.py [-h] --mapfile MAPFILE [--outdir OUTDIR]
+                           [--copies COPIES] [--seed SEED]
+
+Shuffle the protein(s) that map to each peptide. Creates the specified number
+of peptide-protein map files. See the TPS readme for the expected file format.
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --mapfile MAPFILE  The path and filename of the original TPS peptidemap
+                     file, which must contain a file extension.
+  --outdir OUTDIR    The path of the output directory for the permuted map
+                     files (default is the directory of the mapfile).
+  --copies COPIES    The number of shuffled copies to generate (default 10).
+  --seed SEED        A seed for the pseudo-random number generator for
+                     reproducibility.
+```
+
+```
+usage: subsample_peptides.py [-h] --firstfile FIRSTFILE --prevfile PREVFILE
+                             --tsfile TSFILE [--outdir OUTDIR]
+                             [--fraction FRACTION] [--copies COPIES]
+                             [--seed SEED]
+
+Subsample the peptides in the time series and score files for bootstrapping.
+See the TPS readme for the expected file formats.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --firstfile FIRSTFILE
+                        The path and filename of the TPS firstscores file
+  --prevfile PREVFILE   The path and filename of the TPS prevscores file
+  --tsfile TSFILE       The path and filename of the TPS timeseries file
+  --outdir OUTDIR       The path of the output directory for the subsamples
+                        files (default is the directory of the input files).
+  --fraction FRACTION   The fraction of peptides to keep in the subsampled
+                        datasets (default 0.9).
+  --copies COPIES       The number of subsampled copies to generate (default
+                        10).
+  --seed SEED           A seed for the pseudo-random number generator for
+                        reproducibility.
 ```
 
 ```
