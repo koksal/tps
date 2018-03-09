@@ -89,8 +89,10 @@ object PeptideExpansion {
       val peptideIds1 = proteinsToPeptides.getOrElse(v1.id, Set(v1.id))
       val peptideIds2 = proteinsToPeptides.getOrElse(v2.id, Set(v2.id))
       MathUtils.cartesianProduct(peptideIds1, peptideIds2) map { case (id1, id2) =>
-        assert(id1 < id2)
-        Edge(Vertex(id1), Vertex(id2)) -> ess
+        val expandedEdge = GraphParsing.lexicographicEdge(id1, id2)
+        val expandedEdgeLabels = ess map (es => GraphParsing
+          .lexicographicLabel(id1, id2, es))
+        expandedEdge -> expandedEdgeLabels
       }
     }
 
@@ -110,8 +112,11 @@ object PeptideExpansion {
       // do not create self-edges
       if (origSrc != origDst) {
         assert(origSrc < origDst)
-        val collapsedEdge = Edge(Vertex(origSrc), Vertex(origDst))
-        val newEdgeSol = collapsedSol.get(collapsedEdge).getOrElse(Set()) ++ ess
+        val collapsedEdge = GraphParsing.lexicographicEdge(origSrc, origDst)
+        val collapsedEdgeSols = ess map (es =>
+          GraphParsing.lexicographicLabel(origSrc, origDst, es))
+        val newEdgeSol =
+          collapsedSol.get(collapsedEdge).getOrElse(Set()) ++ collapsedEdgeSols
         collapsedSol += collapsedEdge -> newEdgeSol
       }
     }
