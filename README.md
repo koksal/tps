@@ -104,11 +104,13 @@ first time point can be extracted. This file should not contain a header row, an
 header row is provided it should be commented out with a leading **#** character. If
 there are *t* time points in the `--timeseries <file>`, this file should contain
 *t* - 1 significance score columns. Missing values and **N/A** are not allowed and
-should be replaced by placeholder scores of **1.0**.
+should be replaced by placeholder scores of **1.0**. If a peptide's value is missing
+in the `--timeseries <file>` at one or more time points, those time points cannot have
+significance scores less than the `--threshold <value>`.
 - `--prevscores <file>`: Significance scores can be computed in the same manner as the
 `--firstscores <file>` except the scores should be based on comparisons of the current
-time point and the preceding time point. The file format is the same as the
-`--firstscores <file>`.
+time point and the preceding time point. The file format and requirements are the same
+as the `--firstscores <file>`.
 
 ## Output
 
