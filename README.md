@@ -11,7 +11,8 @@
   [TukeyHSD]: https://stat.ethz.ch/R-manual/R-patched/library/stats/html/TukeyHSD.html
   [doi:10.1101/209676]: https://doi.org/10.1101/209676
 
-# TPS: Temporal Pathway Synthesizer [![Circle CI](https://circleci.com/gh/koksal/tps.svg?style=svg)](https://circleci.com/gh/koksal/tps) [![Build Status](https://travis-ci.org/koksal/tps.svg?branch=master)](https://travis-ci.org/koksal/tps)
+# TPS: Temporal Pathway Synthesizer [![Circle CI](https://circleci.com/gh/koksal/tps.svg?style=svg)](https://circleci.com/gh/koksal/tps) [![Build Status](https://travis-ci.org/koksal/tps.svg?branch=master)](https://travis-ci.org/koksal/tps) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1215178.svg)](https://doi.org/10.5281/zenodo.1215178)
+
 
 TPS is a tool for combining time series global phosphoproteomic data and
 protein-protein interaction networks to reconstruct the vast signaling pathways
