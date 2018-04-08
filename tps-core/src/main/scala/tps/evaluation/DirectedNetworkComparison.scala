@@ -4,8 +4,12 @@ import java.io.File
 
 import tps.Graphs.SignedDirectedEdgeLabel
 import tps.Graphs.SignedDirectedGraph
+import tps.TabularData
+import tps.util.FileUtils
 import tps.util.MathUtils
 import tps.{SignedDirectedGraphOps, SignedDirectedGraphParser}
+
+import scala.collection.mutable.ListBuffer
 
 object DirectedNetworkComparison {
   def main(args: Array[String]): Unit = {
@@ -34,26 +38,56 @@ object DirectedNetworkComparison {
   def printAggregateResults(
     results: Iterable[SignedDirectedGraphComparisonResult]
   ): Unit = {
-    val percentiles = List(5, 25, 50, 75, 95)
+    val percentiles = List(25, 50, 75)
+
+    val header = List(
+      "Percentile",
+      "Edge type",
+      "Directed edges",
+      "Signed, directed edges"
+    )
+    var rows = new ListBuffer[List[String]]()
 
     for (percentile <- percentiles) {
-      println(s"${percentile}th percentile:")
-      println(aggregateResults(results, percentile))
+      val percentileResults = aggregateResults(results, percentile)
+
+      if (percentile == percentiles.head) {
+        rows.append(List(
+          "",
+          "Randomized networks with more edges",
+          percentileResults.directedComparison
+            .nbRunsWithMoreEdgesThanOriginal.toString,
+          percentileResults.signedDirectedComparison
+            .nbRunsWithMoreEdgesThanOriginal.toString
+        ))
+      }
+
+      val directedResultsMap = percentileResults.directedComparison
+        .medianResults.asMap()
+      val signedDirectedResultsMap = percentileResults
+        .signedDirectedComparison.medianResults.asMap()
+
+      for (field <- fields) {
+        val row = List(
+          percentile.toString,
+          field,
+          directedResultsMap(field).toString,
+          signedDirectedResultsMap(field).toString
+        )
+        rows.append(row)
+      }
     }
+
+    FileUtils.writeToFile(
+      new File("analysis.tsv"),
+      TabularData(header, rows).toTSVString()
+    )
   }
 
   case class AggregateSignedDirectedGraphComparisonResult(
     directedComparison: AggregateComparisonSubResult,
     signedDirectedComparison: AggregateComparisonSubResult
-  ) {
-    override def toString(): String = {
-      s"""Directed comparison:
-         |${directedComparison}
-         |Signed directed comparison:
-         |${signedDirectedComparison}
-      """.stripMargin
-    }
-  }
+  )
 
   case class SignedDirectedGraphComparisonResult(
     directedComparison: ComparisonSubResult,
@@ -70,6 +104,24 @@ object DirectedNetworkComparison {
     }
   }
 
+  val unambigInOriginalField = "Unambiguous in the original network"
+  val unambigInAggregateField = "Median unambiguous in randomized networks"
+  val medianAgreeingUnamb = "Median agreeing unambiguous"
+  val medianConflictUnamb = "Median conflicting unambiguous"
+  val medianCommonPrior = "Median common prior knowledge"
+  val medianOnlyInOrig = "Median only in the original network"
+  val medianOnlyInAggr = "Median only in randomized networks"
+
+  val fields = List(
+    unambigInOriginalField,
+    unambigInAggregateField,
+    medianAgreeingUnamb,
+    medianConflictUnamb,
+    medianCommonPrior,
+    medianOnlyInOrig,
+    medianOnlyInAggr
+  )
+
   case class ComparisonSubResult(
     nb1: Double,
     nb2: Double,
@@ -80,18 +132,16 @@ object DirectedNetworkComparison {
     nbOnly1: Double,
     nbOnly2: Double
   ) {
-    override def toString(): String = {
-      val rows = List(
-        s"Nb. edges in 1: ${nb1}",
-        s"Nb. edges in 2: ${nb2}",
-        s"Nb. common: ${nbCommon}",
-        s"Nb. common in prior: ${nbCommonInPrior}",
-        s"Nb. agreeing: ${nbAgreeing}",
-        s"Nb. conflicting: ${nbConflicting}",
-        s"Nb. only in 1: ${nbOnly1}",
-        s"Nb. only in 2: ${nbOnly2}"
+    def asMap(): Map[String, Double] = {
+      Map(
+        unambigInOriginalField -> nb1,
+        unambigInAggregateField -> nb2,
+        medianAgreeingUnamb -> nbAgreeing,
+        medianConflictUnamb -> nbConflicting,
+        medianCommonPrior -> nbCommonInPrior,
+        medianOnlyInOrig -> nbOnly1,
+        medianOnlyInAggr -> nbOnly2
       )
-      rows.mkString("\n")
     }
   }
 
