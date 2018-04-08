@@ -3,7 +3,7 @@ package tps
 import tps.synthesis.SynthesisOptions
 
 object Options {
-  val VERSION = "2.1"
+  val VERSION = "2.2"
 }
 
 case class Options(
