@@ -53,7 +53,7 @@ object GraphParsing {
     for ((edge, labelSets) <- edgeToLabelSets) yield {
       val minLabelSetSize = labelSets.map(_.size).min
       val labelSetsWithMinSize = labelSets.filter(_.size == minLabelSetSize)
-      edge -> labelSetsWithMinSize.flatten
+      edge -> labelSetsWithMinSize.flatten.toSet
     }
   }
 }
