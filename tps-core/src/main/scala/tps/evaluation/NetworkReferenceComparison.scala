@@ -3,7 +3,6 @@ package tps.evaluation
 import tps._
 import tps.Graphs._
 import tps.SignedDirectedGraphOps._
-import parsing.DBNNetworkParser
 import java.io.File
 
 import tps.util.MathUtils
@@ -33,10 +32,6 @@ object NetworkReferenceComparison {
     println(aggregateResult)
   }
 
-  def resultString(res: NetworkReferenceComparisonResult): String = {
-    ???
-  }
-
   def aggregateResults(
     results: Iterable[NetworkReferenceComparisonResult]
   ): NetworkReferenceComparisonResult = {
@@ -63,43 +58,6 @@ object NetworkReferenceComparison {
     )
   }
 
-  // legacy analysis
-  def runComparativeAnalysis(refFn: String): Unit = {
-    val refFile = new File(refFn)
-    val refName = refFile.getName()
-    val (refNetwork, refEvidence) = ReferenceParser.run(refFile)
-
-    val networkFolder = new File("data/networks/evaluation")
-
-    val dbnFn = s"$networkFolder/DBN.tsv"
-    val dbnFile = new File(dbnFn)
-    val dbnMinProb = 0.025
-    val dbnNetwork = DBNNetworkParser.run(dbnFile, dbnMinProb)
-
-    // PIN + kin-sub edges
-    val pinFn = "data/networks/directed-pin-with-resource-edges.tsv"
-    val pinFile = new File(pinFn)
-    val pin = toSignedDirectedGraph(PINParser.run(pinFile))
-
-    // SIF networks
-    // undirected TXN + TPS (time series + kinase-substrate)
-    val sifFiles = networkFolder.listFiles() filter { f =>
-      f.getName().endsWith(".sif")
-    }
-    val sifNetworks = sifFiles map { f =>
-      f.getName() -> SignedDirectedGraphParser.run(f)
-    }
-
-    val candidates = Map(
-      "PIN" -> pin,
-      "DBN" -> dbnNetwork
-    ) ++ sifNetworks
-
-    for ((id, network) <- candidates) {
-      println(resultString(compare(network, refNetwork, id, refName)))
-    }
-  }
-
   // Use doubles instead of integers to compute aggregate statistics
   case class NetworkReferenceComparisonResult(
     candidateName: String,
@@ -119,14 +77,42 @@ object NetworkReferenceComparison {
     conflictingDirectionEdgeRatio: Double,
     nbUnconfirmedDirectionEdges: Double,
     unconfirmedDirectionEdgeRatio: Double
-  )
+  ) {
+    override def toString: String = {
+      val directedPrecLowerBound =
+        nbMatchingDirectionEdges / nbCommonDirectedEdges
+      val directedPrecUpperBound =
+        (1 - nbConflictingDirectionEdges) / (nbCommonDirectedEdges)
+
+      val values = List(
+        referenceName,
+        candidateName,
+        nbReferenceEdges,
+        nbCandidateEdges,
+        nbCommonEdges,
+        undirectedPrecision,
+        undirectedRecall,
+        nbDirectedEdges,
+        nbCommonDirectedEdges,
+        nbMatchingDirectionEdges,
+        nbConflictingDirectionEdges,
+        nbUnconfirmedDirectionEdges,
+        directedPrecLowerBound,
+        directedPrecUpperBound,
+        nbMatchingDirectionEdges / nbDirectedEdges * 1000,
+        nbConflictingDirectionEdges / nbDirectedEdges * 1000
+      )
+
+      values.mkString(",")
+    }
+  }
 
   def compare(
     candidate: SignedDirectedGraph, 
     reference: SignedDirectedGraph, 
     candidateName: String,
     referenceName: String
-  ) = {
+  ): NetworkReferenceComparisonResult = {
     // compute precision and recall where relevance is whether a selected edge
     // is in the reference
 
