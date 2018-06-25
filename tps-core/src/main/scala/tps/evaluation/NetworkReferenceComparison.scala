@@ -43,18 +43,11 @@ object NetworkReferenceComparison {
       MathUtils.median(results.map(_.nbCandidateEdges)),
       results.head.nbReferenceEdges,
       MathUtils.median(results.map(_.nbCommonEdges)),
-      MathUtils.average(results.map(_.undirectedPrecision)),
-      MathUtils.average(results.map(_.undirectedRecall)),
       MathUtils.median(results.map(_.nbDirectedEdges)),
-      MathUtils.median(results.map(_.directedEdgeRatio)),
       MathUtils.median(results.map(_.nbCommonDirectedEdges)),
-      MathUtils.median(results.map(_.commonDirectedEdgeRatio)),
       MathUtils.median(results.map(_.nbMatchingDirectionEdges)),
-      MathUtils.median(results.map(_.matchingDirectionEdgeRatio)),
       MathUtils.median(results.map(_.nbConflictingDirectionEdges)),
-      MathUtils.median(results.map(_.conflictingDirectionEdgeRatio)),
-      MathUtils.median(results.map(_.nbUnconfirmedDirectionEdges)),
-      MathUtils.median(results.map(_.unconfirmedDirectionEdgeRatio))
+      MathUtils.median(results.map(_.nbUnconfirmedDirectionEdges))
     )
   }
 
@@ -65,46 +58,63 @@ object NetworkReferenceComparison {
     nbCandidateEdges: Double,
     nbReferenceEdges: Double,
     nbCommonEdges: Double,
-    undirectedPrecision: Double,
-    undirectedRecall: Double,
     nbDirectedEdges: Double,
-    directedEdgeRatio: Double,
     nbCommonDirectedEdges: Double,
-    commonDirectedEdgeRatio: Double,
     nbMatchingDirectionEdges: Double,
-    matchingDirectionEdgeRatio: Double,
     nbConflictingDirectionEdges: Double,
-    conflictingDirectionEdgeRatio: Double,
-    nbUnconfirmedDirectionEdges: Double,
-    unconfirmedDirectionEdgeRatio: Double
+    nbUnconfirmedDirectionEdges: Double
   ) {
     override def toString: String = {
-      val directedPrecLowerBound =
-        nbMatchingDirectionEdges / nbCommonDirectedEdges
-      val directedPrecUpperBound =
-        (1 - nbConflictingDirectionEdges) / (nbCommonDirectedEdges)
-
       val values = List(
         referenceName,
         candidateName,
         nbReferenceEdges,
         nbCandidateEdges,
         nbCommonEdges,
-        undirectedPrecision,
-        undirectedRecall,
+        metricString(precisionLowerBound(nbCommonEdges, nbCandidateEdges)),
+        metricString(recall(nbCommonEdges, nbReferenceEdges)),
         nbDirectedEdges,
         nbCommonDirectedEdges,
         nbMatchingDirectionEdges,
         nbConflictingDirectionEdges,
         nbUnconfirmedDirectionEdges,
-        directedPrecLowerBound,
-        directedPrecUpperBound,
-        nbMatchingDirectionEdges / nbDirectedEdges * 1000,
-        nbConflictingDirectionEdges / nbDirectedEdges * 1000
+        metricString(
+          precisionLowerBound(nbMatchingDirectionEdges, nbCommonDirectedEdges)),
+        metricString(
+          precisionUpperBound(nbConflictingDirectionEdges,  nbCommonDirectedEdges)),
+        metricString(
+          nbMatchingDirectionEdges / nbDirectedEdges * 1000.0),
+        metricString(
+          nbConflictingDirectionEdges / nbDirectedEdges * 1000.0)
       )
 
       values.mkString(",")
     }
+  }
+
+  def metricString(precision: Double): String = {
+    if (precision.isNaN) "N/A" else precision.toString
+  }
+
+  def precisionLowerBound(
+    nbPos: Double,
+    nbPredictions: Double
+  ): Double = {
+    nbPos / nbPredictions
+  }
+
+  def precisionUpperBound(
+    nbNeg: Double,
+    nbPredictions: Double
+  ): Double = {
+    (nbPredictions - nbNeg) / nbPredictions
+  }
+
+  def recall(
+    nbPos: Double,
+    nbTotal: Double
+  ): Double = {
+    nbPos / nbTotal
   }
 
   def compare(
@@ -113,16 +123,10 @@ object NetworkReferenceComparison {
     candidateName: String,
     referenceName: String
   ): NetworkReferenceComparisonResult = {
-    // compute precision and recall where relevance is whether a selected edge
-    // is in the reference
-
     val candidateE = candidate.keySet
     val referenceE = reference.keySet
 
     val commonE = candidateE intersect referenceE
-    var undirPrecision = commonE.size.toDouble / candidateE.size.toDouble
-    if (candidateE.isEmpty) undirPrecision = 0.0
-    val undirRecall    = commonE.size.toDouble / referenceE.size.toDouble
 
     val directedE = candidateE filter { e =>
       oneActiveDirection(candidate(e))
@@ -158,18 +162,11 @@ object NetworkReferenceComparison {
       candidateE.size,
       referenceE.size,
       commonE.size,
-      undirPrecision,
-      undirRecall,
       directedE.size,
-      directedE.size.toDouble / candidateE.size,
       commonDirectedE.size,
-      commonDirectedE.size.toDouble / directedE.size.toDouble,
       matchingDirectionE.size,
-      matchingDirectionE.size.toDouble / directedE.size.toDouble,
       conflictingE.size,
-      conflictingE.size.toDouble / directedE.size.toDouble,
-      unconfirmedDirectionE.size,
-      unconfirmedDirectionE.size.toDouble / directedE.size.toDouble
+      unconfirmedDirectionE.size
     )
   }
 
