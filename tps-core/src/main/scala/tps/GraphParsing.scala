@@ -43,4 +43,17 @@ object GraphParsing {
     }
     sol
   }
+
+  def aggregateBySmallestLabelSets[T](
+    allLabels: Seq[(Edge, Set[T])]
+  ): Map[Edge, Set[T]] = {
+    val edgeToLabelSets = allLabels.groupBy(_._1).map {
+      case (edge, pairs) => edge -> pairs.map(_._2)
+    }
+    for ((edge, labelSets) <- edgeToLabelSets) yield {
+      val minLabelSetSize = labelSets.map(_.size).min
+      val labelSetsWithMinSize = labelSets.filter(_.size == minLabelSetSize)
+      edge -> labelSetsWithMinSize.flatten.toSet
+    }
+  }
 }
