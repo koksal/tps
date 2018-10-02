@@ -162,11 +162,10 @@ for building ScalaZ3 can be found on its project page.
 ## Example data
 
 The example dataset included with TPS is our phosphoproteomic time course of the
-cellular response to EGF stimulation. See the citation information below.
+cellular response to EGF stimulation. See the citation information above.
 
 The example network was produced by [Omics Integrator] run on a network
 of [iRefIndex] and [PhosphoSitePlus] interactions. Please acknowledge
 and reference PhosphoSitePlus if you use `data/resources/kinase-substrate-interactions.sif`
 and both PhosphoSitePlus and iRefIndex if you use `data/networks/phosphosite-irefindex13.0-uniprot.txt`
 or `data/networks/input-network.tsv`.
-
