@@ -19,7 +19,7 @@ before_install:
   - export CONDA_PREFIX=/home/travis/mc
   - ./miniconda.sh -b -p "$CONDA_PREFIX"
   - export PATH="$CONDA_PREFIX/bin":$PATH
-  - conda install anaconda-client
+  - conda install -y anaconda-client
 
 install: 
   # setup python environment and required packages
