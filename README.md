@@ -9,7 +9,6 @@
   [SIF]: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats
   [Tukey's Honest Significant Difference test]: https://en.wikipedia.org/wiki/Tukey%27s_range_test
   [TukeyHSD]: https://stat.ethz.ch/R-manual/R-patched/library/stats/html/TukeyHSD.html
-  [doi:10.1101/209676]: https://doi.org/10.1101/209676
 
 # TPS: Temporal Pathway Synthesizer [![Circle CI](https://circleci.com/gh/koksal/tps.svg?style=svg)](https://circleci.com/gh/koksal/tps) [![Build Status](https://travis-ci.org/koksal/tps.svg?branch=master)](https://travis-ci.org/koksal/tps) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1215178.svg)](https://doi.org/10.5281/zenodo.1215178)
 
@@ -17,6 +16,15 @@
 TPS is a tool for combining time series global phosphoproteomic data and
 protein-protein interaction networks to reconstruct the vast signaling pathways
 that control post-translational modifications.
+
+## Reference
+
+Please cite the following manuscript if you make use of the TPS software or our
+EGF response phosphoproteomic data:
+
+[Synthesizing Signaling Pathways from Temporal Phosphoproteomic Data](https://doi.org/10.1016/j.celrep.2018.08.085).
+Ali Sinan Köksal, Kirsten Beck, Dylan R. Cronin, Aaron McKenna, Nathan D. Camp, Saurabh Srivastava, Matthew E. MacGilvray, Rastislav Bodík, Alejandro Wolf-Yadlin, Ernest Fraenkel, Jasmin Fisher, Anthony Gitter.
+*Cell Reports* 24(13):3607-3618 2018.
 
 ## Requirements
 
@@ -162,13 +170,3 @@ and reference PhosphoSitePlus if you use `data/resources/kinase-substrate-intera
 and both PhosphoSitePlus and iRefIndex if you use `data/networks/phosphosite-irefindex13.0-uniprot.txt`
 or `data/networks/input-network.tsv`.
 
-## Citation
-
-Please cite the following manuscript if you make use of the TPS software or our
-EGF response phosphoproteomic data:
-
-Synthesizing Signaling Pathways from Temporal Phosphoproteomic Data. Ali Sinan
-Köksal, Kirsten Beck, Dylan R. Cronin, Aaron McKenna, Nathan D. Camp, Saurabh
-Srivastava, Matthew E. MacGilvray, Rastislav Bodík, Alejandro Wolf-Yadlin,
-Ernest Fraenkel, Jasmin Fisher, Anthony Gitter. *bioRxiv* 2017.
-[doi:10.1101/209676]

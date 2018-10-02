@@ -14,15 +14,16 @@ notifications:
 
 before_install:
   # install conda to help with numpy/scipy system dependencies
-  - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - wget https://repo.continuum.io/miniconda/Miniconda2-4.0.5-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - export CONDA_PREFIX=/home/travis/mc
   - ./miniconda.sh -b -p "$CONDA_PREFIX"
   - export PATH="$CONDA_PREFIX/bin":$PATH
+  - conda install -y anaconda-client
 
 install: 
   # setup python environment and required packages
-  - conda create -n pcsf -y python=$TRAVIS_PYTHON_VERSION pytest numpy pandas networkx
+  - conda create -n pcsf -y python=$TRAVIS_PYTHON_VERSION pytest numpy=1.13 pandas=0.20 networkx=1.11
   - source activate pcsf
 
   # log stat for debugging

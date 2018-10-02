@@ -69,30 +69,30 @@ class TestSubsamplePeptides:
             args = base_args
             args.extend(["--fraction", "-1"])
             sp.Main(args)
-        assert "The fraction must be in (0,1)" in excinfo.value.message
+        assert "The fraction must be in (0,1)" in str(excinfo)
 
         with pytest.raises(Exception) as excinfo:
             args = base_args
             args.extend(["--fraction", "1.1"])
             sp.Main(args)
-        assert "The fraction must be in (0,1)" in excinfo.value.message
+        assert "The fraction must be in (0,1)" in str(excinfo)
 
         with pytest.raises(Exception) as excinfo:
             args = base_args
             args.extend(["--fraction", "1e-20"])
             sp.Main(args)
         assert "Must increase the fraction to subsample at least one row" \
-            in excinfo.value.message
+            in str(excinfo)
 
         with pytest.raises(Exception) as excinfo:
             args = base_args
             args.extend(["--fraction", "0.9999999"])
             sp.Main(args)
         assert "Must decrease the fraction to subsample less than the total number of rows" \
-            in excinfo.value.message
+            in str(excinfo)
 
         with pytest.raises(Exception) as excinfo:
             args = base_args
             args.extend(["--copies", "0"])
             sp.Main(args)
-        assert "The number of copies must be positive" in excinfo.value.message
+        assert "The number of copies must be positive" in str(excinfo)
