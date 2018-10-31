@@ -27,4 +27,20 @@ class MathUtilsTest extends FunSuite with Matchers {
     val c = MathUtils.combination(list, 0)
     c should equal (List(Nil))
   }
+
+  test("median of odd-sized list") {
+    MathUtils.median(List(1, 2, 3)) should equal (2)
+  }
+
+  test("median of even-sized list") {
+    MathUtils.median(List(1, 2, 3, 4)) should equal (2.5)
+  }
+
+  test("25th percentile of an even-sized list") {
+    MathUtils.percentile(List(1, 2, 3, 4), 25) should equal (1.5)
+  }
+
+  test("25th percentile of an odd-sized list") {
+    MathUtils.percentile(List(1, 2, 3, 4, 5), 25) should equal (2)
+  }
 }

@@ -10,7 +10,7 @@ object ApplicationBuild extends Build {
     baseDirectory in run := file("."),
     baseDirectory in Test := file("."),
 
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.12.4",
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
 
     showSuccess := false,
@@ -24,8 +24,8 @@ object ApplicationBuild extends Build {
     unmanagedBase <<= baseDirectory { base => base / "lib" },
 
     libraryDependencies ++= Seq(
-      "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
-      "com.github.scopt" %% "scopt" % "3.3.0"
+      "org.scalatest" % "scalatest_2.12" % "3.0.1" % "test",
+      "com.github.scopt" %% "scopt" % "3.7.0"
     ),
 
     mainClass in (Compile, run) := Some("tps.Main"),

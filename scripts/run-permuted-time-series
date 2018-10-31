@@ -1,0 +1,15 @@
+#!/bin/bash
+
+for i in `seq 1 100`;
+do
+  ./scripts/run \
+    --network data/networks/input-network.tsv \
+    --timeseries data/timeseries/permuted-time-series/permutation-$i/permuted-time-series.tsv \
+    --firstscores data/timeseries/permuted-time-series/permutation-$i/permuted-first-scores.tsv \
+    --prevscores data/timeseries/permuted-time-series/permutation-$i/permuted-prev-scores.tsv \
+    --partialmodel data/resources/kinase-substrate-interactions.sif \
+    --peptidemap data/timeseries/peptide-mapping.tsv \
+    --source EGF_HUMAN \
+    --threshold 0.01 \
+    --outfolder permuted-time-series-run-$i
+done

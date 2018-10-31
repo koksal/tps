@@ -1,7 +1,5 @@
 package tps
 
-import tps.util.FileUtils._
-
 object PeptideProteinMappingParser {
   def run(f: java.io.File): Map[String, Set[String]] = {
     val data = new TSVSource(f).data

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sbt \
+  "project tps-core" \
+  "run-main tps.evaluation.DirectedNetworkComparison $*"

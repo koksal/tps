@@ -7,10 +7,11 @@ object ReferenceParser {
   def run(f: java.io.File): (SignedDirectedGraph, Map[Edge, String]) = {
     val data = new TSVSource(f, noHeaders = false).data
 
-
     var evidencePerEdge: Map[Edge, String] = Map.empty
 
-    val tuples = data.tuples.collect{ case tuple if tuple.size >= 7 =>
+    val tuples = data.tuples.map{ tuple =>
+      assert(tuple.size >= 6)
+      
       val Seq(src, tgt, lra, lri, rla, rli, rest @ _*) = tuple
       val edge = lexicographicEdge(src, tgt)
 
@@ -21,6 +22,7 @@ object ReferenceParser {
       def labelValue(l: String): Boolean = l match {
         case "true" => true
         case "false" => false
+        case _ => sys.error(s"error parsing $l in $tuple")
       }
 
       if (labelValue(lra)) originalLabels += ActiveEdge(Forward, Activating)

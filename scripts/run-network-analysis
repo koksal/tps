@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for reference in data/resources/reference/*.tsv
+do
+  echo "Evaluating against $reference"
+  sbt \
+    "project tps-core" \
+    "run-main tps.evaluation.NetworkReferenceComparison $reference $*"
+done

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+TIMESERIES=data/timeseries/median-time-series.tsv
+FIRSTSCORES=data/timeseries/p-values-first.tsv
+PREVSCORES=data/timeseries/p-values-prev.tsv
+
+for i in `seq 1 100`;
+do
+  OUTFOLDER="permutation-$i"
+  sbt \
+    "project tps-core" \
+    "run-main tps.evaluation.TimeSeriesPermutation $TIMESERIES $FIRSTSCORES $PREVSCORES $i $OUTFOLDER"
+done    

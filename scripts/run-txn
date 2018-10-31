@@ -1,0 +1,68 @@
+#!/bin/bash
+
+NETWORKFOLDER=data/networks/evaluation
+KINSUB=data/resources/kinase-substrate-interactions.sif
+
+TXN_ALL_UNDIRECTED=$NETWORKFOLDER/TXN-ALL-undirected.tsv
+TXN_ALL_DIRECTED=$NETWORKFOLDER/TXN-ALL-directed.sif
+TXN_1F_UNDIRECTED=$NETWORKFOLDER/TXN-1F-undirected.tsv
+TXN_1F_DIRECTED=$NETWORKFOLDER/TXN-1F-directed.sif
+
+function run_with_base_args() {
+  ./scripts/run \
+    --timeseries data/timeseries/median-time-series.tsv \
+    --firstscores data/timeseries/p-values-first.tsv \
+    --prevscores data/timeseries/p-values-prev.tsv \
+    --peptidemap data/timeseries/peptide-mapping.tsv \
+    --source EGFR_HUMAN \
+    --threshold 0.01 \
+    "$@"
+}
+
+run_with_base_args \
+  --outlabel TXN-ALL-directed-topo-kinsub \
+  --network $TXN_ALL_UNDIRECTED \
+  --partialmodel $KINSUB \
+  --partialmodel $TXN_ALL_DIRECTED \
+  --no-temporality
+
+run_with_base_args \
+  --outlabel TXN-ALL-directed-topo-kinsub-temp \
+  --network $TXN_ALL_UNDIRECTED \
+  --partialmodel $KINSUB \
+  --partialmodel $TXN_ALL_DIRECTED
+
+run_with_base_args \
+  --outlabel TXN-1F-directed-topo-kinsub \
+  --network $TXN_1F_UNDIRECTED \
+  --partialmodel $KINSUB \
+  --partialmodel $TXN_ALL_DIRECTED \
+  --no-temporality
+
+run_with_base_args \
+  --outlabel TXN-1F-directed-topo-kinsub-temp \
+  --network $TXN_1F_UNDIRECTED \
+  --partialmodel $KINSUB \
+  --partialmodel $TXN_ALL_DIRECTED
+
+run_with_base_args \
+  --outlabel TXN-ALL-undirected-topo-kinsub \
+  --network $TXN_ALL_UNDIRECTED \
+  --partialmodel $KINSUB \
+  --no-temporality
+
+run_with_base_args \
+  --outlabel TXN-ALL-undirected-topo-kinsub-temp \
+  --network $TXN_ALL_UNDIRECTED \
+  --partialmodel $KINSUB
+
+run_with_base_args \
+  --outlabel TXN-1F-undirected-topo-kinsub \
+  --network $TXN_1F_UNDIRECTED \
+  --partialmodel $KINSUB \
+  --no-temporality
+
+run_with_base_args \
+  --outlabel TXN-1F-undirected-topo-kinsub-temp \
+  --network $TXN_1F_UNDIRECTED \
+  --partialmodel $KINSUB

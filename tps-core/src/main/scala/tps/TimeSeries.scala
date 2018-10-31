@@ -1,9 +1,5 @@
 package tps
 
-import Graphs._
-
-import tps.util.StringUtils
-
 case class Profile(id: String, values: Seq[Option[Double]])
 
 case class TimeSeries(
