@@ -80,9 +80,6 @@ steps:
 - `--peptidemap <file>`: Input file in TSV format that defines a mapping between time series profile identifiers and input network node identifiers. A profile can be mapped to more than one node, in which case the second column is a pipe-separated list of node identifiers. The file begins with a header row.
 - `--outlabel <value>`: Prefix string to be added to all output files.
 - `--outfolder <value>`: Folder in which the output files should be generated. By default, output files are generated in the current directory.
-- `--solver <value>`: Solver to use (`naive`, `bilateral`, or `dataflow`). The default, recommended solver is `dataflow`. Both `naive` and `bilateral` are symbolic solvers and use the Z3 backend. (See the **Solvers** section for notes related to the symbolic solvers.)
-- `--slack <value>`: Integer value for limiting the length of paths from the source to any node to *n* + *k*, where *n* is the length of the shortest path from the source to the node in the undirected network, and *k* is the given slack value. This only applies to the symbolic solvers.
-- `--bitvect <value>`: Use bitvector encoding for representing integers when using the symbolic solvers, with bitvectors of the given integer length.
 - `--no-connectivity`: Do not use connectivity constraints.
 - `--no-temporality`: Do not use temporal constraints.
 - `--no-monotonicity`: Do not use monotonicity constraints when inferring activity intervals for time series data.
@@ -149,15 +146,12 @@ per time point:
 
 ## Solvers
 
-TPS uses by default a custom solver (`DataflowSolver`), but it also includes
-two symbolic solvers (`NaiveSymbolicSolver` and `BilateralSolver`) that
-implement the same functionality as the custom solver.
+TPS uses by default a custom solver (`DataflowSolver`). Historically, it also
+supported two symbolic solvers (`NaiveSymbolicSolver` and `BilateralSolver`)
+that implement the same functionality as the custom solver.
 
-We recommend using the default solver, which is the most recent and fastest of
-all three. Meanwhile, if you would like to use either of the two symbolic
-solvers on OS X, you will need to replace the `scalaz3.jar` with a packaged
-version of [ScalaZ3] built on the computer you will run TPS on. Instructions
-for building ScalaZ3 can be found on its project page.
+Currently, only the default solver (which is the most recent and fastest of all
+three) is supported. 
 
 ## Example data
 

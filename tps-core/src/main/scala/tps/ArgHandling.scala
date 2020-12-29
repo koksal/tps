@@ -63,7 +63,7 @@ object ArgHandling {
       opt[String]("solver") action { (v, o) =>
         o.copy(synthesisOptions = 
           o.synthesisOptions.copy(solver = v)) } text(
-          "solver type (naive, bilateral or dataflow)")
+          "solver type (only 'dataflow' is currently supported)")
 
       opt[Int]("slack") action { (i, o) =>
         o.copy(synthesisOptions = 
