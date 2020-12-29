@@ -45,8 +45,6 @@ class SolverOutputTest extends FunSuite with Matchers {
     }
 
     val dataflowOutput = runSolver(synOpts)
-    val naiveSymbolicOutput = runSolver(synOpts.copy(solver = "naive"))
-    val bilateralSymbolicOutput = runSolver(synOpts.copy(solver = "bilateral"))
 
     val expectedNetwork = Map(
       // missing B data, direction from topology
@@ -86,8 +84,5 @@ class SolverOutputTest extends FunSuite with Matchers {
     )
 
     dataflowOutput should equal (expectedNetwork)
-    naiveSymbolicOutput should equal (expectedNetwork)
-    bilateralSymbolicOutput should equal (expectedNetwork)
-    
   }
 }
