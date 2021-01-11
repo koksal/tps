@@ -17,7 +17,7 @@ class SolverOutputTest extends FunSuite with Matchers {
     new File(url.getFile())
   }
 
-  test("output of solvers match") {
+  test("dataflow solver output matches expected network") {
     val network = UndirectedGraphParser.run(testFile("network.tsv"))
     val timeSeries = TimeSeriesParser.run(testFile("time-series.tsv"))
     val firstScores = TimeSeriesScoresParser.run(testFile("significance-first.tsv"))
@@ -45,8 +45,6 @@ class SolverOutputTest extends FunSuite with Matchers {
     }
 
     val dataflowOutput = runSolver(synOpts)
-    val naiveSymbolicOutput = runSolver(synOpts.copy(solver = "naive"))
-    val bilateralSymbolicOutput = runSolver(synOpts.copy(solver = "bilateral"))
 
     val expectedNetwork = Map(
       // missing B data, direction from topology
@@ -86,8 +84,5 @@ class SolverOutputTest extends FunSuite with Matchers {
     )
 
     dataflowOutput should equal (expectedNetwork)
-    naiveSymbolicOutput should equal (expectedNetwork)
-    bilateralSymbolicOutput should equal (expectedNetwork)
-    
   }
 }

@@ -86,20 +86,8 @@ object Synthesis {
           interpretation,
           resultReporter
         )
-      case "naive" => 
-        new NaiveSymbolicSolver(
-          expandedNetwork,
-          expandedPartialModel,
-          opts,
-          interpretation
-        )
-      case "bilateral" => 
-        new BilateralSolver(
-          expandedNetwork,
-          expandedPartialModel,
-          opts,
-          interpretation
-        )
+      case _ =>
+        throw new Exception("Only the dataflow solver is supported.")
     }
 
     val expandedSol = solver.summary()

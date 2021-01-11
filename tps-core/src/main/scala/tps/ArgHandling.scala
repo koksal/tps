@@ -63,17 +63,7 @@ object ArgHandling {
       opt[String]("solver") action { (v, o) =>
         o.copy(synthesisOptions = 
           o.synthesisOptions.copy(solver = v)) } text(
-          "solver type (naive, bilateral or dataflow)")
-
-      opt[Int]("slack") action { (i, o) =>
-        o.copy(synthesisOptions = 
-          o.synthesisOptions.copy(pathLengthSlack = Some(i))) } text(
-          "integer limit for maximum path lengths from sources (only for symbolic solvers)")
-
-      opt[Int]("bitvect") action { (i, o) => 
-        o.copy(synthesisOptions = 
-          o.synthesisOptions.copy(bitvectorWidth = Some(i))) } text(
-          "use bitvectors of the given size for integer encoding")
+          "solver type (only 'dataflow' is currently supported)")
 
       opt[Unit]("no-connectivity") action { (_, o) => 
         o.copy(synthesisOptions = 
