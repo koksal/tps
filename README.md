@@ -2,6 +2,7 @@
   [iRefIndex]: http://irefindex.org/
   [Java Development Kit 8]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
   [Omics Integrator]: http://fraenkel.mit.edu/omicsintegrator
+  [osmotic-stress]: https://github.com/gitter-lab/osmotic-stress
   [PhosphoSitePlus]: http://www.phosphosite.org/
   [sbt]: https://github.com/sbt/sbt
   [sbt-extras]: https://github.com/paulp/sbt-extras
@@ -163,3 +164,5 @@ of [iRefIndex] and [PhosphoSitePlus] interactions. Please acknowledge
 and reference PhosphoSitePlus if you use `data/resources/kinase-substrate-interactions.sif`
 and both PhosphoSitePlus and iRefIndex if you use `data/networks/phosphosite-irefindex13.0-uniprot.txt`
 or `data/networks/input-network.tsv`.
+
+The yeast osmotic stress response data and analysis are available in the separate [osmotic-stress] repository.
